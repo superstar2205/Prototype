@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IRDA Inspection IMS — Full Prototype</title>
+<style>
+  :root{
+    --gov-blue:#12346a;
+    --gov-accent:#1e40af;
+    --gov-bg:#f5f7fb;
+    --card-radius:12px;
+    --shadow: 0 6px 18px rgba(2,6,23,0.08);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+  html,body{ margin:0; background:var(--gov-bg); color:#0f172a; }
+  .muted{ color:#64748b; font-size:13px; }
+  .container{ padding:24px; max-width:1200px; margin:24px auto; }
+  header{
+    padding:18px 24px; display:flex; align-items:center; gap:16px;
+    background:linear-gradient(90deg,#eef2ff,#f8fbff); border-bottom:1px solid rgba(30,58,138,0.06);
+  }
+  .brand{ display:flex; gap:12px; align-items:center; }
+  .brand .logo{ width:46px;height:46px;border-radius:8px;background:linear-gradient(135deg,#084b8a,#1e3a8a);color:#fff;display:flex;justify-content:center;align-items:center;font-weight:800; }
+  .spacer{ flex:1; }
+  .user-info{ text-align:right; color:#0b2a5a; }
+  .user-name{ font-size:18px; font-weight:800; }
+  .user-meta{ font-size:13px; color:#334155; line-height:1.35; }
+
+  button{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; background:var(--gov-accent); color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(2,6,23,0.08); }
+  button.secondary{ background:#0f172a; }
+  button.link{ background:transparent; color:#1e40af; box-shadow:none; padding:0; }
+  button:disabled{ opacity:.6; cursor:not-allowed; }
+  input,select,textarea{ border:1px solid #cbd5e1; padding:10px; border-radius:8px; }
+
+  .card{ background:#fff; border-radius:var(--card-radius); box-shadow:var(--shadow); padding:16px; }
+  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .big{ font-size:28px; font-weight:800; }
+  /* give space between the KPI cards and the lists panel (applies when "View Ongoing/Completed" shows lists) */
+  #lists{ margin-top:22px; }
+  .toolbar{ display:flex; align-items:center; gap:8px; white-space:nowrap; flex-wrap:nowrap; }
+  .steps{ display:flex; gap:6px; margin:12px 0 18px 0; flex-wrap:nowrap; white-space:nowrap; }
+  .step{ padding:8px 10px; border-radius:12px; background:#eef2f7; color:#334155; font-weight:700; cursor:pointer; font-size:13px; }
+  .step.active{ background:#0f172a; color:#fff; }
+
+  table{ width:100%; border-collapse:collapse; }
+  th,td{ text-align:left; padding:10px; border-bottom:1px solid #eef2f7; }
+  .chip{ padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:8px; }
+  .ok{ background:#d1fae5; color:#065f46; }
+  .miss{ background:#fee2e2; color:#7f1d1d; }
+  .warn{ background:#fff7ed; color:#92400e; }
+  .info{ background:#e0f2fe; color:#075985; }
+
+  .bar{ height:12px; background:#e6eefb; border-radius:6px; overflow:hidden; }
+  .bar > i{ display:block; height:100%; background:linear-gradient(90deg,#60a5fa,#1e40af); }
+  .pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:#eef2f7; border-radius:999px; font-size:12px; margin:4px 6px 0 0; }
+  .pill b{ font-weight:700; }
+
+  .row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .col{ flex:1; min-width:260px; }
+
+  .login-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    position:relative; padding:28px; overflow:hidden;
+    background:
+      radial-gradient(900px 520px at 15% -10%, #e6f0ff 0%, transparent 60%),
+      radial-gradient(900px 520px at 110% 0%, #eef3ff 0%, transparent 60%);
+  }
+  .login-card{
+    width:min(520px, 94vw);
+    background:#fff;
+    border:1px solid #e6edf7;
+    border-radius:16px;
+    box-shadow:0 24px 60px rgba(15,23,42,.10);
+    padding:26px;
+  }
+  .login-card h1{ font-size:22px; margin:0 0 4px 0; font-weight:900; letter-spacing:.3px; color:var(--gov-blue); }
+  .login-card .tagline{ margin-top:6px; color:#3b4b62; font-size:13px; }
+  .login-card label{ display:block; font-weight:700; margin-top:14px; }
+  .login-card input{ width:100%; padding:12px; border:1px solid #cdd7ea; border-radius:12px; margin-top:6px; background:#fbfdff; }
+  .login-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:16px; }
+  .btn{ padding:10px 14px; border-radius:10px; border:1px solid #d6e1f5; background:#0f172a; color:#fff; font-weight:800; cursor:pointer; }
+  .link{ background:transparent; border:0; color:#1e40af; cursor:pointer; font-weight:700; }
+
+
+  /* --- Config Tabs --- */
+  .tabs{ display:flex; gap:8px; margin:14px 0; flex-wrap:wrap; }
+  .tab{ padding:8px 12px; border-radius:10px; background:#eef2ff; border:1px solid #dfe7fb; cursor:pointer; font-weight:800; color:#2a3c5f; font-size:12.5px; }
+  .tab.active{ background:#1e4fb8; color:#fff; border-color:transparent; box-shadow:0 10px 22px rgba(30,79,184,.18); }
+
+  /* footer style — match previous formatting (inherit page font/weight and color) */
+  .footer{
+    text-align:center;
+    margin-top:20px;
+    color:#94a3b8;
+    font-size:13px;
+    font-weight:400;
+    font-family:inherit;
+  }
+
+  /* make config spacing match lists (uniform gap below KPI cards) */
+  #config-root{ margin-top:22px; }
+
+/* Modal (final report) */
+.btn.small{ padding:6px 10px; font-size:13px; border-radius:8px; }
+.modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); z-index:1200; }
+.modal.show{ display:flex; }
+.modal .dialog{ width:94%; max-width:920px; background:#fff; border-radius:12px; padding:18px; box-shadow:0 20px 60px rgba(2,6,23,0.12); }
+.modal .dialog header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.modal .dialog .content{ height:560px; overflow:auto; border:1px solid #eef2f7; border-radius:8px; padding:12px; background:#fafcff; }
+.modal .close{ background:transparent; border:0; font-weight:800; cursor:pointer; color:#0f172a; }
+</style>
+</head>
+<body>
+
+<!-- ===== Login ===== -->
+<section id="login" class="login-wrap">
+  <div class="login-card">
+    <h1>PRISM</h1>
+    <div class="tagline">Platform for Risk-based Inspection & Supervisory Management</div>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="name@irdai.gov.in">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••">
+    <div class="login-actions">
+      <button id="login-btn" type="button" class="btn">Login</button>
+      <button id="forgot" type="button" class="link">Forgot Password?</button>
+    </div>
+    <div style="text-align:center; font-size:12px; color:#90a1b6; margin-top:8px;">Prepared by IRDAI InsurTech Team</div>
+  </div>
+</section>
+
+<!-- ===== App ===== -->
+<section id="app-root" style="display:none;">
+  <header>
+    <div class="brand">
+      <div class="logo">IRDAI</div>
+      <div>
+        <div style="font-weight:800">PRISM</div>
+        <div class="muted">Platform for Risk-based Inspection & Supervisory Management
+ </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="user-info">
+      <div class="user-name"><strong>Meghana Nara</strong></div>
+      <div class="user-meta">Logged in: 12-Nov-2025 11:15<br>IP: 192.168.1.108</div>
+    </div>
+  </header>
+
+  <main class="container" id="app">
+    <!-- Supervision toolbar: hidden by default, shown only when Home -> Supervision tab is active -->
+    <div id="supervision-toolbar" class="toolbar" style="display:none; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #eef2f7;">
+      <button id="btn-start" type="button">Start New Inspection</button>
+      <button id="btn-view-ongoing" type="button">View Ongoing</button>
+      <button id="btn-view-completed" type="button">View Completed</button>
+      <button id="btn-config" type="button">Configure</button>
+    </div>
+
+    <div style="display:flex; justify-content:flex-start; align-items:center; gap:12px; margin-bottom:12px;">
+      <div class="toolbar" style="margin-right:auto;">
+        <button id="btn-home" type="button">Home</button>
+      </div>
+      <h2 style="margin:0;"></h2>
+    </div>
+
+    <!-- HOME -->
+    <div id="home" style="display:none; min-height:220px;">
+      <div class="card">
+        <div class="tabs" style="margin-top:12px;">
+          <div class="tab active" data-home="rbs">Risk Based Supervision</div>
+          <div class="tab" data-home="supervision">Supervision</div>
+          <div class="tab" data-home="enforcement">Enforcement</div>
+          <div class="tab" data-home="grievance">Grievance Intelligence</div>
+        </div>
+
+        <div id="home-panels" style="margin-top:12px;">
+          <div id="home-rbs" class="card" style="display:block;">
+            <h4 style="margin-top:0;">Risk Based Supervision</h4>
+            <div class="muted">Placeholder view for Risk Based Supervision.</div>
+          </div>
+
+          <div id="home-supervision" class="card" style="display:none;">
+            <h4 style="margin-top:0;">Supervision</h4>
+            <div class="muted">Quick access to supervision features.</div>
+            <!-- removed duplicated internal toolbar (buttons moved to #supervision-toolbar) -->
+            <div style="margin-top:8px;" class="muted">Click any action to open the supervision workspace.</div>
+          </div>
+
+          <div id="home-enforcement" class="card" style="display:none;">
+            <h4 style="margin-top:0;">Enforcement</h4>
+            <div class="muted">Placeholder view for Enforcement.</div>
+          </div>
+
+          <div id="home-grievance" class="card" style="display:none;">
+            <h4 style="margin-top:0;">Grievance Intelligence</h4>
+            <div class="muted">Placeholder view for Grievance Intelligence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTS (default) -->
+    <div id="lists" class="grid">
+      <div class="card" style="grid-column:1 / -1;">
+        <h3 id="list-title" style="margin-top:0;">Completed Inspections</h3>
+        <div class="muted">Demo data.</div>
+        <table style="margin-top:8px;">
+          <thead><tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Final Report</th></tr></thead>
+          <tbody id="list-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FLOW -->
+    <div id="flow" style="display:none;">
+      <div class="steps" id="steps">
+        <div class="step active" data-step="1">1. Create Inspection</div>
+        <div class="step" data-step="2">2. Data Fetch (Status)</div>
+        <div class="step" data-step="3">3. Data Validation</div>
+        <div class="step" data-step="4">4. Regulatory Check</div>
+        <div class="step" data-step="5">5. Analytics & Risk-Based Sampling</div>
+        <div class="step" data-step="6">6. Onsite Inspection Support</div>
+        <div class="step" data-step="7">7. Observations & Report</div>
+      </div>
+
+      <div id="area">
+        <!-- Step 1 -->
+        <div class="card" id="step-1">
+          <h3>Create New Inspection</h3>
+          <div class="muted">Fill basic info and assign team.</div>
+          <div class="row" style="margin-top:8px;">
+            <div class="col">
+              <label>Insurer</label><br/>
+              <select id="insurer" style="width:48%; max-width:520px; margin-top:6px;">
+                <option>LIC</option><option>ICICI Lombard</option><option>SBI Life</option><option>HDFC Ergo</option>
+              </select>
+
+              <!-- Dates moved below insurer; fixed widths and spacing to avoid overlap -->
+              <div class="row" style="margin-top:10px; gap:16px; align-items:center;">
+                <div style="flex:0 0 220px; min-width:160px;">
+                  <label>From</label><br/>
+                  <input type="date" id="from" style="width:100%; margin-top:6px;">
+                </div>
+                <div style="flex:0 0 220px; min-width:160px; margin-left:6px;">
+                  <label>To</label><br/>
+                  <input type="date" id="to" style="width:100%; margin-top:6px;">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <label>Data Category (select one or more)</label>
+            <div style="margin-top:8px; max-width:880px;">
+              <!-- multi-select will control which category field-dropdowns are shown -->
+              <select id="data-cats" multiple size="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                <option value="claims">Claims</option>
+                <option value="under">Underwriting</option>
+                <option value="griev">Grievances</option>
+                <option value="sales">Sales/Agents</option>
+              </select>
+
+              <div id="fields-container" style="margin-top:10px;">
+                <!-- per-category dropdowns - hidden until their category is selected -->
+                <details id="fields-claims" class="field-group" style="display:none;">
+                  <summary>Claims fields</summary>
+                  <div class="field-list">
+                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_id" checked> Claim ID</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="claims" value="policy_number" checked> Policy Number</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_date"> Claim Date</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_amount"> Claim Amount</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="claims" value="settlement_date"> Settlement Date</label><br/>
+                  </div>
+                </details>
+
+                <details id="fields-under" class="field-group" style="display:none;">
+                  <summary>Underwriting fields</summary>
+                  <div class="field-list">
+                    <label><input type="checkbox" class="field" data-cat="under" value="policy_number" checked> Policy Number</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="under" value="inception_date"> Inception Date</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="under" value="sum_assured"> Sum Assured</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="under" value="product_code"> Product Code</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="under" value="underwriting_decision"> Underwriting Decision</label><br/>
+                  </div>
+                </details>
+
+                <details id="fields-griev" class="field-group" style="display:none;">
+                  <summary>Grievances fields</summary>
+                  <div class="field-list">
+                    <label><input type="checkbox" class="field" data-cat="griev" value="complaint_id" checked> Complaint ID</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="griev" value="received_date"> Received Date</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="griev" value="category"> Complaint Category</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="griev" value="resolution_date"> Resolution Date</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="griev" value="status"> Complaint Status</label><br/>
+                  </div>
+                </details>
+
+                <details id="fields-sales" class="field-group" style="display:none;">
+                  <summary>Sales / Agents fields</summary>
+                  <div class="field-list">
+                    <label><input type="checkbox" class="field" data-cat="sales" value="agent_id" checked> Agent ID</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="sales" value="agent_name"> Agent Name</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="sales" value="channel"> Channel</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="sales" value="sales_date"> Sales Date</label><br/>
+                    <label><input type="checkbox" class="field" data-cat="sales" value="commission"> Commission Amount</label><br/>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <label>Assign Team</label>
+            <div id="team-list" class="row" style="margin-top:6px;">
+              <label><input type="checkbox" class="team" value="A. Kumar"> A. Kumar</label>
+              <label><input type="checkbox" class="team" value="R. Singh"> R. Singh</label>
+              <label><input type="checkbox" class="team" value="P. Rao"> P. Rao</label>
+              <label><input type="checkbox" class="team" value="S. Iyer"> S. Iyer</label>
+            </div>
+            <div id="team-pills" style="margin-top:6px;"></div>
+          </div>
+          <div class="row" style="margin-top:14px; align-items:center;">
+            <button id="create-inspection" type="button" class="secondary">Create Inspection</button>
+            <div class="muted">Team will be notified (simulated).</div>
+          </div>
+        </div>
+
+        <!-- Step 2: Data Fetch -->
+        <div class="card" id="step-2" style="display:none; margin-top:12px;">
+          <h3>Data Fetch (Status)</h3>
+          <div class="row" style="margin-top:8px;">
+            <div class="col">
+              <div style="font-weight:700; margin-bottom:6px;">Checklist</div>
+              <div id="chk-fields" class="chip miss"><span class="tick">✗</span> All requested fields fetched</div>
+              <div style="height:6px;"></div>
+              <div id="chk-period" class="chip warn"><span class="tick">!</span> Requested time period fetched</div>
+              <div class="row" style="margin-top:10px;">
+                <button id="btn-fetch-all" type="button">Re-fetch All</button>
+                <button id="btn-proceed3" type="button" class="secondary" disabled>Proceed to Validation</button>
+              </div>
+            </div>
+            <div class="col">
+              <div style="font-weight:700; margin-bottom:6px;">Dataset status</div>
+              <table>
+                <thead><tr><th>Dataset</th><th>Status</th><th>Last Fetch</th></tr></thead>
+                <tbody id="ds-status">
+                  <tr><td>Claims</td><td><span class="chip ok">✓ Fetched</span></td><td>12-Nov-2025 10:05</td></tr>
+                  <tr><td>Underwriting</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                  <tr><td>Grievances</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                  <tr><td>Sales/Agents</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="font-weight:700; margin-bottom:6px;">Insurer submissions</div>
+            <table>
+              <thead><tr><th>Dataset</th><th>Period</th><th>Submission</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Claims</td><td>2025-Q3</td><td>claims_2025_q3.xlsx</td><td><span class="chip ok">✓ Received</span></td></tr>
+                <tr><td>Underwriting</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+                <tr><td>Grievances</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+                <tr><td>Sales/Agents</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 3: Data Validation -->
+        <div class="card" id="step-3" style="display:none; margin-top:12px;">
+          <h3>Data Validation</h3>
+          <div class="muted">Automatic checks for structure, completeness, mandatory fields, and formats.</div>
+          <div class="row" style="margin-top:10px;">
+            <div class="col">
+              <div class="card" style="padding:12px;">
+                <div><b>Records processed:</b> <span id="val-rows">12,432</span></div>
+                <div style="margin-top:6px;"><b>Exceptions:</b> <span id="val-exc">27</span></div>
+                <div style="margin-top:6px;"><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
+                <div style="margin-top:8px;">
+                  <button id="btn-exception" type="button">Download Exception Report</button>
+                  <button id="btn-req-fix" type="button" class="secondary">Request Corrected Data</button>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="muted">Sample issues</div>
+              <ul>
+                <li>Missing Policy ID (9)</li>
+                <li>Invalid Date Format (6)</li>
+                <li>Claim TAT value out of range (12)</li>
+              </ul>
+              <button id="btn-proceed4" type="button">Proceed to Regulatory Checks</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Regulatory Check -->
+        <div class="card" id="step-4" style="display:none; margin-top:12px;">
+          <h3>Regulatory Checklist & Automated Checks</h3>
+          <div class="row" style="margin-top:8px; align-items:center;">
+            <div class="muted">Filter:</div>
+            <button class="link" type="button" data-sev="All">All</button>
+            <button class="link" type="button" data-sev="High">High</button>
+            <button class="link" type="button" data-sev="Medium">Medium</button>
+            <button class="link" type="button" data-sev="Low">Low</button>
+          </div>
+          <table style="margin-top:8px;">
+            <thead><tr><th>Rule</th><th>Breach</th><th>Severity</th><th>Count</th></tr></thead>
+            <tbody id="reg-table">
+              <tr data-sev="High"><td>Claims TAT &gt; SLA</td><td>Exceeded 30 days</td><td><span class="chip miss">High</span></td><td>12</td></tr>
+              <tr data-sev="High"><td>Repudiation cluster</td><td>Above baseline in region</td><td><span class="chip miss">High</span></td><td>6</td></tr>
+              <tr data-sev="Medium"><td>Grievance closure time</td><td>&gt; 15 days</td><td><span class="chip warn">Medium</span></td><td>9</td></tr>
+              <tr data-sev="Low"><td>Commission variance</td><td>&gt; 2σ of product</td><td><span class="chip info">Low</span></td><td>18</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;">
+            <button id="btn-proceed5" type="button">Proceed to Analytics & Sampling</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Analytics & Sampling -->
+        <div class="card" id="step-5" style="display:none; margin-top:12px;">
+          <h3>Analytics & Risk-Based Sampling</h3>
+          <div class="row" style="margin-top:8px;">
+            <div class="col">
+              <div class="muted">Risk Scores</div>
+              <div style="margin-top:6px;">
+                <div class="row" style="align-items:center;"><div style="width:160px;">ICICI Lombard</div><div class="bar" style="flex:1;"><i style="width:85%"></i></div><div style="width:40px; text-align:right;">85</div></div>
+                <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">SBI Life</div><div class="bar" style="flex:1;"><i style="width:60%"></i></div><div style="width:40px; text-align:right;">60</div></div>
+                <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">LIC</div><div class="bar" style="flex:1;"><i style="width:40%"></i></div><div style="width:40px; text-align:right;">40</div></div>
+              </div>
+              <div class="card" style="margin-top:10px; padding:12px;">
+                <b>Insights</b>
+                <ul style="margin-top:6px;">
+                  <li>Uptrend in claim repudiations in Q3</li>
+                  <li>Anomaly: High refunds in branch #441</li>
+                  <li>Early warning: Rising complaint rate in motor TP</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <div class="muted">Suggested Sample (editable)</div>
+              <table style="margin-top:6px;">
+                <thead><tr><th>Case ID</th><th>Reason</th><th></th></tr></thead>
+                <tbody id="sample-table">
+                  <tr><td>CL-2115</td><td>High repudiation</td><td><button class="link del" type="button">Remove</button></td></tr>
+                  <tr><td>CL-2100</td><td>Long TAT</td><td><button class="link del" type="button">Remove</button></td></tr>
+                  <tr><td>CL-2091</td><td>Missing policy ID</td><td><button class="link del" type="button">Remove</button></td></tr>
+                </tbody>
+              </table>
+              <div class="row" style="margin-top:8px;">
+                <input id="add-id" placeholder="Add Case ID" style="flex:1;">
+                <button id="add-case" type="button">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px; padding:12px;">
+            <h4 style="margin:0 0 6px 0;">Additional Documents / Clarification Requests</h4>
+            <table>
+              <thead><tr><th>Case ID</th><th>Request</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="clarify-table">
+                <tr><td>CL-2100</td><td>Discharge summary & hospital bill copy</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
+                <tr><td>CL-2115</td><td>Underwriting notes & agent memo</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
+              </tbody>
+            </table>
+            <div class="row" style="margin-top:8px;">
+              <input id="clarify-id" placeholder="Case ID">
+              <input id="clarify-text" placeholder="Request details" style="flex:1;">
+              <button id="clarify-add" type="button">Add Request</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <button id="finalize-sample" type="button" class="secondary">Finalize Sample (for Onsite)</button>
+          </div>
+        </div>
+
+        <!-- Step 6: Onsite -->
+        <div class="card" id="step-6" style="display:none; margin-top:12px;">
+          <h3>Onsite Inspection Support</h3>
+          <div class="row" style="margin-top:8px;">
+            <div class="col">
+              <div class="muted">Case Files</div>
+              <table style="margin-top:6px;">
+                <thead><tr><th>Case ID</th><th>Open</th></tr></thead>
+                <tbody id="onsite-cases">
+                  <tr><td>CL-2100</td><td><button class="link" type="button">Open file</button></td></tr>
+                  <tr><td>CL-2115</td><td><button class="link" type="button">Open file</button></td></tr>
+                  <tr><td>CL-2091</td><td><button class="link" type="button">Open file</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col">
+              <div class="muted">Notes / Evidence</div>
+              <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
+              <div class="row" style="margin-top:6px; align-items:center;">
+                <input type="file" id="onsite-file">
+                <button id="flag-risk" type="button">Flag High-Risk Issue</button>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <button id="btn-proceed7" type="button">Proceed to Observations</button>
+          </div>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="card" id="step-7" style="display:none; margin-top:12px;">
+          <h3>Observation & Finding Management</h3>
+          <table>
+            <thead><tr><th>Observation</th><th>Severity</th><th>Evidence Count</th><th>Status</th></tr></thead>
+            <tbody id="obs-table">
+              <tr><td>Delayed claim TAT beyond SLA in 12 cases</td><td><span class="chip miss">High</span></td><td>3</td><td>Draft</td></tr>
+              <tr><td>Missing policy IDs in claims</td><td><span class="chip warn">Medium</span></td><td>2</td><td>Draft</td></tr>
+            </tbody>
+          </table>
+          <div class="row" style="margin-top:8px;">
+            <input id="obs-text" placeholder="Issue, rule breached, evidence, impact..." style="flex:2;">
+            <select id="obs-sev"><option>High</option><option>Medium</option><option>Low</option></select>
+            <button id="add-obs" type="button">Add Observation</button>
+          </div>
+
+          <div class="card" style="margin-top:12px; padding:12px;">
+            <h4 style="margin:0 0 6px 0;">Inspection Report</h4>
+            <div class="row">
+              <div class="col">
+                <label>Executive Summary</label>
+                <textarea id="exec" style="width:100%; height:120px; margin-top:6px;">Draft executive summary...</textarea>
+              </div>
+              <div class="col">
+                <label>Recommendations</label>
+                <textarea id="reco" style="width:100%; height:120px; margin-top:6px;">Key recommendations...</textarea>
+              </div>
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <button id="btn-generate" type="button">Generate Report (PDF)</button>
+              <button id="btn-download" type="button">Export Word</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- footer: single copy for all tabs (keeps visual style and appears on every view) -->
+   </main>
+  </section>
+  
+  <!-- ====================== CONFIGURATION DASHBOARD ====================== -->
+<section id="config-root" class="container" style="display:none;">
+  <h2 style="margin:0;">System Configuration Dashboard</h2>
+  <div class="muted">Define rules, thresholds, weights, and templates that power PRISM</div>
+  <!-- Back to Dashboard button removed as requested -->
+
+  <div class="tabs" style="margin-top:12px;">
+    <div class="tab active" data-target="data-validation">Data Validation Rules</div>
+    <div class="tab" data-target="reg-rules">Regulatory Check</div>
+    <div class="tab" data-target="analytics">Analytics</div>
+    <div class="tab" data-target="risk-matrix">Risk Metrics</div>
+    <div class="tab" data-target="early-warning">Early Warning Indicators</div>
+    <div class="tab" data-target="insp-templates">Inspection Templates</div>
+    <div class="tab" data-target="integrations">Integrations</div>
+  </div>
+
+  <section id="reg-rules" class="card">
+    <div class="row" style="justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;">Configure Regulatory Checks</h3>
+      <label class="switch"><input id="reg-enable" type="checkbox" checked><span class="slider"></span></label>
+    </div>
+    <div class="muted">Define rules applied during Regulatory Checks (Step 4).</div>
+    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
+      <thead><tr><th>Rule Name</th><th>Condition</th><th>Severity</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="reg-body">
+        <tr>
+          <td>Claims TAT ≤ 30 days</td>
+          <td>avg(claim_settlement_days) &gt; 30</td>
+          <td><span class="chip miss">High</span></td>
+          <td><span class="chip ok">Active</span></td>
+          <td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><input id="reg-name" placeholder="Rule name (e.g., Claims TAT ≤ 30 days)"></div>
+      <div class="col"><input id="reg-cond" placeholder="Condition (e.g., avg(claim_settlement_days) > 30)"></div>
+      <div class="col"><select id="reg-sev"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="col" style="max-width:160px;"><button id="reg-add" type="button" class="btn">Add Rule</button></div>
+    </div>
+  </section>
+
+  <section id="analytics" class="card" style="margin-top:18px; display:none;">
+    <div class="row" style="justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;">Configure Analytics Models</h3>
+      <label class="switch"><input id="ana-enable" type="checkbox" checked><span class="slider"></span></label>
+    </div>
+    <div class="muted">Select algorithms and set sensitivity/thresholds.</div>
+    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
+      <thead><tr><th>Model Name</th><th>Type</th><th>Dataset</th><th>Sensitivity</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="ana-body">
+        <tr><td>Repudiation Outlier</td><td>Z-score</td><td>Claims</td><td>0.85</td><td><span class="chip ok">Active</span></td><td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td></tr>
+      </tbody>
+    </table>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><input id="ana-name" placeholder="Model name"></div>
+      <div class="col"><select id="ana-type"><option>Z-score</option><option>IQR</option><option>Clustering (K-Means)</option><option>Regression</option><option>Time-series</option></select></div>
+      <div class="col"><select id="ana-data"><option>Claims</option><option>Underwriting</option><option>Grievances</option><option>Sales/Agents</option></select></div>
+      <div class="col"><input id="ana-sens" placeholder="Sensitivity (0-1)" value="0.75"></div>
+      <div class="col" style="max-width:160px;"><button id="ana-add" type="button" class="btn">Add Model</button></div>
+    </div>
+  </section>
+
+  <section id="risk-matrix" class="card" style="margin-top:18px; display:none;">
+    <div class="row" style="justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;">Configure Risk Scoring Matrix</h3>
+      <label class="switch"><input id="risk-enable" type="checkbox" checked><span class="slider"></span></label>
+    </div>
+    <div class="muted">Define weights and cutoffs used for composite insurer risk scores.</div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><label>Grievances Weight (%)</label><input id="w-griev" value="30"></div>
+      <div class="col"><label>Regulatory Breaches Weight (%)</label><input id="w-breach" value="35"></div>
+      <div class="col"><label>Data Quality Weight (%)</label><input id="w-quality" value="15"></div>
+      <div class="col"><label>Persistency / Claims Ratios (%)</label><input id="w-metrics" value="20"></div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><label>High-Risk Cutoff</label><input id="risk-cutoff" value="80"></div>
+      <div class="col" style="max-width:180px; align-self:end;"><button id="risk-save" type="button" class="btn">Save Weights</button></div>
+    </div>
+    <div id="risk-msg" class="muted" style="margin-top:8px;"></div>
+  </section>
+
+  <section id="data-validation" class="card" style="margin-top:18px; display:none;">
+    <h3>Data Validation Rules</h3>
+    <div class="muted">Create and maintain structural and business rule checks for incoming datasets.</div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><input placeholder="Rule name (e.g., Policy ID not null)"></div>
+      <div class="col"><input placeholder="Expression (e.g., not isnull(policy_id))"></div>
+      <div class="col"><select><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="col" style="max-width:160px;"><button class="btn" type="button">Add Rule</button></div>
+    </div>
+  </section>
+
+  <section id="early-warning" class="card" style="margin-top:18px; display:none;">
+    <h3>Early Warning Indicators</h3>
+    <div class="muted">Configure grievance trends, anomaly thresholds, and triggers for automated alerts.</div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><label>Complaint spike threshold (%)</label><input value="25"></div>
+      <div class="col"><label>Repudiation rate z-score</label><input value="2.0"></div>
+      <div class="col"><label>Refunds volume anomaly</label><input value="3σ"></div>
+    </div>
+  </section>
+
+  <section id="dash-kpis" class="card" style="margin-top:18px; display:none;">
+    <h3>Dashboard & KPIs</h3>
+    <div class="muted">Choose KPI cards and layouts for the supervisory dashboard.</div>
+    <div class="row" style="margin-top:10px;">
+      <label><input type="checkbox" checked> Active Inspections</label>
+      <label><input type="checkbox" checked> Pending Fetches</label>
+      <label><input type="checkbox" checked> High-risk Alerts</label>
+    </div>
+  </section>
+
+  <section id="insp-templates" class="card" style="margin-top:18px; display:none;">
+    <h3>Inspection Templates</h3>
+    <div class="muted">Manage document templates for DSF, exception reports, and final reports.</div>
+    <div class="row" style="margin-top:10px;">
+      <div class="col"><input placeholder="Template name (e.g., DSF Claims 2025)"></div>
+      <div class="col" style="max-width:160px;"><button class="btn" type="button">Upload</button></div>
+    </div>
+  </section>
+
+  <section id="notifications" class="card" style="margin-top:18px; display:none;">
+    <h3>Notifications</h3>
+    <div class="muted">Define email/SMS alerts for events like data receipt, validation failures, and high-risk flags.</div>
+    <div class="row" style="margin-top:10px;">
+      <label><input type="checkbox" checked> Data receipt summary</label>
+      <label><input type="checkbox" checked> Validation failure</label>
+      <label><input type="checkbox"> High-risk alert</label>
+    </div>
+  </section>
+
+  <section id="user-roles" class="card" style="margin-top:18px; display:none;">
+    <h3>User Roles</h3>
+    <div class="muted">Manage access roles (Inspector, Admin, Viewer) and permissions.</div>
+    <table style="margin-top:8px;">
+      <thead><tr><th>Role</th><th>Permissions</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>Inspector</td><td>Create, Validate, Onsite, Observations</td><td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td></tr>
+        <tr><td>Admin</td><td>All modules + Configuration</td><td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="integrations" class="card" style="margin-top:18px; display:none;">
+    <h3>Integrations</h3>
+    <div class="muted">Connect external systems and view connection status.</div>
+    <div style="margin-top:12px;">
+      <div class="row" style="align-items:center; margin-bottom:10px;">
+        <div style="flex:1; font-weight:700;">Bima Bharosa</div>
+        <div style="flex:0 0 420px;"><input placeholder="Endpoint URL" style="width:100%;"></div>
+        <div style="flex:0 0 120px; text-align:right;"><span class="chip ok">Integrated</span></div>
+      </div>
+
+      <div class="row" style="align-items:center; margin-bottom:10px;">
+        <div style="flex:1; font-weight:700;">IIB</div>
+        <div style="flex:0 0 420px;"><input placeholder="Endpoint / API Key" style="width:100%;"></div>
+        <div style="flex:0 0 120px; text-align:right;"><span class="chip miss">Not connected</span></div>
+      </div>
+
+      <div class="row" style="align-items:center;">
+        <div style="flex:1; font-weight:700;">Other Links</div>
+        <div style="flex:0 0 420px;"><input placeholder="Add URL or notes" style="width:100%;"></div>
+        <div style="flex:0 0 120px; text-align:right;"><span class="chip warn">Partial</span></div>
+      </div>
+    </div>
+  </section>
+</section>
+<!-- config sections end -->
+
+<!-- global footer (moved to page end so it does not sit between KPI cards and config) -->
+<div class="footer">Prototype - Prepared by IRDAI InsurTech Team</div>
+
+<!-- Dummy final-report modal -->
+<div id="report-modal" class="modal" aria-hidden="true">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="report-title">
+    <header>
+      <h3 id="report-title" style="margin:0;">Final Inspection Report</h3>
+      <div><button class="close" id="report-close" aria-label="Close">✕</button></div>
+    </header>
+    <div class="content" id="report-content">
+      <!-- dummy content -->
+      <h4 style="margin-top:0;">Report preview (dummy)</h4>
+      <p>This is a placeholder for the final inspection report. When integrated, the PDF or report viewer will render here.</p>
+      <p><b>Report ID:</b> <span id="report-id">—</span></p>
+      <hr/>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse potenti. Nulla facilisi. (Dummy preview)</p>
+    </div>
+    <div style="margin-top:12px; text-align:right;">
+      <button id="report-download" class="btn">Download (dummy)</button>
+      <button id="report-close-2" class="btn small" style="background:#0f172a; margin-left:8px;">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Simple helpers
+  const $  = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  const login   = $('#login');
+  const appRoot = $('#app-root');
+  const config  = $('#config-root');
+
+  // Login toggle
+  $('#login-btn')?.addEventListener('click', ()=>{
+    if(login) login.style.display = 'none';
+    if(appRoot){ appRoot.style.display = ''; window.scrollTo({top:0, behavior:'smooth'}); }
+    showOnly('home');  // Show HOME page instead of Completed Inspections
+  });
+
+  // Show default list
+  function showList(kind){
+    const lists = $('#lists');
+    const flow  = $('#flow');
+    if(lists) lists.style.display = 'grid';
+    if(flow)  flow.style.display  = 'none';
+    const SAMPLE = {
+      ongoing: [
+        {id:'INSP-1101', insurer:'ICICI Lombard', period:'2025-07-01 → 2025-09-30', status:'Data Fetch', owner:'A. Kumar'},
+        {id:'INSP-1102', insurer:'SBI Life',       period:'2025-06-01 → 2025-06-30', status:'Validation', owner:'R. Singh'},
+        {id:'INSP-1103', insurer:'LIC',            period:'2025-05-01 → 2025-05-31', status:'Regulatory', owner:'P. Rao'},
+        {id:'INSP-1104', insurer:'HDFC Ergo',      period:'2025-04-01 → 2025-04-30', status:'Analytics', owner:'M. Iyer'},
+        {id:'INSP-1105', insurer:'Bajaj Allianz',  period:'2025-03-01 → 2025-03-31', status:'Onsite', owner:'S. Iyer'},
+        {id:'INSP-1106', insurer:'Tata AIG',       period:'2025-02-01 → 2025-02-28', status:'Observations', owner:'P. Rao'}
+      ],
+      completed: [
+        {id:'INSP-0999', insurer:'HDFC Ergo', period:'2024-10-01 → 2024-12-31', status:'Closed', owner:'A. Kumar'},
+        {id:'INSP-0992', insurer:'LIC',       period:'2024-07-01 → 2024-09-30', status:'Closed', owner:'M. Iyer'}
+      ]
+    };
+    const rows = (SAMPLE[kind]||[]).map(r => {
+      // final-report button for completed entries (dummy)
+      const reportBtn = `<button class="btn small view-report" data-id="${r.id}" title="View final report">View</button>`;
+      return `<tr>
+                <td>${r.id}</td>
+                <td>${r.insurer}</td>
+                <td>${r.period}</td>
+                <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
+                <td>${r.owner}</td>
+                <td style="width:120px; text-align:right;">${ (kind==='completed') ? reportBtn : '' }</td>
+              </tr>`;
+    }).join('');
+     $('#list-body')?.insertAdjacentHTML('afterbegin',''); // noop for Safari
+     const body  = $('#list-body'); if(body) body.innerHTML = rows;
+     const title = $('#list-title'); if(title) title.textContent = (kind==='ongoing')?'Ongoing Inspections':'Completed Inspections';
+   }
+   //showList('completed');  // Remove this line - don't show completed by default
+
+  // Go to a specific step section and show flow
+  function gotoStep(n){
+    const lists = $('#lists');
+    const flow  = $('#flow');
+    if(lists) lists.style.display = 'none';
+    if(flow)  flow.style.display  = 'block';
+    // toggle active chip + panels
+    $$('.step').forEach(s => s.classList.toggle('active', s.dataset.step == String(n)));
+    for(let i=1;i<=7;i++){
+      const area = $('#step-'+i);
+      if(area) area.style.display = (i===n)?'block':'none';
+    }
+    flow?.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  window.gotoStep = gotoStep;
+
+  // Toolbar actions
+  // === Config Tabs behavior ===
+  function initConfigTabs(){
+    const root = document.getElementById('config-root');
+    if(!root) return;
+    const tabs = root.querySelectorAll('.tab');
+    // new ordered list of sections (matches the reduced tabs)
+    const sectionIds = ['data-validation','reg-rules','analytics','risk-matrix','early-warning','insp-templates','integrations'];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    function activate(target){
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-target')===target));
+      sections.forEach(sec => { sec.style.display = (sec.id === target) ? 'block' : 'none'; });
+    }
+    tabs.forEach(t => t.addEventListener('click', ()=> activate(t.getAttribute('data-target'))));
+    const first = tabs[0];
+    const defaultTarget = (root.querySelector('.tab.active') || first)?.getAttribute('data-target') || 'reg-rules';
+    activate(defaultTarget);
+  }
+
+  function showOnly(section){
+    const lists = $('#lists');
+    const flow  = $('#flow');
+    const home = $('#home');
+    // hide everything by default, then show the requested section
+    if(lists) lists.style.display='none';
+    if(flow)  flow.style.display='none';
+    if(config) config.style.display='none';
+    if(home) home.style.display='none';
+
+    if(section === 'home'){ if(home) home.style.display='block'; }
+    if(section === 'flow'){ if(flow) flow.style.display='block'; }
+    if(section === 'ongoing'){ if(lists) { lists.style.display='grid'; showList('ongoing'); } }
+    if(section === 'completed'){ if(lists) { lists.style.display='grid'; showList('completed'); } }
+    if(section === 'config'){ if(config){ config.style.display=''; config.scrollIntoView({behavior:'smooth', block:'start'}); } }
+  }
+  $('#btn-home')?.addEventListener('click', ()=> {
+    showOnly('home');
+    // ensure the home tabs reset to the default (first) tab (Risk Based Supervision)
+    const firstTab = document.querySelector('#home .tabs .tab');
+    if(firstTab) firstTab.click();
+    // scroll to top of app for good measure
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  $('#btn-start')?.addEventListener('click', ()=> { gotoStep(1); showOnly('flow'); });
+  $('#btn-view-ongoing')?.addEventListener('click', ()=> showOnly('ongoing'));
+  $('#btn-view-completed')?.addEventListener('click', ()=> showOnly('completed'));
+  $('#btn-config')?.addEventListener('click', ()=> { showOnly('config'); initConfigTabs(); });
+
+  // Home tabs behavior: switch panels inside #home
+  (function(){
+    const homeRoot = document.getElementById('home');
+    if(!homeRoot) return;
+    const tabs = Array.from(homeRoot.querySelectorAll('.tabs .tab'));
+    const panels = ['rbs','supervision','enforcement','grievance'];
+    function activateHome(target){
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-home')===target));
+      panels.forEach(p => {
+        const el = document.getElementById('home-' + p);
+        if(el) el.style.display = (p === target) ? 'block' : 'none';
+      });
+      // show/hide supervision toolbar positioned under navbar
+      const supToolbar = document.getElementById('supervision-toolbar');
+      if(supToolbar) supToolbar.style.display = (target === 'supervision') ? 'flex' : 'none';
+    }
+    tabs.forEach(t => t.addEventListener('click', ()=> activateHome(t.getAttribute('data-home'))));
+    // ensure initial panel visible (matches markup)
+    const active = tabs.find(t => t.classList.contains('active')) || tabs[0];
+    if(active) activateHome(active.getAttribute('data-home'));
+
+    // removed internal home-super-* handlers (buttons moved to #supervision-toolbar)
+    // keep the global btn-start / btn-view-* / btn-config handlers already defined below
+  })();
+
+ // Step nav clicks
+ 
+   $$('.step').forEach(s => s.addEventListener('click', ()=> gotoStep(parseInt(s.dataset.step))));
+ 
+  // Team pills
+  function renderPills(){
+     const sel = $$('.team').filter(b => b.checked).map(b => b.value);
+     const pills = $('#team-pills');
+     if(pills) pills.innerHTML = sel.map(m => `<span class="pill"><b>${m}</b></span>`).join('');
+   }
+   $$('.team').forEach(b => b.addEventListener('change', renderPills));
+   renderPills();
+
+  // Show only field dropdowns for categories selected in the multi-select (#data-cats)
+  (function(){
+    const dataCats = document.getElementById('data-cats');
+    const cats = ['claims','under','griev','sales'];
+    function updateVisible(){
+      const selected = dataCats ? Array.from(dataCats.selectedOptions).map(o=>o.value) : [];
+      cats.forEach(cat => {
+        const el = document.getElementById('fields-' + cat);
+        if(!el) return;
+        // show details only if category selected; otherwise hide
+        el.style.display = selected.includes(cat) ? 'block' : 'none';
+        // open the details panel when shown for convenience
+        if(el.tagName === 'DETAILS') el.open = selected.includes(cat);
+      });
+    }
+    if(dataCats){
+      // initialize according to default selection (none selected by default)
+      updateVisible();
+      dataCats.addEventListener('change', updateVisible);
+    }
+  })();
+
+  // Create inspection
+  $('#create-inspection')?.addEventListener('click', ()=>{
+    const insurer = $('#insurer')?.value;
+    const from    = $('#from')?.value;
+    const to      = $('#to')?.value;
+    const chosen  = $$('.team').filter(b=>b.checked).map(b=>b.value);
+    if(!insurer || !from || !to || chosen.length===0){
+      alert('Fill insurer, dates, and team.'); return;
+    }
+    const active = $('#kpi-active'); if(active) active.textContent = String((+active.textContent||0)+1);
+    gotoStep(2);
+  });
+
+  // Fetch -> proceed
+  $('#btn-fetch-all')?.addEventListener('click', ()=>{
+    $$('#ds-status td:nth-child(2)').forEach(td=> td.innerHTML = '<span class="chip ok">✓ Fetched</span>');
+    const ts = new Date().toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short',year:'numeric'});
+    $$('#ds-status td:nth-child(3)').forEach(td=> td.textContent = ts);
+    const cf = $('#chk-fields'); if(cf){ cf.className='chip ok'; cf.textContent='✓ All requested fields fetched'; }
+    const cp = $('#chk-period'); if(cp){ cp.className='chip ok'; cp.textContent='✓ Requested time period fetched'; }
+    const p3 = $('#btn-proceed3'); if(p3) p3.disabled=false;
+  });
+  $('#btn-proceed3')?.addEventListener('click', ()=> gotoStep(3));
+
+  // Validation -> proceed
+  $('#btn-exception')?.addEventListener('click', ()=>{
+    const content = 'CaseID,Issue,Severity\nCL-2100,Invalid date,High\nCL-2115,Missing policy ID,Medium';
+    const blob = new Blob([content], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'validation_exceptions.csv'; a.click();
+    URL.revokeObjectURL(url);
+  });
+  $('#btn-req-fix')?.addEventListener('click', ()=> alert('Request for corrected data sent to insurer (simulated).'));
+  $('#btn-proceed4')?.addEventListener('click', ()=> gotoStep(4));
+
+  // Regulatory filter + proceed
+  $$('#step-4 .link[data-sev]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const sev = btn.getAttribute('data-sev');
+      $$('#reg-table tr').forEach(tr => tr.style.display = (sev==='All' || tr.getAttribute('data-sev')===sev)?'':'none');
+    });
+  });
+  $('#btn-proceed5')?.addEventListener('click', ()=> gotoStep(5));
+
+  // Sampling add/remove
+  function attachDelHandlers(){
+    $$('#sample-table .del').forEach(b => b.onclick = (e)=>{ e.target.closest('tr')?.remove(); });
+  }
+  attachDelHandlers();
+  $('#add-case')?.addEventListener('click', ()=>{
+    const id = $('#add-id')?.value.trim();
+    if(!id) return;
+    $('#sample-table')?.insertAdjacentHTML('beforeend', `<tr><td>${id}</td><td>Manual add</td><td><button class="link del" type="button">Remove</button></td></tr>`);
+    const addId = $('#add-id'); if(addId) addId.value='';
+    attachDelHandlers();
+  });
+
+  // Clarifications
+  $('#clarify-table')?.addEventListener('click', (e)=>{
+    if(e.target.classList.contains('mark-rec')){
+      const td = e.target.closest('tr').children[2];
+      td.innerHTML = '<span class="chip ok">✓ Received</span>';
+    }
+  });
+  $('#clarify-add')?.addEventListener('click', ()=>{
+    const id  = $('#clarify-id')?.value.trim();
+    const txt = $('#clarify-text')?.value.trim();
+    if(!id || !txt) return;
+    $('#clarify-table')?.insertAdjacentHTML('beforeend', `<tr><td>${id}</td><td>${txt}</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>`);
+    const idEl  = $('#clarify-id');  if(idEl)  idEl.value='';
+    const txtEl = $('#clarify-text'); if(txtEl) txtEl.value='';
+  });
+
+  // Finalize -> onsite
+  $('#finalize-sample')?.addEventListener('click', ()=> gotoStep(6));
+
+  // Onsite -> observations
+  $('#flag-risk')?.addEventListener('click', ()=> alert('High-risk issue flagged (simulated).'));
+  $('#btn-proceed7')?.addEventListener('click', ()=> gotoStep(7));
+
+  // Observations interactions
+  $('#add-obs')?.addEventListener('click', ()=>{
+    const text = $('#obs-text')?.value.trim();
+    const sev  = $('#obs-sev')?.value;
+    if(!text) return;
+    $('#obs-table')?.insertAdjacentHTML('beforeend', `<tr><td>${text}</td><td><span class="chip ${sev==='High'?'miss':sev==='Medium'?'warn':'info'}">${sev}</span></td><td>0</td><td>Draft</td></tr>`);
+    const t = $('#obs-text'); if(t) t.value='';
+  });
+  $('#btn-generate')?.addEventListener('click', ()=> alert('PDF generated (simulated).'));
+  $('#btn-download')?.addEventListener('click', ()=> alert('Word exported (simulated).'));
+
+  // final report modal handlers
+  const modal = document.getElementById('report-modal');
+  const reportIdEl = document.getElementById('report-id');
+  function openReport(id){
+    if(reportIdEl) reportIdEl.textContent = id;
+    if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+  }
+  function closeReport(){
+    if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+  }
+  // delegated click handler for view buttons
+  document.body.addEventListener('click', function(e){
+    const t = e.target;
+    if(t && t.classList && t.classList.contains('view-report')){
+      const id = t.getAttribute('data-id') || '—';
+      openReport(id);
+    }
+    if(t && (t.id==='report-close' || t.id==='report-close-2')) closeReport();
+    if(t && t.id==='report-download') alert('Download (dummy) — report for ' + (reportIdEl?.textContent||'—'));
+  });
+  // close when clicking on overlay outside dialog
+  modal?.addEventListener('click', function(e){
+    if(e.target === modal) closeReport();
+  });
+});
+</script>
+</body>
+</html>
