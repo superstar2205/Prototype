@@ -145,6 +145,7 @@
     <div class="user-info">
       <div class="user-name"><strong>Meghana Nara</strong></div>
       <div class="user-meta">Logged in: 12-Nov-2025 11:15<br>IP: 192.168.1.108</div>
+      <button id="logout-btn" type="button" class="link" style="margin-top:8px; font-size:13px;">Logout</button>
     </div>
   </header>
 
@@ -753,9 +754,33 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // Login toggle
   $('#login-btn')?.addEventListener('click', ()=>{
+    const email = $('#email')?.value.trim();
+    const password = $('#password')?.value.trim();
+    
+    // Validate credentials
+    if(email !== 'pilot' || password !== 'insurance'){
+      alert('Please enter valid credentials');
+      return;
+    }
+    
     if(login) login.style.display = 'none';
     if(appRoot){ appRoot.style.display = ''; window.scrollTo({top:0, behavior:'smooth'}); }
-    showOnly('home');  // Show HOME page instead of Completed Inspections
+    showOnly('home');
+  });
+
+  // Logout handler
+  $('#logout-btn')?.addEventListener('click', ()=>{
+    if(appRoot) appRoot.style.display = 'none';
+    if(config) config.style.display = 'none';
+    if(login) login.style.display = 'block';
+    // Clear form fields
+    const emailInput = $('#email');
+    const passwordInput = $('#password');
+    if(emailInput) emailInput.value = '';
+    if(passwordInput) passwordInput.value = '';
+    // Scroll to top and reload
+    window.scrollTo({top:0, behavior:'smooth'});
+    setTimeout(()=>{ location.reload(); }, 300);
   });
 
   // Show default list
