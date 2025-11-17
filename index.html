@@ -109,6 +109,54 @@
 .modal .dialog header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 .modal .dialog .content{ height:560px; overflow:auto; border:1px solid #eef2f7; border-radius:8px; padding:12px; background:#fafcff; }
 .modal .close{ background:transparent; border:0; font-weight:800; cursor:pointer; color:#0f172a; }
+
+  /* Step checklist layout (added) */
+  .step-layout { display:flex; gap:16px; align-items:flex-start; }
+  .step-main { flex:1; }
+  .step-tasks { flex:0 0 260px; max-width:260px; border-left:1px solid #e2e8f0; padding-left:12px; font-size:13px; }
+  .task-list { list-style:none; padding-left:0; margin:8px 0 0; }
+  .task-list li { margin-bottom:6px; }
+
+  /* Step 1 automatic task status icons */
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .task-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .task-icon.status-pending {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  .task-icon.status-done {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .stage-chip { margin-left:8px; display:inline-block; }
+  .step.done { border-bottom:2px solid #16a34a; }
+  /* keep existing .chip green appearance; ensure stage-chip uses same look */
+  .stage-chip.chip { background:#d1fae5; color:#065f46; }
+
+  /* Insurer portal styles */
+  .kpi-grid{ display:flex; gap:12px; margin-top:12px; }
+  .kpi-card{ padding:12px; text-align:left; }
+  .kpi-title{ color:#475569; font-weight:700; font-size:13px; }
+  .kpi-value{ font-size:22px; font-weight:800; color:var(--gov-blue); margin-top:8px; }
+  .flex-row{ display:flex; gap:16px; align-items:flex-start; margin-top:12px; }
+  /* --- end insurer portal styles --- */
 </style>
 </head>
 <body>
@@ -145,11 +193,22 @@
     <div class="user-info">
       <div class="user-name"><strong>Meghana Nara</strong></div>
       <div class="user-meta">Logged in: 12-Nov-2025 11:15<br>IP: 192.168.1.108</div>
+
+      <!-- Role switch: Regulator (default) / Insurer -->
+      <div style="margin-top:8px;">
+        <label for="role-switch" class="muted" style="font-size:12px; margin-right:8px;">View</label>
+        <select id="role-switch" style="padding:6px 8px; border-radius:8px; border:1px solid #cbd5e1;">
+          <option value="regulator" selected>Regulator</option>
+          <option value="insurer">Insurer</option>
+        </select>
+      </div>
+
       <button id="logout-btn" type="button" class="link" style="margin-top:8px; font-size:13px;">Logout</button>
     </div>
   </header>
 
   <main class="container" id="app">
+  <div id="regulator-view">
     <!-- Supervision toolbar: hidden by default, shown only when Home -> Supervision tab is active -->
     <div id="supervision-toolbar" class="toolbar" style="display:none; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #eef2f7;">
       <button id="btn-start" type="button">Start New Inspection</button>
@@ -228,315 +287,437 @@
       <div id="area">
         <!-- Step 1 -->
         <div class="card" id="step-1">
-          <h3>Create New Inspection</h3>
-          <div class="muted">Fill basic info and assign team.</div>
-          <div class="row" style="margin-top:8px;">
-            <div class="col">
-              <label>Insurer</label><br/>
-              <select id="insurer" style="width:48%; max-width:520px; margin-top:6px;">
-                <option>LIC</option><option>ICICI Lombard</option><option>SBI Life</option><option>HDFC Ergo</option>
-              </select>
-
-              <!-- Dates moved below insurer; fixed widths and spacing to avoid overlap -->
-              <div class="row" style="margin-top:10px; gap:16px; align-items:center;">
-                <div style="flex:0 0 220px; min-width:160px;">
-                  <label>From</label><br/>
-                  <input type="date" id="from" style="width:100%; margin-top:6px;">
-                </div>
-                <div style="flex:0 0 220px; min-width:160px; margin-left:6px;">
-                  <label>To</label><br/>
-                  <input type="date" id="to" style="width:100%; margin-top:6px;">
+          <h3>Create New Inspection <span class="chip stage-chip" data-step="1" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <div class="muted">Fill basic info and assign team.</div>
+              <div class="row" style="margin-top:8px;">
+                <div class="col">
+                  <label>Insurer</label><br/>
+                  <select id="insurer" style="width:48%; max-width:520px; margin-top:6px;">
+                    <option>LIC</option><option>ICICI Lombard</option><option>SBI Life</option><option>HDFC Ergo</option>
+                  </select>
+                  <div class="row" style="margin-top:10px; gap:16px; align-items:center;">
+                    <div style="flex:0 0 220px; min-width:160px;">
+                      <label>From</label><br/>
+                      <input type="date" id="from" style="width:100%; margin-top:6px;">
+                    </div>
+                    <div style="flex:0 0 220px; min-width:160px; margin-left:6px;">
+                      <label>To</label><br/>
+                      <input type="date" id="to" style="width:100%; margin-top:6px;">
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div style="margin-top:12px;">
-            <label>Data Category (select one or more)</label>
-            <div style="margin-top:8px; max-width:880px;">
-              <!-- multi-select will control which category field-dropdowns are shown -->
-              <select id="data-cats" multiple size="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
-                <option value="claims">Claims</option>
-                <option value="under">Underwriting</option>
-                <option value="griev">Grievances</option>
-                <option value="sales">Sales/Agents</option>
-              </select>
-
-              <div id="fields-container" style="margin-top:10px;">
-                <!-- per-category dropdowns - hidden until their category is selected -->
-                <details id="fields-claims" class="field-group" style="display:none;">
-                  <summary>Claims fields</summary>
-                  <div class="field-list">
-                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_id" checked> Claim ID</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="claims" value="policy_number" checked> Policy Number</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_date"> Claim Date</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="claims" value="claim_amount"> Claim Amount</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="claims" value="settlement_date"> Settlement Date</label><br/>
+              <!-- Data category controls (unchanged markup kept) -->
+              <div style="margin-top:12px;">
+                <label>Data Category (select one or more)</label>
+                <div style="margin-top:8px; max-width:880px;">
+                  <!-- Mode chooser -->
+                  <div style="margin-bottom:8px;">
+                    <label style="font-weight:700; margin-right:12px;">
+                      <input type="radio" name="tpl-mode" id="mode-template" checked> Use inspection template
+                    </label>
+                    <label style="font-weight:700;">
+                      <input type="radio" name="tpl-mode" id="mode-manual"> Choose data category and fields manually
+                    </label>
                   </div>
-                </details>
-
-                <details id="fields-under" class="field-group" style="display:none;">
-                  <summary>Underwriting fields</summary>
-                  <div class="field-list">
-                    <label><input type="checkbox" class="field" data-cat="under" value="policy_number" checked> Policy Number</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="under" value="inception_date"> Inception Date</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="under" value="sum_assured"> Sum Assured</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="under" value="product_code"> Product Code</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="under" value="underwriting_decision"> Underwriting Decision</label><br/>
+                  <div id="templateSection">
+                    <div id="template-control" style="margin-bottom:8px;">
+                      <label style="display:block; font-weight:700; margin-bottom:6px;">Inspection template</label>
+                      <select id="template-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                        <option value="">-- Select template --</option>
+                        <option value="claims_basic">Claims – Basic Claim Inspection</option>
+                        <option value="claims_advanced">Claims – Advanced Fraud Review</option>
+                        <option value="sales_perf">Sales – Agent Performance Review</option>
+                      </select>
+                    </div>
                   </div>
-                </details>
-
-                <details id="fields-griev" class="field-group" style="display:none;">
-                  <summary>Grievances fields</summary>
-                  <div class="field-list">
-                    <label><input type="checkbox" class="field" data-cat="griev" value="complaint_id" checked> Complaint ID</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="griev" value="received_date"> Received Date</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="griev" value="category"> Complaint Category</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="griev" value="resolution_date"> Resolution Date</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="griev" value="status"> Complaint Status</label><br/>
+                  <div id="manualSection" style="display:none;">
+                    <div id="manual-controls">
+                      <select id="data-cats" multiple size="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                        <option value="claims">Claims</option>
+                        <option value="under">Underwriting</option>
+                        <option value="griev">Grievances</option>
+                        <option value="sales">Sales/Agents</option>
+                      </select>
+                    </div>
+                    <div id="fields-container" style="margin-top:10px;">
+                      <details id="fields-claims" class="field-group" style="display:none;">
+                        <summary>Claims fields</summary>
+                        <div class="field-list">
+                          <label><input type="checkbox" class="field" data-cat="claims" value="claim_id" checked> Claim ID</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="claims" value="policy_number" checked> Policy Number</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="claims" value="claim_date"> Claim Date</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="claims" value="claim_amount"> Claim Amount</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="claims" value="settlement_date"> Settlement Date</label><br/>
+                        </div>
+                      </details>
+                      <details id="fields-under" class="field-group" style="display:none;">
+                        <summary>Underwriting fields</summary>
+                        <div class="field-list">
+                          <label><input type="checkbox" class="field" data-cat="under" value="policy_number" checked> Policy Number</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="under" value="inception_date"> Inception Date</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="under" value="sum_assured"> Sum Assured</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="under" value="product_code"> Product Code</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="under" value="underwriting_decision"> Underwriting Decision</label><br/>
+                        </div>
+                      </details>
+                      <details id="fields-griev" class="field-group" style="display:none;">
+                        <summary>Grievances fields</summary>
+                        <div class="field-list">
+                          <label><input type="checkbox" class="field" data-cat="griev" value="complaint_id" checked> Complaint ID</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="griev" value="received_date"> Received Date</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="griev" value="category"> Complaint Category</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="griev" value="resolution_date"> Resolution Date</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="griev" value="status"> Complaint Status</label><br/>
+                        </div>
+                      </details>
+                      <details id="fields-sales" class="field-group" style="display:none;">
+                        <summary>Sales / Agents fields</summary>
+                        <div class="field-list">
+                          <label><input type="checkbox" class="field" data-cat="sales" value="agent_id" checked> Agent ID</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="sales" value="agent_name"> Agent Name</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="sales" value="channel"> Channel</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="sales" value="sales_date"> Sales Date</label><br/>
+                          <label><input type="checkbox" class="field" data-cat="sales" value="commission"> Commission Amount</label><br/>
+                        </div>
+                      </details>
+                    </div>
                   </div>
-                </details>
-
-                <details id="fields-sales" class="field-group" style="display:none;">
-                  <summary>Sales / Agents fields</summary>
-                  <div class="field-list">
-                    <label><input type="checkbox" class="field" data-cat="sales" value="agent_id" checked> Agent ID</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="sales" value="agent_name"> Agent Name</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="sales" value="channel"> Channel</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="sales" value="sales_date"> Sales Date</label><br/>
-                    <label><input type="checkbox" class="field" data-cat="sales" value="commission"> Commission Amount</label><br/>
-                  </div>
-                </details>
+                </div>
+              </div>
+              <div style="margin-top:12px;">
+                <label>Assign Team</label>
+                <div id="team-list" class="row" style="margin-top:6px;">
+                  <label><input type="checkbox" class="team" value="A. Kumar"> A. Kumar</label>
+                  <label><input type="checkbox" class="team" value="R. Singh"> R. Singh</label>
+                  <label><input type="checkbox" class="team" value="P. Rao"> P. Rao</label>
+                  <label><input type="checkbox" class="team" value="S. Iyer"> S. Iyer</label>
+                </div>
+                <div id="team-pills" style="margin-top:6px;"></div>
+              </div>
+              <div class="row" style="margin-top:14px; align-items:center;">
+                <button id="create-inspection" type="button" class="secondary">Create Inspection</button>
+                <div class="muted">Team will be notified (simulated).</div>
               </div>
             </div>
-          </div>
-          <div style="margin-top:12px;">
-            <label>Assign Team</label>
-            <div id="team-list" class="row" style="margin-top:6px;">
-              <label><input type="checkbox" class="team" value="A. Kumar"> A. Kumar</label>
-              <label><input type="checkbox" class="team" value="R. Singh"> R. Singh</label>
-              <label><input type="checkbox" class="team" value="P. Rao"> P. Rao</label>
-              <label><input type="checkbox" class="team" value="S. Iyer"> S. Iyer</label>
-            </div>
-            <div id="team-pills" style="margin-top:6px;"></div>
-          </div>
-          <div class="row" style="margin-top:14px; align-items:center;">
-            <button id="create-inspection" type="button" class="secondary">Create Inspection</button>
-            <div class="muted">Team will be notified (simulated).</div>
+            <aside class="step-tasks" data-step="1">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list" id="step1-tasks">
+                <li class="task-item" data-task="insurer">
+                  <span class="task-icon status-pending">✕</span>
+                  <span>Select insurer</span>
+                </li>
+                <li class="task-item" data-task="dates">
+                  <span class="task-icon status-pending">✕</span>
+                  <span>Set inspection date range</span>
+                </li>
+                <li class="task-item" data-task="scope">
+                  <span class="task-icon status-pending">✕</span>
+                  <span>Choose data categories / fields</span>
+                </li>
+                <li class="task-item" data-task="team">
+                  <span class="task-icon status-pending">✕</span>
+                  <span>Assign inspection team</span>
+                </li>
+                <li class="task-item" data-task="create">
+                  <span class="task-icon status-pending">✕</span>
+                  <span>Click "Create Inspection"</span>
+                </li>
+              </ul>
+            </aside>
           </div>
         </div>
 
         <!-- Step 2: Data Fetch -->
         <div class="card" id="step-2" style="display:none; margin-top:12px;">
-          <h3>Data Fetch (Status)</h3>
-          <div class="row" style="margin-top:8px;">
-            <div class="col">
-              <div style="font-weight:700; margin-bottom:6px;">Checklist</div>
-              <div id="chk-fields" class="chip miss"><span class="tick">✗</span> All requested fields fetched</div>
-              <div style="height:6px;"></div>
-              <div id="chk-period" class="chip warn"><span class="tick">!</span> Requested time period fetched</div>
-              <div class="row" style="margin-top:10px;">
-                <button id="btn-fetch-all" type="button">Re-fetch All</button>
-                <button id="btn-proceed3" type="button" class="secondary" disabled>Proceed to Validation</button>
+          <h3>Data Fetch (Status) <span class="chip stage-chip" data-step="2" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <div class="row" style="margin-top:8px;">
+                <div class="col">
+                  <div style="font-weight:700; margin-bottom:6px;">Checklist</div>
+                  <div id="chk-fields" class="chip miss"><span class="tick">✗</span> All requested fields fetched</div>
+                  <div style="height:6px;"></div>
+                  <div id="chk-period" class="chip warn"><span class="tick">!</span> Requested time period fetched</div>
+                  <div class="row" style="margin-top:10px;">
+                    <button id="btn-fetch-all" type="button">Re-fetch All</button>
+                    <button id="btn-proceed3" type="button" class="secondary" disabled>Proceed to Validation</button>
+                  </div>
+                </div>
+                <div class="col">
+                  <div style="font-weight:700; margin-bottom:6px;">Dataset status</div>
+                  <table>
+                    <thead><tr><th>Dataset</th><th>Status</th><th>Last Fetch</th></tr></thead>
+                    <tbody id="ds-status">
+                      <tr><td>Claims</td><td><span class="chip ok">✓ Fetched</span></td><td>12-Nov-2025 10:05</td></tr>
+                      <tr><td>Underwriting</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                      <tr><td>Grievances</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                      <tr><td>Sales/Agents</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div style="margin-top:12px;">
+                <div style="font-weight:700; margin-bottom:6px;">Insurer submissions</div>
+                <table>
+                  <thead><tr><th>Dataset</th><th>Period</th><th>Submission</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <tr><td>Claims</td><td>2025-Q3</td><td>claims_2025_q3.xlsx</td><td><span class="chip ok">✓ Received</span></td></tr>
+                    <tr><td>Underwriting</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+                    <tr><td>Grievances</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+                    <tr><td>Sales/Agents</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div class="col">
-              <div style="font-weight:700; margin-bottom:6px;">Dataset status</div>
-              <table>
-                <thead><tr><th>Dataset</th><th>Status</th><th>Last Fetch</th></tr></thead>
-                <tbody id="ds-status">
-                  <tr><td>Claims</td><td><span class="chip ok">✓ Fetched</span></td><td>12-Nov-2025 10:05</td></tr>
-                  <tr><td>Underwriting</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                  <tr><td>Grievances</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                  <tr><td>Sales/Agents</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div style="margin-top:12px;">
-            <div style="font-weight:700; margin-bottom:6px;">Insurer submissions</div>
-            <table>
-              <thead><tr><th>Dataset</th><th>Period</th><th>Submission</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>Claims</td><td>2025-Q3</td><td>claims_2025_q3.xlsx</td><td><span class="chip ok">✓ Received</span></td></tr>
-                <tr><td>Underwriting</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
-                <tr><td>Grievances</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
-                <tr><td>Sales/Agents</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
-              </tbody>
-            </table>
+            <aside class="step-tasks" data-step="2">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Review DSF status for all datasets</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Confirm datasets received from insurer</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Trigger re-fetch for missing datasets</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Check insurer submissions table</label></li>
+              </ul>
+            </aside>
           </div>
         </div>
 
         <!-- Step 3: Data Validation -->
         <div class="card" id="step-3" style="display:none; margin-top:12px;">
-          <h3>Data Validation</h3>
-          <div class="muted">Automatic checks for structure, completeness, mandatory fields, and formats.</div>
-          <div class="row" style="margin-top:10px;">
-            <div class="col">
-              <div class="card" style="padding:12px;">
-                <div><b>Records processed:</b> <span id="val-rows">12,432</span></div>
-                <div style="margin-top:6px;"><b>Exceptions:</b> <span id="val-exc">27</span></div>
-                <div style="margin-top:6px;"><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
-                <div style="margin-top:8px;">
-                  <button id="btn-exception" type="button">Download Exception Report</button>
-                  <button id="btn-req-fix" type="button" class="secondary">Request Corrected Data</button>
+          <h3>Data Validation <span class="chip stage-chip" data-step="3" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <div class="muted">Automatic checks for structure, completeness, mandatory fields, and formats.</div>
+              <div class="row" style="margin-top:10px;">
+                <div class="col">
+                  <div class="card" style="padding:12px;">
+                    <div><b>Records processed:</b> <span id="val-rows">12,432</span></div>
+                    <div style="margin-top:6px;"><b>Exceptions:</b> <span id="val-exc">27</span></div>
+                    <div style="margin-top:6px;"><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
+                    <div style="margin-top:8px;">
+                      <button id="btn-exception" type="button">Download Exception Report</button>
+                      <button id="btn-req-fix" type="button" class="secondary">Request Corrected Data</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="muted">Sample issues</div>
+                  <ul>
+                    <li>Missing Policy ID (9)</li>
+                    <li>Invalid Date Format (6)</li>
+                    <li>Claim TAT value out of range (12)</li>
+                  </ul>
+                  <button id="btn-proceed4" type="button">Proceed to Regulatory Checks</button>
                 </div>
               </div>
             </div>
-            <div class="col">
-              <div class="muted">Sample issues</div>
-              <ul>
-                <li>Missing Policy ID (9)</li>
-                <li>Invalid Date Format (6)</li>
-                <li>Claim TAT value out of range (12)</li>
+            <aside class="step-tasks" data-step="3">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Run validation rules on all datasets</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Review failed records and error counts</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Send validation issues to insurer</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Finalize cleaned dataset for analysis</label></li>
               </ul>
-              <button id="btn-proceed4" type="button">Proceed to Regulatory Checks</button>
-            </div>
+            </aside>
           </div>
         </div>
 
         <!-- Step 4: Regulatory Check -->
         <div class="card" id="step-4" style="display:none; margin-top:12px;">
-          <h3>Regulatory Checklist & Automated Checks</h3>
-          <div class="row" style="margin-top:8px; align-items:center;">
-            <div class="muted">Filter:</div>
-            <button class="link" type="button" data-sev="All">All</button>
-            <button class="link" type="button" data-sev="High">High</button>
-            <button class="link" type="button" data-sev="Medium">Medium</button>
-            <button class="link" type="button" data-sev="Low">Low</button>
-          </div>
-          <table style="margin-top:8px;">
-            <thead><tr><th>Rule</th><th>Breach</th><th>Severity</th><th>Count</th></tr></thead>
-            <tbody id="reg-table">
-              <tr data-sev="High"><td>Claims TAT &gt; SLA</td><td>Exceeded 30 days</td><td><span class="chip miss">High</span></td><td>12</td></tr>
-              <tr data-sev="High"><td>Repudiation cluster</td><td>Above baseline in region</td><td><span class="chip miss">High</span></td><td>6</td></tr>
-              <tr data-sev="Medium"><td>Grievance closure time</td><td>&gt; 15 days</td><td><span class="chip warn">Medium</span></td><td>9</td></tr>
-              <tr data-sev="Low"><td>Commission variance</td><td>&gt; 2σ of product</td><td><span class="chip info">Low</span></td><td>18</td></tr>
-            </tbody>
-          </table>
-          <div style="margin-top:10px;">
-            <button id="btn-proceed5" type="button">Proceed to Analytics & Sampling</button>
+          <h3>Regulatory Checklist & Automated Checks <span class="chip stage-chip" data-step="4" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <div class="row" style="margin-top:8px; align-items:center;">
+                <div class="muted">Filter:</div>
+                <button class="link" type="button" data-sev="All">All</button>
+                <button class="link" type="button" data-sev="High">High</button>
+                <button class="link" type="button" data-sev="Medium">Medium</button>
+                <button class="link" type="button" data-sev="Low">Low</button>
+              </div>
+              <table style="margin-top:8px;">
+                <thead><tr><th>Rule</th><th>Breach</th><th>Severity</th><th>Count</th></tr></thead>
+                <tbody id="reg-table">
+                  <tr data-sev="High"><td>Claims TAT &gt; SLA</td><td>Exceeded 30 days</td><td><span class="chip miss">High</span></td><td>12</td></tr>
+                  <tr data-sev="High"><td>Repudiation cluster</td><td>Above baseline in region</td><td><span class="chip miss">High</span></td><td>6</td></tr>
+                  <tr data-sev="Medium"><td>Grievance closure time</td><td>&gt; 15 days</td><td><span class="chip warn">Medium</span></td><td>9</td></tr>
+                  <tr data-sev="Low"><td>Commission variance</td><td>&gt; 2σ of product</td><td><span class="chip info">Low</span></td><td>18</td></tr>
+                </tbody>
+              </table>
+              <div style="margin-top:10px;">
+                <button id="btn-proceed5" type="button">Proceed to Analytics & Sampling</button>
+              </div>
+            </div>
+            <aside class="step-tasks" data-step="4">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Run regulatory checklist rules</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Review HIGH severity breaches</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Tag breaches for observation drafting</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Park items needing more data or clarification</label></li>
+              </ul>
+            </aside>
           </div>
         </div>
 
         <!-- Step 5: Analytics & Sampling -->
         <div class="card" id="step-5" style="display:none; margin-top:12px;">
-          <h3>Analytics & Risk-Based Sampling</h3>
-          <div class="row" style="margin-top:8px;">
-            <div class="col">
-              <div class="muted">Risk Scores</div>
-              <div style="margin-top:6px;">
-                <div class="row" style="align-items:center;"><div style="width:160px;">ICICI Lombard</div><div class="bar" style="flex:1;"><i style="width:85%"></i></div><div style="width:40px; text-align:right;">85</div></div>
-                <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">SBI Life</div><div class="bar" style="flex:1;"><i style="width:60%"></i></div><div style="width:40px; text-align:right;">60</div></div>
-                <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">LIC</div><div class="bar" style="flex:1;"><i style="width:40%"></i></div><div style="width:40px; text-align:right;">40</div></div>
-              </div>
-              <div class="card" style="margin-top:10px; padding:12px;">
-                <b>Insights</b>
-                <ul style="margin-top:6px;">
-                  <li>Uptrend in claim repudiations in Q3</li>
-                  <li>Anomaly: High refunds in branch #441</li>
-                  <li>Early warning: Rising complaint rate in motor TP</li>
-                </ul>
-              </div>
-            </div>
-            <div class="col">
-              <div class="muted">Suggested Sample (editable)</div>
-              <table style="margin-top:6px;">
-                <thead><tr><th>Case ID</th><th>Reason</th><th></th></tr></thead>
-                <tbody id="sample-table">
-                  <tr><td>CL-2115</td><td>High repudiation</td><td><button class="link del" type="button">Remove</button></td></tr>
-                  <tr><td>CL-2100</td><td>Long TAT</td><td><button class="link del" type="button">Remove</button></td></tr>
-                  <tr><td>CL-2091</td><td>Missing policy ID</td><td><button class="link del" type="button">Remove</button></td></tr>
-                </tbody>
-              </table>
+          <h3>Analytics & Risk-Based Sampling <span class="chip stage-chip" data-step="5" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
               <div class="row" style="margin-top:8px;">
-                <input id="add-id" placeholder="Add Case ID" style="flex:1;">
-                <button id="add-case" type="button">Add</button>
+                <div class="col">
+                  <div class="muted">Risk Scores</div>
+                  <div style="margin-top:6px;">
+                    <div class="row" style="align-items:center;"><div style="width:160px;">ICICI Lombard</div><div class="bar" style="flex:1;"><i style="width:85%"></i></div><div style="width:40px; text-align:right;">85</div></div>
+                    <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">SBI Life</div><div class="bar" style="flex:1;"><i style="width:60%"></i></div><div style="width:40px; text-align:right;">60</div></div>
+                    <div class="row" style="align-items:center; margin-top:8px;"><div style="width:160px;">LIC</div><div class="bar" style="flex:1;"><i style="width:40%"></i></div><div style="width:40px; text-align:right;">40</div></div>
+                  </div>
+                  <div class="card" style="margin-top:10px; padding:12px;">
+                    <b>Insights</b>
+                    <ul style="margin-top:6px;">
+                      <li>Uptrend in claim repudiations in Q3</li>
+                      <li>Anomaly: High refunds in branch #441</li>
+                      <li>Early warning: Rising complaint rate in motor TP</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="muted">Suggested Sample (editable)</div>
+                  <table style="margin-top:6px;">
+                    <thead><tr><th>Case ID</th><th>Reason</th><th></th></tr></thead>
+                    <tbody id="sample-table">
+                      <tr><td>CL-2115</td><td>High repudiation</td><td><button class="link del" type="button">Remove</button></td></tr>
+                      <tr><td>CL-2100</td><td>Long TAT</td><td><button class="link del" type="button">Remove</button></td></tr>
+                      <tr><td>CL-2091</td><td>Missing policy ID</td><td><button class="link del" type="button">Remove</button></td></tr>
+                    </tbody>
+                  </table>
+                  <div class="row" style="margin-top:8px;">
+                    <input id="add-id" placeholder="Add Case ID" style="flex:1;">
+                    <button id="add-case" type="button">Add</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card" style="margin-top:12px; padding:12px;">
+                <h4 style="margin:0 0 6px 0;">Additional Documents / Clarification Requests</h4>
+                <table>
+                  <thead><tr><th>Case ID</th><th>Request</th><th>Status</th><th>Action</th></tr></thead>
+                  <tbody id="clarify-table">
+                    <tr><td>CL-2100</td><td>Discharge summary & hospital bill copy</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
+                    <tr><td>CL-2115</td><td>Underwriting notes & agent memo</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
+                  </tbody>
+                </table>
+                <div class="row" style="margin-top:8px;">
+                  <input id="clarify-id" placeholder="Case ID">
+                  <input id="clarify-text" placeholder="Request details" style="flex:1;">
+                  <button id="clarify-add" type="button">Add Request</button>
+                </div>
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <button id="finalize-sample" type="button" class="secondary">Finalize Sample (for Onsite)</button>
               </div>
             </div>
-          </div>
-
-          <div class="card" style="margin-top:12px; padding:12px;">
-            <h4 style="margin:0 0 6px 0;">Additional Documents / Clarification Requests</h4>
-            <table>
-              <thead><tr><th>Case ID</th><th>Request</th><th>Status</th><th>Action</th></tr></thead>
-              <tbody id="clarify-table">
-                <tr><td>CL-2100</td><td>Discharge summary & hospital bill copy</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
-                <tr><td>CL-2115</td><td>Underwriting notes & agent memo</td><td><span class="chip warn">Pending</span></td><td><button class="link mark-rec" type="button">Mark Received</button></td></tr>
-              </tbody>
-            </table>
-            <div class="row" style="margin-top:8px;">
-              <input id="clarify-id" placeholder="Case ID">
-              <input id="clarify-text" placeholder="Request details" style="flex:1;">
-              <button id="clarify-add" type="button">Add Request</button>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:10px;">
-            <button id="finalize-sample" type="button" class="secondary">Finalize Sample (for Onsite)</button>
+            <aside class="step-tasks" data-step="5">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Review analytics results and risk scores</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Adjust sampling logic if required</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Generate recommended sample list</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Finalize sample set for onsite inspection</label></li>
+              </ul>
+            </aside>
           </div>
         </div>
 
         <!-- Step 6: Onsite -->
         <div class="card" id="step-6" style="display:none; margin-top:12px;">
-          <h3>Onsite Inspection Support</h3>
-          <div class="row" style="margin-top:8px;">
-            <div class="col">
-              <div class="muted">Case Files</div>
-              <table style="margin-top:6px;">
-                <thead><tr><th>Case ID</th><th>Open</th></tr></thead>
-                <tbody id="onsite-cases">
-                  <tr><td>CL-2100</td><td><button class="link" type="button">Open file</button></td></tr>
-                  <tr><td>CL-2115</td><td><button class="link" type="button">Open file</button></td></tr>
-                  <tr><td>CL-2091</td><td><button class="link" type="button">Open file</button></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col">
-              <div class="muted">Notes / Evidence</div>
-              <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
-              <div class="row" style="margin-top:6px; align-items:center;">
-                <input type="file" id="onsite-file">
-                <button id="flag-risk" type="button">Flag High-Risk Issue</button>
+          <h3>Onsite Inspection Support <span class="chip stage-chip" data-step="6" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <div class="row" style="margin-top:8px;">
+                <div class="col">
+                  <div class="muted">Case Files</div>
+                  <table style="margin-top:6px;">
+                    <thead><tr><th>Case ID</th><th>Open</th></tr></thead>
+                    <tbody id="onsite-cases">
+                      <tr><td>CL-2100</td><td><button class="link" type="button">Open file</button></td></tr>
+                      <tr><td>CL-2115</td><td><button class="link" type="button">Open file</button></td></tr>
+                      <tr><td>CL-2091</td><td><button class="link" type="button">Open file</button></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col">
+                  <div class="muted">Notes / Evidence</div>
+                  <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
+                  <div class="row" style="margin-top:6px; align-items:center;">
+                    <input type="file" id="onsite-file">
+                    <button id="flag-risk" type="button">Flag High-Risk Issue</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="margin-top:10px;">
+                <button id="btn-proceed7" type="button">Proceed to Observations</button>
               </div>
             </div>
-          </div>
-          <div class="row" style="margin-top:10px;">
-            <button id="btn-proceed7" type="button">Proceed to Observations</button>
+            <aside class="step-tasks" data-step="6">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Download final sample file for fieldwork</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Capture onsite notes / interviews in the portal</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Upload evidence (documents / screenshots)</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Flag high-risk issues found onsite</label></li>
+              </ul>
+            </aside>
           </div>
         </div>
 
         <!-- Step 7 -->
         <div class="card" id="step-7" style="display:none; margin-top:12px;">
-          <h3>Observation & Finding Management</h3>
-          <table>
-            <thead><tr><th>Observation</th><th>Severity</th><th>Evidence Count</th><th>Status</th></tr></thead>
-            <tbody id="obs-table">
-              <tr><td>Delayed claim TAT beyond SLA in 12 cases</td><td><span class="chip miss">High</span></td><td>3</td><td>Draft</td></tr>
-              <tr><td>Missing policy IDs in claims</td><td><span class="chip warn">Medium</span></td><td>2</td><td>Draft</td></tr>
-            </tbody>
-          </table>
-          <div class="row" style="margin-top:8px;">
-            <input id="obs-text" placeholder="Issue, rule breached, evidence, impact..." style="flex:2;">
-            <select id="obs-sev"><option>High</option><option>Medium</option><option>Low</option></select>
-            <button id="add-obs" type="button">Add Observation</button>
-          </div>
-
-          <div class="card" style="margin-top:12px; padding:12px;">
-            <h4 style="margin:0 0 6px 0;">Inspection Report</h4>
-            <div class="row">
-              <div class="col">
-                <label>Executive Summary</label>
-                <textarea id="exec" style="width:100%; height:120px; margin-top:6px;">Draft executive summary...</textarea>
+          <h3>Observation & Finding Management <span class="chip stage-chip" data-step="7" style="display:none;">Stage completed</span></h3>
+          <div class="step-layout">
+            <div class="step-main">
+              <table>
+                <thead><tr><th>Observation</th><th>Severity</th><th>Evidence Count</th><th>Status</th></tr></thead>
+                <tbody id="obs-table">
+                  <tr><td>Delayed claim TAT beyond SLA in 12 cases</td><td><span class="chip miss">High</span></td><td>3</td><td>Draft</td></tr>
+                  <tr><td>Missing policy IDs in claims</td><td><span class="chip warn">Medium</span></td><td>2</td><td>Draft</td></tr>
+                </tbody>
+              </table>
+              <div class="row" style="margin-top:8px;">
+                <input id="obs-text" placeholder="Issue, rule breached, evidence, impact..." style="flex:2;">
+                <select id="obs-sev"><option>High</option><option>Medium</option><option>Low</option></select>
+                <button id="add-obs" type="button">Add Observation</button>
               </div>
-              <div class="col">
-                <label>Recommendations</label>
-                <textarea id="reco" style="width:100%; height:120px; margin-top:6px;">Key recommendations...</textarea>
+              <div class="card" style="margin-top:12px; padding:12px;">
+                <h4 style="margin:0 0 6px 0;">Inspection Report</h4>
+                <div class="row">
+                  <div class="col">
+                    <label>Executive Summary</label>
+                    <textarea id="exec" style="width:100%; height:120px; margin-top:6px;">Draft executive summary...</textarea>
+                  </div>
+                  <div class="col">
+                    <label>Recommendations</label>
+                    <textarea id="reco" style="width:100%; height:120px; margin-top:6px;">Key recommendations...</textarea>
+                  </div>
+                </div>
+                <div class="row" style="margin-top:8px;">
+                  <button id="btn-generate" type="button">Generate Report (PDF)</button>
+                  <button id="btn-download" type="button">Export Word</button>
+                </div>
               </div>
             </div>
-            <div class="row" style="margin-top:8px;">
-              <button id="btn-generate" type="button">Generate Report (PDF)</button>
-              <button id="btn-download" type="button">Export Word</button>
-            </div>
+            <aside class="step-tasks" data-step="7">
+              <h4>Tasks in this stage</h4>
+              <ul class="task-list">
+                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Draft observations for key issues</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Attach evidence to each observation</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Review & refine observations</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Generate draft inspection report</label></li>
+                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Mark report ready for management review</label></li>
+              </ul>
+            </aside>
           </div>
         </div>
 
@@ -783,6 +964,26 @@ document.addEventListener('DOMContentLoaded', function(){
     setTimeout(()=>{ location.reload(); }, 300);
   });
 
+  // Template vs Manual toggle: show/hide sections
+  (function(){
+    const tplRadio   = document.getElementById('mode-template');
+    const manualRadio= document.getElementById('mode-manual');
+    const tplSection = document.getElementById('templateSection');
+    const manualSection = document.getElementById('manualSection');
+
+    function setModeTemplate(isTemplate){
+      if(tplSection) tplSection.style.display = isTemplate ? '' : 'none';
+      if(manualSection) manualSection.style.display = isTemplate ? 'none' : '';
+    }
+
+    // wire radios
+    tplRadio?.addEventListener('change', ()=> setModeTemplate(true));
+    manualRadio?.addEventListener('change', ()=> setModeTemplate(false));
+
+    // initialize (default = template)
+    setModeTemplate(true);
+  })();
+
   // Show default list
   function showList(kind){
     const lists = $('#lists');
@@ -959,13 +1160,15 @@ document.addEventListener('DOMContentLoaded', function(){
   })();
 
   // Create inspection
+
   $('#create-inspection')?.addEventListener('click', ()=>{
     const insurer = $('#insurer')?.value;
     const from    = $('#from')?.value;
     const to      = $('#to')?.value;
     const chosen  = $$('.team').filter(b=>b.checked).map(b=>b.value);
     if(!insurer || !from || !to || chosen.length===0){
-      alert('Fill insurer, dates, and team.'); return;
+      alert('Fill insurer, dates, and team.');
+      return;
     }
     const active = $('#kpi-active'); if(active) active.textContent = String((+active.textContent||0)+1);
     gotoStep(2);
@@ -1074,6 +1277,186 @@ document.addEventListener('DOMContentLoaded', function(){
   modal?.addEventListener('click', function(e){
     if(e.target === modal) closeReport();
   });
+
+  // --- Task checklist behaviour (added) ---
+  (function(){
+    function updateStepState(n){
+      const boxes = Array.from(document.querySelectorAll('.task-checkbox[data-step="'+n+'"]'));
+      if(boxes.length === 0) return;
+      const all = boxes.every(b => b.checked);
+      const chip = document.querySelector('.stage-chip[data-step="'+n+'"]');
+      const nav = document.querySelector('.steps .step[data-step="'+n+'"]');
+      if(all){
+        if(chip) { chip.style.display = 'inline-block'; chip.classList.add('chip'); }
+        if(nav) nav.classList.add('done');
+      } else {
+        if(chip) { chip.style.display = 'none'; chip.classList.remove('chip'); }
+        if(nav) nav.classList.remove('done');
+      }
+    }
+    // attach listeners
+    document.querySelectorAll('.task-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e)=>{
+        const n = e.target.getAttribute('data-step');
+        updateStepState(n);
+      });
+    });
+    // initialize existing state on load (in case some boxes are pre-checked)
+    const steps = ['1','2','3','4','5','6','7'];
+    steps.forEach(s => updateStepState(s));
+  })();
+
+  // Role switch: Regulator <-> Insurer
+  (function(){
+    const roleSwitch = document.getElementById('role-switch');
+    const regulatorView = document.getElementById('regulator-view');
+    const insurerView = document.getElementById('insurer-view');
+
+    function setRole(role){
+      if(role === 'insurer'){
+        if(regulatorView) regulatorView.style.display = 'none';
+        if(insurerView) insurerView.style.display = 'block';
+      } else {
+        if(regulatorView) regulatorView.style.display = '';
+        if(insurerView) insurerView.style.display = 'none';
+      }
+      // small scroll to top to position view
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    roleSwitch?.addEventListener('change', function(){
+      setRole(this.value);
+    });
+
+    // inspector row click: update details panel
+    document.getElementById('insurer-inspections-body')?.addEventListener('click', function(e){
+      const tr = e.target.closest('tr[data-inspection]');
+      if(!tr) return;
+      const id = tr.getAttribute('data-inspection');
+      const title = document.getElementById('insurer-work-title');
+      const status = document.getElementById('insurer-validation-status');
+      if(title) title.textContent = 'Inspection details — ' + id;
+      if(status) status.textContent = tr.children[3]?.textContent || 'Data pending';
+      // replace messages for demo
+      const msgs = document.getElementById('insurer-messages');
+      if(msgs){
+        msgs.innerHTML = `<li>IRDAI request: Please upload dataset as per DSF.</li>
+                          <li>Deadline: ${tr.children[4]?.textContent || '—'}</li>`;
+      }
+    });
+
+    // demo DSF download (just a small CSV)
+    document.getElementById('insurer-download-dsf')?.addEventListener('click', function(){
+      const csv = 'case_id,policy_number,claim_date,amount\n';
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'dsf_template.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // demo upload behaviour: mark validation status as "Submitted" then "Under validation"
+    document.getElementById('insurer-upload-btn')?.addEventListener('click', function(){
+      const fileEl = document.getElementById('insurer-upload-file');
+      const status = document.getElementById('insurer-validation-status');
+      if(!fileEl || !fileEl.files || fileEl.files.length===0){ alert('Choose a file to upload'); return; }
+      if(status) status.textContent = 'Submitted — awaiting validation';
+      // simulate async validation result
+      setTimeout(()=>{
+        if(status) status.textContent = 'Under validation';
+      }, 800);
+    });
+
+    // initialize default role
+    setRole(roleSwitch?.value || 'regulator');
+  })();
+
+  // === Step 1: Automatic task status indicators ===
+  (function(){
+    let step1Created = false;
+
+    // Get form elements
+    const insurerSelect = document.getElementById('insurer');
+    const fromInput = document.getElementById('from');
+    const toInput = document.getElementById('to');
+    const templateSelect = document.getElementById('template-select');
+    const teamCheckboxes = document.querySelectorAll('.team');
+    const createBtn = document.getElementById('create-inspection');
+    const step1TasksList = document.getElementById('step1-tasks');
+
+    function updateStep1Tasks(){
+      if(!step1TasksList) return;
+
+      // Evaluate conditions
+      const conditions = {
+        insurer: insurerSelect?.value !== '',
+        dates: !!(fromInput?.value && toInput?.value),
+        scope: templateSelect?.value !== '',
+        team: Array.from(teamCheckboxes).some(cb => cb.checked),
+        create: step1Created
+      };
+
+      // Update each task icon
+      Object.entries(conditions).forEach(([taskName, isDone]) => {
+        const taskEl = step1TasksList.querySelector(`[data-task="${taskName}"]`);
+        if(!taskEl) return;
+        const icon = taskEl.querySelector('.task-icon');
+        if(icon){
+          icon.textContent = isDone ? '✓' : '✕';
+          icon.classList.remove(isDone ? 'status-pending' : 'status-done');
+          icon.classList.add(isDone ? 'status-done' : 'status-pending');
+        }
+      });
+
+      // Check if all tasks are done
+      const allDone = Object.values(conditions).every(v => v === true);
+      const chip = document.querySelector('.stage-chip[data-step="1"]');
+      const navStep = document.querySelector('.steps .step[data-step="1"]');
+
+      if(allDone){
+        if(chip) chip.style.display = 'inline-block';
+        if(navStep) navStep.classList.add('done');
+      } else {
+        if(chip) chip.style.display = 'none';
+        if(navStep) navStep.classList.remove('done');
+      }
+    }
+
+    // Attach change listeners
+    insurerSelect?.addEventListener('change', updateStep1Tasks);
+    fromInput?.addEventListener('change', updateStep1Tasks);
+    toInput?.addEventListener('change', updateStep1Tasks);
+    templateSelect?.addEventListener('change', updateStep1Tasks);
+    teamCheckboxes.forEach(cb => cb.addEventListener('change', updateStep1Tasks));
+
+    // Override create button click
+    if(createBtn){
+      const originalClick = createBtn.onclick;
+      createBtn.addEventListener('click', function(e){
+        const insurer = insurerSelect?.value;
+        const from    = fromInput?.value;
+        const to      = toInput?.value;
+        const chosen  = Array.from(teamCheckboxes).filter(b=>b.checked).map(b=>b.value);
+
+        if(!insurer || !from || !to || chosen.length===0){
+          alert('Fill insurer, dates, and team.');
+          return;
+        }
+
+        // Mark as created and update tasks
+        step1Created = true;
+        updateStep1Tasks();
+
+        // Original logic
+        const active = document.getElementById('kpi-active');
+        if(active) active.textContent = String((+active.textContent||0)+1);
+        gotoStep(2);
+      });
+    }
+
+    // Initialize on load (show all as pending initially)
+    updateStep1Tasks();
+  })();
+
 });
 </script>
 </body>
