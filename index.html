@@ -891,23 +891,36 @@ document.addEventListener('DOMContentLoaded', function(){
     if(!homeRoot) return;
     const tabs = Array.from(homeRoot.querySelectorAll('.tabs .tab'));
     const panels = ['rbs','supervision','enforcement','grievance'];
-    function activateHome(target){
+
+    // show the selected home panel; when `collapse` is true hide other main tabs (show only active)
+    function activateHome(target, collapse=false){
+      // mark active tab
       tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-home')===target));
+      // show only the selected panel
       panels.forEach(p => {
         const el = document.getElementById('home-' + p);
         if(el) el.style.display = (p === target) ? 'block' : 'none';
       });
-      // show/hide supervision toolbar positioned under navbar
+      // supervision-specific sub-toolbar
       const supToolbar = document.getElementById('supervision-toolbar');
       if(supToolbar) supToolbar.style.display = (target === 'supervision') ? 'flex' : 'none';
-    }
-    tabs.forEach(t => t.addEventListener('click', ()=> activateHome(t.getAttribute('data-home'))));
-    // ensure initial panel visible (matches markup)
-    const active = tabs.find(t => t.classList.contains('active')) || tabs[0];
-    if(active) activateHome(active.getAttribute('data-home'));
 
-    // removed internal home-super-* handlers (buttons moved to #supervision-toolbar)
-    // keep the global btn-start / btn-view-* / btn-config handlers already defined below
+      // collapse other main tabs when requested (keeps only the active main tab visible)
+      tabs.forEach(t => {
+        if(collapse){
+          t.style.display = (t.getAttribute('data-home')===target) ? 'inline-flex' : 'none';
+        } else {
+          t.style.display = ''; // restore default / original display
+        }
+      });
+    }
+
+    // user clicks should collapse (event.isTrusted === true for real user clicks).
+    tabs.forEach(t => t.addEventListener('click', (ev) => activateHome(t.getAttribute('data-home'), !!ev.isTrusted)));
+
+    // ensure initial panel visible but do NOT collapse other tabs on initial load/programmatic click
+    const active = tabs.find(t => t.classList.contains('active')) || tabs[0];
+    if(active) activateHome(active.getAttribute('data-home'), false);
   })();
 
  // Step nav clicks
