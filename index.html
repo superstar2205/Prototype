@@ -983,7 +983,7 @@
 <section id="login" class="login-wrap">
   <div class="login-card">
     <h1>PROTOTYPE</h1>
-    <div class="tagline">Demo Prototype<br>Prepared by IRDAI InsurTech Team</div>
+    <div class="tagline">Demo Prototype<br></div>
     <label>Username</label>
     <input type="email" id="email" placeholder="Enter your username">
     <label>Password</label>
@@ -992,7 +992,7 @@
       <button id="login-btn" type="button" class="btn">Login</button>
       <button id="forgot" type="button" class="link">Forgot Password?</button>
     </div>
-    <div class="login-footer-text">Developed by InsurTech Team — IRDAI</div>
+    <div class="login-footer-text">Developed by InsurTech Team </div>
   </div>
 </section>
 
@@ -1008,7 +1008,7 @@
     </div>
     <div class="spacer"></div>
     <div class="user-info">
-      <div class="user-name">Meghana Nara</div>
+      <div class="user-name">User-Name</div>
       <div class="user-meta">Logged in: 12-Nov-2025 11:15 | IP: 192.168.1.108</div>
 
       <!-- Role switch and Logout on same line -->
@@ -1879,6 +1879,26 @@
   </div>
 </div>
 
+<!-- Communication modal (for ongoing -> message insurer) -->
+<div id="comm-modal" class="modal" aria-hidden="true" style="display:none;">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="comm-title">
+    <header>
+      <h3 id="comm-title" style="margin:0;">Communication — <span id="comm-ins-id">—</span></h3>
+      <div><button class="close" id="comm-close" aria-label="Close">✕</button></div>
+    </header>
+    <div class="content" id="comm-content" style="display:flex; flex-direction:column; gap:12px;">
+      <div id="comm-thread" style="flex:1; overflow:auto; padding:8px; border:1px solid var(--color-border); border-radius:6px; background:white;">
+        <div class="muted">Conversation will appear here (dummy).</div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input id="comm-input" placeholder="Type a message to insurer..." style="flex:1; padding:0.6rem; border-radius:6px; border:1.5px solid var(--color-border);">
+        <button id="comm-send" class="btn">Send</button>
+        <button id="comm-close-2" class="btn small" style="background:#0f172a; color:white;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   // Simple helpers
@@ -1947,6 +1967,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const flow  = $('#flow');
     if(lists) lists.style.display = 'grid';
     if(flow)  flow.style.display  = 'none';
+
     const SAMPLE = {
       ongoing: [
         {id:'INSP-1101', insurer:'ICICI Lombard', period:'2025-07-01 → 2025-09-30', status:'Data Fetch', owner:'A. Kumar'},
@@ -1961,23 +1982,44 @@ document.addEventListener('DOMContentLoaded', function(){
         {id:'INSP-0992', insurer:'LIC',       period:'2024-07-01 → 2024-09-30', status:'Closed', owner:'M. Iyer'}
       ]
     };
+
+    // update table header according to list kind
+    const headEl = $('#lists thead');
+    if(headEl){
+      const headHtml = (kind === 'ongoing')
+        ? `<tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Communication</th></tr>`
+        : `<tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Final Report</th></tr>`;
+      headEl.innerHTML = headHtml;
+    }
+
     const rows = (SAMPLE[kind]||[]).map(r => {
-      // final-report button for completed entries (dummy)
-      const reportBtn = `<button class="btn small view-report" data-id="${r.id}" title="View final report">View</button>`;
-      return `<tr>
-                <td>${r.id}</td>
-                <td>${r.insurer}</td>
-                <td>${r.period}</td>
-                <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
-                <td>${r.owner}</td>
-                <td style="width:120px; text-align:right;">${ (kind==='completed') ? reportBtn : '' }</td>
-              </tr>`;
+      if(kind === 'completed'){
+        const reportBtn = `<button class="btn small view-report" data-id="${r.id}" title="View final report">View</button>`;
+        return `<tr>
+                  <td>${r.id}</td>
+                  <td>${r.insurer}</td>
+                  <td>${r.period}</td>
+                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
+                  <td>${r.owner}</td>
+                  <td style="width:140px; text-align:right;">${reportBtn}</td>
+                </tr>`;
+      } else {
+        const commBtn = `<button class="btn small comm-btn" data-id="${r.id}" title="Message insurer">Message</button>`;
+        return `<tr>
+                  <td>${r.id}</td>
+                  <td>${r.insurer}</td>
+                  <td>${r.period}</td>
+                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
+                  <td>${r.owner}</td>
+                  <td style="width:140px; text-align:right;">${commBtn}</td>
+                </tr>`;
+      }
     }).join('');
-     $('#list-body')?.insertAdjacentHTML('afterbegin',''); // noop for Safari
-     const body  = $('#list-body'); if(body) body.innerHTML = rows;
-     const title = $('#list-title'); if(title) title.textContent = (kind==='ongoing')?'Ongoing Inspections':'Completed Inspections';
-   }
-   //showList('completed');  // Remove this line - don't show completed by default
+
+    const body  = $('#list-body'); if(body) body.innerHTML = rows;
+    const title = $('#list-title'); if(title) title.textContent = (kind==='ongoing')?'Ongoing Inspections':'Completed Inspections';
+  }
+  //showList('completed');  // don't show completed by default
 
   // Go to a specific step section and show flow
   function gotoStep(n){
@@ -2100,7 +2142,7 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     }
 
-    // user clicks should collapse (event.isTrusted === true for real user clicks).
+    // wire up clicks
     tabs.forEach(t => t.addEventListener('click', (ev) => activateHome(t.getAttribute('data-home'), !!ev.isTrusted)));
 
     // ensure initial panel visible but do NOT collapse other tabs on initial load/programmatic click
@@ -2248,21 +2290,71 @@ document.addEventListener('DOMContentLoaded', function(){
   function closeReport(){
     if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
   }
-  // delegated click handler for view buttons
+  // delegated click handler for view buttons (report) and comm buttons
   document.body.addEventListener('click', function(e){
     const t = e.target;
-    if(t && t.classList && t.classList.contains('view-report')){
+    if(!t) return;
+    // final report open
+    if(t.classList && t.classList.contains('view-report')){
       const id = t.getAttribute('data-id') || '—';
-      openReport(id);
+      const reportIdEl = document.getElementById('report-id');
+      const modal = document.getElementById('report-modal');
+      if(reportIdEl) reportIdEl.textContent = id;
+      if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+      return;
     }
-    if(t && (t.id==='report-close' || t.id==='report-close-2')) closeReport();
-    if(t && t.id==='report-download') alert('Download (dummy) — report for ' + (reportIdEl?.textContent||'—'));
+    // communication open
+    if(t.classList && t.classList.contains('comm-btn')){
+      const id = t.getAttribute('data-id') || '—';
+      const commModal = document.getElementById('comm-modal');
+      const commIdEl = document.getElementById('comm-ins-id');
+      const commThread = document.getElementById('comm-thread');
+      if(commIdEl) commIdEl.textContent = id;
+      if(commThread) commThread.innerHTML = `<div class="muted">Conversation with ${id} (dummy)</div>
+        <div style="margin-top:8px;"><b>Regulator:</b> Please provide missing dataset.</div>
+        <div style="margin-top:6px;"><b>Insurer:</b> Will upload shortly.</div>`;
+      if(commModal){ commModal.classList.add('show'); commModal.setAttribute('aria-hidden','false'); }
+      document.getElementById('comm-input')?.focus();
+      return;
+    }
+    // close buttons
+    if(t.id === 'report-close' || t.id === 'report-close-2') {
+      document.getElementById('report-modal')?.classList.remove('show');
+      document.getElementById('report-modal')?.setAttribute('aria-hidden','true');
+    }
+    if(t.id === 'comm-close' || t.id === 'comm-close-2') {
+      document.getElementById('comm-modal')?.classList.remove('show');
+      document.getElementById('comm-modal')?.setAttribute('aria-hidden','true');
+    }
+    if(t.id === 'report-download') {
+      const reportId = document.getElementById('report-id')?.textContent || '—';
+      alert('Download (dummy) — report for ' + reportId);
+    }
   });
-  // close when clicking on overlay outside dialog
-  modal?.addEventListener('click', function(e){
-    if(e.target === modal) closeReport();
+  // send message handler (dummy)
+  document.getElementById('comm-send')?.addEventListener('click', function(){
+    const input = document.getElementById('comm-input');
+    const thread = document.getElementById('comm-thread');
+    const txt = input?.value?.trim();
+    if(!txt) return;
+    const div = document.createElement('div');
+    div.style.marginTop = '8px';
+    div.innerHTML = `<div style="text-align:right;"><b>You:</b> ${escapeHtml(txt)}</div>`;
+    thread?.appendChild(div);
+    thread.scrollTop = thread.scrollHeight;
+    if(input) input.value = '';
+    setTimeout(()=> {
+      const r = document.createElement('div');
+      r.style.marginTop = '6px';
+      r.innerHTML = `<div><b>Insurer:</b> (auto reply) Received.</div>`;
+      thread?.appendChild(r);
+      thread.scrollTop = thread.scrollHeight;
+    }, 600);
   });
-
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  // close modal when clicking on overlay
+  document.getElementById('report-modal')?.addEventListener('click', function(e){ if(e.target === this) this.classList.remove('show'); });
+  document.getElementById('comm-modal')?.addEventListener('click', function(e){ if(e.target === this) this.classList.remove('show'); });
   // --- Task checklist behaviour (added) ---
   (function(){
     function updateStepState(n){
@@ -2302,9 +2394,13 @@ document.addEventListener('DOMContentLoaded', function(){
       if(role === 'insurer'){
         if(regulatorView) regulatorView.style.display = 'none';
         if(insurerView) insurerView.style.display = 'block';
+        // hide configuration dashboard for insurer role
+        if(config) config.style.display = 'none';
       } else {
         if(regulatorView) regulatorView.style.display = '';
         if(insurerView) insurerView.style.display = 'none';
+        // show configuration dashboard for regulator role
+        if(config) config.style.display = '';
       }
       // small scroll to top to position view
       window.scrollTo({top:0, behavior:'smooth'});
