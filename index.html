@@ -941,7 +941,7 @@
   }
 
   /* ========== Responsive Adjustments ========== */
-  @media (max-width: 1024px) {
+  @media (max-width: 768px) {
     .step-tasks {
       position: static;
       flex: 1 1 100%;
@@ -1234,7 +1234,7 @@
     <!-- FLOW -->
     <div id="flow" style="display:none;">
       <div class="steps" id="steps">
-        <div class="step active" data-step="1">1. Create Inspection</div>
+        <div class="step" data-step="1">1. Create Inspection</div>
         <div class="step" data-step="2">2. Data Fetch (Status)</div>
         <div class="step" data-step="3">3. Data Validation</div>
         <div class="step" data-step="4">4. Regulatory Check</div>
@@ -1243,7 +1243,7 @@
         <div class="step" data-step="7">7. Observations & Report</div>
       </div>
 
-      <div id="area">
+      <div id="area" style="margin-top:var(--spacing-xl);">
         <!-- Step 1 -->
         <div class="card" id="step-1">
           <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Create New Inspection <span class="chip stage-chip" data-step="1" style="display:none;">Stage completed</span></h3>
@@ -1365,7 +1365,7 @@
               </div>
               <div style="margin-top:var(--spacing-2xl); display:flex; align-items:center; gap:var(--spacing-lg); flex-wrap:wrap;">
                 <button id="create-inspection" type="button" class="secondary">Create Inspection</button>
-                <div class="muted">Team will be notified (simulated).</div>
+                <div class="muted">Assigned Members and Insurance Company will be notified (simulated).</div>
               </div>
             </div>
             <aside class="step-tasks" data-step="1">
@@ -1617,7 +1617,12 @@
                   <div class="muted">Notes / Evidence</div>
                   <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
                   <div class="row" style="margin-top:6px; align-items:center;">
+                    <button type="button" class="btn small">Upload Evidence</button>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <aside class="step-tasks" data-step="6">
               <h4>Tasks in this stage</h4>
               <ul class="task-list">
@@ -1630,41 +1635,69 @@
           </div>
         </div>
 
-        <!-- Step 7 -->
+        <!-- Step 7: Observations & Report -->
         <div class="card" id="step-7" style="display:none; margin-top:var(--spacing-xl);">
-          <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Observation & Finding Management <span class="chip stage-chip" data-step="7" style="display:none;">Stage completed</span></h3>
+          <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Observations & Report <span class="chip stage-chip" data-step="7" style="display:none;">Stage completed</span></h3>
           <div class="step-layout">
             <div class="step-main">
+              <!-- Observations Table -->
               <table>
-                <thead><tr><th>Observation</th><th>Severity</th><th>Evidence Count</th><th>Status</th></tr></thead>
-                <tbody id="obs-table">
-                  <tr><td>Delayed claim TAT beyond SLA in 12 cases</td><td><span class="chip miss">High</span></td><td>3</td><td>Draft</td></tr>
-                  <tr><td>Missing policy IDs in claims</td><td><span class="chip warn">Medium</span></td><td>2</td><td>Draft</td></tr>
+                <thead>
+                  <tr>
+                    <th>Observation</th>
+                    <th>Severity</th>
+                    <th>Evidence Count</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="obs-table-step7">
+                  <tr>
+                    <td>Delayed claim TAT beyond SLA in 12 cases</td>
+                    <td><span class="chip miss">High</span></td>
+                    <td>3</td>
+                    <td>Draft</td>
+                  </tr>
+                  <tr>
+                    <td>Missing policy IDs in claims</td>
+                    <td><span class="chip warn">Medium</span></td>
+                    <td>2</td>
+                    <td>Draft</td>
+                  </tr>
                 </tbody>
               </table>
-              <div class="row" style="margin-top:8px;">
-                <input id="obs-text" placeholder="Issue, rule breached, evidence, impact..." style="flex:2;">
-                <select id="obs-sev"><option>High</option><option>Medium</option><option>Low</option></select>
-                <button id="add-obs" type="button">Add Observation</button>
+
+              <!-- Add Observation Form -->
+              <div class="row" style="margin-top:var(--spacing-lg);">
+                <input id="obs-text-step7" placeholder="Issue, rule breached, evidence, impact..." style="flex:2;">
+                <select id="obs-sev-step7" style="flex:0 0 140px;">
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+                <button id="add-obs-step7" type="button">Add Observation</button>
               </div>
-              <div class="card" style="margin-top:12px; padding:12px;">
-                <h4 style="margin:0 0 6px 0;">Inspection Report</h4>
+
+              <!-- Inspection Report -->
+              <div class="card" style="margin-top:var(--spacing-2xl); padding:var(--spacing-xl); background:var(--color-bg);">
+                <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Inspection Report</h4>
                 <div class="row">
                   <div class="col">
                     <label>Executive Summary</label>
-                    <textarea id="exec" style="width:100%; height:120px; margin-top:6px;">Draft executive summary...</textarea>
+                    <textarea id="exec-step7" style="width:100%; height:140px; margin-top:var(--spacing-sm);" placeholder="Draft executive summary..."></textarea>
                   </div>
                   <div class="col">
                     <label>Recommendations</label>
-                    <textarea id="reco" style="width:100%; height:120px; margin-top:6px;">Key recommendations...</textarea>
+                    <textarea id="reco-step7" style="width:100%; height:140px; margin-top:var(--spacing-sm);" placeholder="Key recommendations..."></textarea>
                   </div>
                 </div>
-                <div class="row" style="margin-top:8px;">
-                  <button id="btn-generate" type="button">Generate Report (PDF)</button>
-                  <button id="btn-download" type="button">Export Word</button>
+                <div class="row" style="margin-top:var(--spacing-lg); gap:var(--spacing-md);">
+                  <button id="btn-generate-step7" type="button">Generate Report (PDF)</button>
+                  <button id="btn-download-step7" type="button" class="secondary">Export Word</button>
                 </div>
               </div>
             </div>
+
+            <!-- Right Sidebar Tasks -->
             <aside class="step-tasks" data-step="7">
               <h4>Tasks in this stage</h4>
               <ul class="task-list">
@@ -1688,132 +1721,480 @@
     <div id="insurer-view" style="display:none;">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title" style="color:var(--color-primary);">Insurer Workspace</h3>
-          <div class="muted">Role: Insurer (demo)</div>
+          <h3 class="card-title" style="color:var(--color-primary);">Insurer Portal</h3>
+          <div class="muted">Inspection Management Dashboard</div>
         </div>
 
-        <!-- KPI Cards -->
-        <div class="kpi-grid">
-          <div class="card kpi-card">
-            <div class="kpi-title">Datasets pending submission</div>
-            <div id="kpi-pending" class="kpi-value">3</div>
+        <!-- Insurer Navigation Tabs -->
+        <div class="tabs">
+          <div class="tab active" data-insurer-target="overview">Overview</div>
+          <div class="tab" data-insurer-target="requirements">Requirements & Uploads</div>
+          <div class="tab" data-insurer-target="reports">Reports</div>
+          <div class="tab" data-insurer-target="observations">Responses to Observations</div>
+          <div class="tab" data-insurer-target="history">History</div>
+        </div>
+
+        <!-- TAB 1: OVERVIEW -->
+        <div id="insurer-overview" class="insurer-content-panel" style="display:block;">
+          <div class="page-header">
+            <h2>Current Inspection</h2>
+            <div class="muted">Inspection details and status</div>
           </div>
-          <div class="card kpi-card">
-            <div class="kpi-title">Validation issues to resolve</div>
-            <div id="kpi-validation" class="kpi-value">27</div>
+
+          <!-- Inspection Details Card -->
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Inspection Details</h4>
+            <div class="row">
+              <div class="col">
+                <div style="margin-bottom:var(--spacing-md);"><strong>Inspection ID:</strong> INSP-2025-001</div>
+                <div style="margin-bottom:var(--spacing-md);"><strong>Entity Name:</strong> ABC Insurance Company Ltd.</div>
+              </div>
+              <div class="col">
+                <div style="margin-bottom:var(--spacing-md);"><strong>Status:</strong> <span class="chip warn">In Progress</span></div>
+                <div style="margin-bottom:var(--spacing-md);"><strong>Next Deadline:</strong> 2025-11-30</div>
+              </div>
+            </div>
           </div>
-          <div class="card kpi-card">
-            <div class="kpi-title">Clarification requests pending</div>
-            <div id="kpi-clarify" class="kpi-value">2</div>
+
+          <!-- Summary Cards -->
+          <div class="grid" style="margin-top:var(--spacing-xl);">
+            <div class="card">
+              <h4 style="margin:0 0 var(--spacing-sm) 0;">Pre-inspection Data</h4>
+              <div class="big" style="color:var(--color-accent-success);">Complete</div>
+              <div class="muted" style="margin-top:var(--spacing-xs);">All data submitted</div>
+            </div>
+            <div class="card">
+              <h4 style="margin:0 0 var(--spacing-sm) 0;">Requirements Status</h4>
+              <div class="big" style="color:var(--color-accent-warning);">3 Pending</div>
+              <div class="muted" style="margin-top:var(--spacing-xs);">2 Submitted, 1 Overdue</div>
+            </div>
+            <div class="card">
+              <h4 style="margin:0 0 var(--spacing-sm) 0;">Exit Report</h4>
+              <div class="big" style="color:var(--color-text-muted);">Not Available</div>
+              <div class="muted" style="margin-top:var(--spacing-xs);">Awaiting completion</div>
+            </div>
+            <div class="card">
+              <h4 style="margin:0 0 var(--spacing-sm) 0;">Final Report</h4>
+              <div class="big" style="color:var(--color-text-muted);">Not Available</div>
+              <div class="muted" style="margin-top:var(--spacing-xs);">Inspection ongoing</div>
+            </div>
           </div>
-          <div class="card kpi-card">
-            <div class="kpi-title">Upcoming deadlines</div>
-            <div id="kpi-deadlines" class="kpi-value">2</div>
+
+          <!-- Inspection Timeline -->
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Inspection Timeline</h4>
+            <div style="display:flex; flex-direction:column; gap:var(--spacing-md);">
+              <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-accent-success-bg); border-radius:var(--radius-md);">
+                <span class="chip ok" style="margin-right:var(--spacing-md);">✓</span>
+                <div style="flex:1;">
+                  <strong>Pre-inspection Data Submission</strong>
+                  <div class="muted">Completed on 2025-10-15</div>
+                </div>
+              </div>
+              <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-accent-warning-bg); border-radius:var(--radius-md);">
+                <span class="chip warn" style="margin-right:var(--spacing-md);">⟳</span>
+                <div style="flex:1;">
+                  <strong>Onsite Inspection</strong>
+                  <div class="muted">In Progress - Started 2025-11-05</div>
+                </div>
+              </div>
+              <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-bg); border-radius:var(--radius-md);">
+                <span class="chip info" style="margin-right:var(--spacing-md);">◯</span>
+                <div style="flex:1;">
+                  <strong>Exit Report</strong>
+                  <div class="muted">Pending</div>
+                </div>
+              </div>
+              <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-bg); border-radius:var(--radius-md);">
+                <span class="chip info" style="margin-right:var(--spacing-md);">◯</span>
+                <div style="flex:1;">
+                  <strong>Final Report</strong>
+                  <div class="muted">Pending</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="flex-row">
-          <div style="flex:1;">
-            <!-- Messages from Regulator -->
-            <div class="card" style="margin-top:var(--spacing-xl);">
-              <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Messages from Regulator</h4>
-              <div class="muted">Recent communications</div>
-              <ul id="insurer-messages" style="margin-top:var(--spacing-md); padding-left:1.25rem;">
-                <li>No messages.</li>
+        <!-- TAB 2: REQUIREMENTS & UPLOADS -->
+        <div id="insurer-requirements" class="insurer-content-panel" style="display:none;">
+          <div class="page-header">
+            <h2>Requirements & Uploads</h2>
+            <div class="muted">Manage pre-inspection and during-inspection requirements</div>
+          </div>
+
+          <!-- Pre-inspection Requirements -->
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">A. Pre-inspection Requirements</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Requirement ID</th>
+                  <th>Description</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Download Format</th>
+                  <th>Upload Response</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>REQ-PRE-001</td>
+                  <td>Financial Statements (Last 3 years)</td>
+                  <td>2025-10-10</td>
+                  <td><span class="chip ok">Submitted</span></td>
+                  <td><button class="btn small link" type="button">Download Template</button></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-pre-001').click()">Upload</button><input type="file" id="upload-pre-001" style="display:none;"></td>
+                </tr>
+                <tr>
+                  <td>REQ-PRE-002</td>
+                  <td>Claims Data (DSF Format)</td>
+                  <td>2025-10-10</td>
+                  <td><span class="chip ok">Submitted</span></td>
+                  <td><button class="btn small link" type="button">Download Template</button></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-pre-002').click()">Upload</button><input type="file" id="upload-pre-002" style="display:none;"></td>
+                </tr>
+                <tr>
+                  <td>REQ-PRE-003</td>
+                  <td>Grievance Register</td>
+                  <td>2025-10-10</td>
+                  <td><span class="chip ok">Submitted</span></td>
+                  <td><button class="btn small link" type="button">Download Template</button></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-pre-003').click()">Upload</button><input type="file" id="upload-pre-003" style="display:none;"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Upload Section -->
+            <div style="margin-top:var(--spacing-xl); padding:var(--spacing-lg); background:var(--color-bg); border-radius:var(--radius-md);">
+              <h5 style="margin:0 0 var(--spacing-md) 0;">Upload New Document</h5>
+              <div class="row">
+                <div class="col">
+                  <label>Select Requirement</label>
+                  <select id="pre-req-select" style="width:100%;">
+                    <option>REQ-PRE-001</option>
+                    <option>REQ-PRE-002</option>
+                    <option>REQ-PRE-003</option>
+                  </select>
+                </div>
+                <div class="col">
+                  <label>File</label>
+                  <input type="file" id="pre-file-upload" style="width:100%;">
+                </div>
+              </div>
+              <div style="margin-top:var(--spacing-md);">
+                <label>Comment (Optional)</label>
+                <textarea id="pre-comment" placeholder="Add any relevant comments..." style="width:100%; height:80px;"></textarea>
+              </div>
+              <div style="margin-top:var(--spacing-md);">
+                <button type="button" class="btn">Submit Document</button>
+                <span class="muted" style="margin-left:var(--spacing-md);">Last upload: 2025-10-09 14:32</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Requirements During Inspection -->
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">B. Requirements During Inspection</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Requirement ID</th>
+                  <th>Description</th>
+                  <th>Raised On</th>
+                  <th>Deadline</th>
+                  <th>Status</th>
+                  <th>Response Upload</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>REQ-DUR-001</td>
+                  <td>Additional Claims Details for Policy IDs 1001-1050</td>
+                  <td>2025-11-08</td>
+                  <td>2025-11-18</td>
+                  <td><span class="chip warn">Pending</span></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-dur-001').click()">Upload</button><input type="file" id="upload-dur-001" style="display:none;"></td>
+                </tr>
+                <tr>
+                  <td>REQ-DUR-002</td>
+                  <td>Underwriting Guidelines Documentation</td>
+                  <td>2025-11-10</td>
+                  <td>2025-11-20</td>
+                  <td><span class="chip warn">Pending</span></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-dur-002').click()">Upload</button><input type="file" id="upload-dur-002" style="display:none;"></td>
+                </tr>
+                <tr>
+                  <td>REQ-DUR-003</td>
+                  <td>Agent Commission Structure Details</td>
+                  <td>2025-11-06</td>
+                  <td>2025-11-15</td>
+                  <td><span class="chip miss">Overdue</span></td>
+                  <td><button class="btn small" type="button" onclick="document.getElementById('upload-dur-003').click()">Upload</button><input type="file" id="upload-dur-003" style="display:none;"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Upload History -->
+            <div style="margin-top:var(--spacing-xl);">
+              <h5 style="margin:0 0 var(--spacing-md) 0;">Upload History</h5>
+              <ul style="list-style:none; padding:0;">
+                <li style="padding:var(--spacing-sm); border-bottom:1px solid var(--color-border);">
+                  <strong>REQ-DUR-001</strong> - claims_additional_data.xlsx
+                  <span class="muted" style="margin-left:var(--spacing-md);">Uploaded: 2025-11-12 10:45</span>
+                  <span class="chip ok" style="margin-left:var(--spacing-sm);">Accepted</span>
+                </li>
+                <li style="padding:var(--spacing-sm); border-bottom:1px solid var(--color-border);">
+                  <strong>REQ-DUR-002</strong> - underwriting_guidelines_v2.pdf
+                  <span class="muted" style="margin-left:var(--spacing-md);">Uploaded: 2025-11-13 15:20</span>
+                  <span class="chip warn" style="margin-left:var(--spacing-sm);">Under Review</span>
+                </li>
               </ul>
             </div>
+          </div>
+        </div>
 
-            <!-- Insurer inspections list -->
-            <div class="card" style="margin-top:var(--spacing-xl);">
-              <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Your Inspections</h4>
-              <table style="width:100%;">
-                <thead><tr><th>ID</th><th>Period</th><th>Status</th><th>Deadline</th></tr></thead>
-                <tbody id="insurer-inspections-body">
-                  <tr data-inspection="INSP-1101"><td>INSP-1101</td><td>2025-Q3</td><td>Data Fetch</td><td>2025-11-25</td></tr>
-                  <tr data-inspection="INSP-0999"><td>INSP-0999</td><td>2024-Q4</td><td>Closed</td><td>—</td></tr>
-                </tbody>
-              </table>
+        <!-- TAB 3: REPORTS -->
+        <div id="insurer-reports" class="insurer-content-panel" style="display:none;">
+          <div class="page-header">
+            <h2>Reports</h2>
+            <div class="muted">Download inspection reports and documents</div>
+          </div>
+
+          <div class="row" style="margin-top:var(--spacing-xl);">
+            <div class="col">
+              <!-- Exit Report -->
+              <div class="card">
+                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Exit Report</h4>
+                <div class="muted">Final exit report from onsite inspection</div>
+                <div style="margin-top:var(--spacing-lg);">
+                  <button type="button" class="btn" disabled>Download Exit Report</button>
+                  <div class="muted" style="margin-top:var(--spacing-sm);">Not yet available</div>
+                </div>
+              </div>
+
+              <!-- Pending Requirements -->
+              <div class="card" style="margin-top:var(--spacing-xl);">
+                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Pending Requirements List</h4>
+                <div class="muted">Summary of outstanding requirements</div>
+                <div style="margin-top:var(--spacing-lg);">
+                  <button type="button" class="btn">Download Pending List</button>
+                  <div class="muted" style="margin-top:var(--spacing-sm);">Last updated: 2025-11-15</div>
+                </div>
+              </div>
             </div>
 
-            <!-- Upload / template actions -->
-            <div class="card" style="margin-top:var(--spacing-xl);">
-              <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">DSF Template / Upload</h4>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <button id="insurer-download-dsf" class="link" type="button">Download DSF Template</button>
+            <div class="col">
+              <!-- Final Report -->
+              <div class="card">
+                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Final Inspection Report</h4>
+                <div class="muted">Complete inspection report with findings</div>
+                <div style="margin-top:var(--spacing-lg);">
+                  <button type="button" class="btn" disabled>Download Final Report</button>
+                  <div class="muted" style="margin-top:var(--spacing-sm);">Not yet available</div>
+                </div>
               </div>
-              <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
-                <input id="insurer-upload-file" type="file" style="flex:1;">
-                <button id="insurer-upload-btn" type="button">Upload</button>
-              </div>
-              <div style="margin-top:8px;">Status: <span id="insurer-validation-status">Not submitted</span></div>
-            </div>
 
-            <!-- Final report (visible only when inspection completed) -->
-            <div id="insurer-final-report" class="card" style="display:none; margin-top:12px; text-align:center;">
-              <h4 style="margin:0 0 8px 0;">Final Report</h4>
-              <div class="muted">Inspection completed</div>
-              <div style="margin-top:8px;">
-                <button id="insurer-download-report" class="btn">Download Report</button>
+              <!-- Annexures -->
+              <div class="card" style="margin-top:var(--spacing-xl);">
+                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Report Annexures</h4>
+                <div class="muted">Supporting documents and annexures</div>
+                <div style="margin-top:var(--spacing-lg);">
+                  <button type="button" class="btn" disabled>Download Annexures</button>
+                  <div class="muted" style="margin-top:var(--spacing-sm);">Available after final report</div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- RIGHT SIDE: Insurer Details Panel with Tabs -->
-          <aside style="flex:1; min-width:500px;">
-            <div class="card" style="margin-top:var(--spacing-xl);">
-              <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Insurer Details Panel</h4>
-              
-              <!-- Tabs -->
-              <div class="insurer-tabs">
-                <div class="insurer-tab active" data-insurer-tab="dsf">DSF Status</div>
-                <div class="insurer-tab" data-insurer-tab="validation">Validation Issues</div>
-                <div class="insurer-tab" data-insurer-tab="clarifications">Clarification Requests</div>
-              </div>
+          <!-- Downloaded Reports History -->
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Download History</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Downloaded On</th>
+                  <th>Downloaded By</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pending Requirements List</td>
+                  <td>2025-11-15 09:30</td>
+                  <td>admin@abcinsurance.com</td>
+                  <td><button class="btn small link" type="button">Download Again</button></td>
+                </tr>
+                <tr>
+                  <td>Pre-inspection Data Template</td>
+                  <td>2025-10-01 14:15</td>
+                  <td>data@abcinsurance.com</td>
+                  <td><button class="btn small link" type="button">Download Again</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-              <!-- Tab Content -->
-              <div id="insurer-tab-container">
-                <!-- DSF Status Panel -->
-                <div class="insurer-tab-panel active" data-panel="dsf">
-                  <div style="overflow-x:auto;">
-                  <table id="insurer-dsf-table" style="min-width:100%;">
-                    <thead><tr><th>Dataset</th><th>Period</th><th>Template</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                      <!-- populated by JS from step-2 ds-status -->
-                    </tbody>
-                  </table>
-                  </div>
-                </div>
+        <!-- TAB 4: RESPONSES TO OBSERVATIONS -->
+        <div id="insurer-observations" class="insurer-content-panel" style="display:none;">
+          <div class="page-header">
+            <h2>Responses to Observations</h2>
+            <div class="muted">Respond to inspection observations and findings</div>
+          </div>
 
-                <!-- Validation Issues Panel -->
-                <div class="insurer-tab-panel" data-panel="validation">
-                  <div style="overflow-x:auto;">
-                  <table id="insurer-val-issues" style="min-width:100%;">
-                    <thead><tr><th>Issue</th><th>Count</th><th>Severity</th><th>File</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                      <!-- populated by JS (reads step-3 summary / exceptions) -->
-                    </tbody>
-                  </table>
-                  </div>
-                </div>
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Observation ID</th>
+                  <th>Title</th>
+                  <th>Severity</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>OBS-001</td>
+                  <td>Delayed Claims Settlement beyond SLA</td>
+                  <td><span class="chip miss">High</span></td>
+                  <td><span class="chip warn">Response Required</span></td>
+                  <td><button class="btn small" type="button" onclick="openObservationResponse('OBS-001')">Respond</button></td>
+                </tr>
+                <tr>
+                  <td>OBS-002</td>
+                  <td>Incomplete Grievance Register Data</td>
+                  <td><span class="chip warn">Medium</span></td>
+                  <td><span class="chip warn">Response Required</span></td>
+                  <td><button class="btn small" type="button" onclick="openObservationResponse('OBS-002')">Respond</button></td>
+                </tr>
+                <tr>
+                  <td>OBS-003</td>
+                  <td>Commission Payment Variance</td>
+                  <td><span class="chip info">Low</span></td>
+                  <td><span class="chip ok">Response Submitted</span></td>
+                  <td><button class="btn small link" type="button" onclick="viewObservationResponse('OBS-003')">View Response</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-                <!-- Clarification Requests Panel -->
-                <div class="insurer-tab-panel" data-panel="clarifications">
-                  <div style="overflow-x:auto;">
-                  <table id="insurer-clar-requests" style="min-width:100%;">
-                    <thead><tr><th>Case ID</th><th>Request</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                      <!-- populated by JS from #clarify-table -->
-                    </tbody>
-                  </table>
-                  </div>
-                </div>
-              </div>
+          <!-- Response Panel (Initially Hidden) -->
+          <div id="observation-response-panel" class="card" style="display:none; margin-top:var(--spacing-xl); border:2px solid var(--color-primary);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-lg);">
+              <h4 style="margin:0; color:var(--color-primary);">Response to <span id="obs-response-id">OBS-001</span></h4>
+              <button type="button" class="btn small secondary" onclick="closeObservationResponse()">Close</button>
             </div>
-          </aside>
+            
+            <div style="margin-bottom:var(--spacing-lg);">
+              <label>Response Details</label>
+              <textarea id="obs-response-text" placeholder="Provide detailed response to the observation..." style="width:100%; height:150px; margin-top:var(--spacing-xs);"></textarea>
+            </div>
+
+            <div style="margin-bottom:var(--spacing-lg);">
+              <label>Attach Supporting Documents</label>
+              <input type="file" id="obs-response-file" multiple style="width:100%; margin-top:var(--spacing-xs);">
+              <div class="muted" style="margin-top:var(--spacing-xs);">You can attach multiple files</div>
+            </div>
+
+            <div style="display:flex; gap:var(--spacing-md);">
+              <button type="button" class="btn" onclick="submitObservationResponse()">Submit Response</button>
+              <button type="button" class="btn secondary" onclick="saveObservationDraft()">Save as Draft</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: HISTORY -->
+        <div id="insurer-history" class="insurer-content-panel" style="display:none;">
+          <div class="page-header">
+            <h2>Activity History</h2>
+            <div class="muted">Complete log of all uploads, downloads, and actions</div>
+          </div>
+
+          <div class="card" style="margin-top:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">All Activities</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Activity Type</th>
+                  <th>Description</th>
+                  <th>Requirement/Document</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2025-11-15 09:30</td>
+                  <td><span class="chip info">Download</span></td>
+                  <td>Downloaded Pending Requirements List</td>
+                  <td>pending_requirements_2025-11-15.pdf</td>
+                  <td><span class="chip ok">Success</span></td>
+                </tr>
+                <tr>
+                  <td>2025-11-13 15:20</td>
+                  <td><span class="chip warn">Upload</span></td>
+                  <td>Uploaded Underwriting Guidelines</td>
+                  <td>REQ-DUR-002</td>
+                  <td><span class="chip warn">Under Review</span></td>
+                </tr>
+                <tr>
+                  <td>2025-11-12 10:45</td>
+                  <td><span class="chip warn">Upload</span></td>
+                  <td>Uploaded Additional Claims Data</td>
+                  <td>REQ-DUR-001</td>
+                  <td><span class="chip ok">Accepted</span></td>
+                </tr>
+                <tr>
+                  <td>2025-10-09 14:32</td>
+                  <td><span class="chip warn">Upload</span></td>
+                  <td>Submitted Grievance Register</td>
+                  <td>REQ-PRE-003</td>
+                  <td><span class="chip ok">Accepted</span></td>
+                </tr>
+                <tr>
+                  <td>2025-10-09 14:20</td>
+                  <td><span class="chip warn">Upload</span></td>
+                  <td>Submitted Claims Data (DSF Format)</td>
+                  <td>REQ-PRE-002</td>
+                  <td><span class="chip ok">Accepted</span></td>
+                </tr>
+                <tr>
+                  <td>2025-10-09 14:10</td>
+                  <td><span class="chip warn">Upload</span></td>
+                  <td>Submitted Financial Statements</td>
+                  <td>REQ-PRE-001</td>
+                  <td><span class="chip ok">Accepted</span></td>
+                </tr>
+                <tr>
+                  <td>2025-10-01 14:15</td>
+                  <td><span class="chip info">Download</span></td>
+                  <td>Downloaded Pre-inspection Data Template</td>
+                  <td>pre_inspection_template.xlsx</td>
+                  <td><span class="chip ok">Success</span></td>
+                </tr>
+                <tr>
+                  <td>2025-09-28 11:00</td>
+                  <td><span class="chip">Action</span></td>
+                  <td>Inspection Initiated</td>
+                  <td>INSP-2025-001</td>
+                  <td><span class="chip ok">Confirmed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Export Options -->
+          <div style="margin-top:var(--spacing-xl); text-align:right;">
+            <button type="button" class="btn secondary">Export History (CSV)</button>
+            <button type="button" class="btn secondary" style="margin-left:var(--spacing-md);">Export History (PDF)</button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </div> <!-- end insurer-view -->
+  </main>
   
   <!-- ====================== CONFIGURATION DASHBOARD ====================== -->
   <section id="config-root" class="app-shell" style="display:none;">
@@ -1983,9 +2364,8 @@
         <div style="flex:0 0 120px; text-align:right;"><span class="chip warn">Partial</span></div>
       </div>
     </div>
-  </section>
-</section>
-<!-- config sections end -->
+  </section> <!-- end config-root -->
+</section> <!-- end app-root -->
 
 <!-- global footer (moved to page end so it does not sit between KPI cards and config) -->
 <div class="footer">Prototype - Developed by InsurTech Team</div>
@@ -2162,41 +2542,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   //showList('completed');  // don't show completed by default
 
-  // Go to a specific step section and show flow
-  function gotoStep(n){
-    const lists = $('#lists');
-    const flow  = $('#flow');
-    if(lists) lists.style.display = 'none';
-    if(flow)  flow.style.display  = 'block';
-    // toggle active chip + panels
-    $$('.step').forEach(s => s.classList.toggle('active', s.dataset.step == String(n)));
-    for(let i=1;i<=7;i++){
-      const area = $('#step-'+i);
-      if(area) area.style.display = (i===n)?'block':'none';
-    }
-    flow?.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-  window.gotoStep = gotoStep;
-
-  // Toolbar actions
-  // === Config Tabs behavior ===
-  function initConfigTabs(){
-    const root = document.getElementById('config-root');
-    if(!root) return;
-    const tabs = root.querySelectorAll('.tab');
-    // new ordered list of sections (matches the reduced tabs)
-    const sectionIds = ['data-validation','reg-rules','analytics','risk-matrix','early-warning','insp-templates','integrations'];
-    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-    function activate(target){
-      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-target')===target));
-      sections.forEach(sec => { sec.style.display = (sec.id === target) ? 'block' : 'none'; });
-    }
-    tabs.forEach(t => t.addEventListener('click', ()=> activate(t.getAttribute('data-target'))));
-    const first = tabs[0];
-    const defaultTarget = (root.querySelector('.tab.active') || first)?.getAttribute('data-target') || 'reg-rules';
-    activate(defaultTarget);
-  }
-
+  // Show/hide main sections (home, flow, lists, config)
   function showOnly(section){
     const lists = $('#lists');
     const flow  = $('#flow');
@@ -2240,6 +2586,58 @@ document.addEventListener('DOMContentLoaded', function(){
       if(supToolbar) supToolbar.style.display='flex'; // Show toolbar
     }
   }
+
+  // Go to a specific step section and show flow
+  function gotoStep(n){
+    console.log('gotoStep called with n=', n);
+    // First ensure we're showing the flow view
+    showOnly('flow');
+    
+    const flow  = $('#flow');
+    if(flow) {
+      flow.style.display = 'block';
+      console.log('Flow display set to block');
+    } else {
+      console.error('Flow element not found!');
+    }
+    
+    // toggle active chip + panels
+    $$('.step').forEach(s => s.classList.toggle('active', s.dataset.step == String(n)));
+    
+    // Show/hide step content by directly setting display style
+    for(let i=1;i<=7;i++){
+      const stepDiv = $('#step-'+i);
+      if(stepDiv) {
+        stepDiv.style.display = (i===n) ? 'block' : 'none';
+        if(i===n) console.log(`Step ${i} display set to block`);
+      } else {
+        console.error(`step-${i} not found!`);
+      }
+    }
+    flow?.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  window.gotoStep = gotoStep;
+
+  // Toolbar actions
+  // === Config Tabs behavior ===
+  function initConfigTabs(){
+    const root = document.getElementById('config-root');
+    if(!root) return;
+    const tabs = root.querySelectorAll('.tab');
+    // new ordered list of sections (matches the reduced tabs)
+    const sectionIds = ['data-validation','reg-rules','analytics','risk-matrix','early-warning','insp-templates','integrations'];
+    const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+    function activate(target){
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-target')===target));
+      sections.forEach(sec => { sec.style.display = (sec.id === target) ? 'block' : 'none'; });
+    }
+    tabs.forEach(t => t.addEventListener('click', ()=> activate(t.getAttribute('data-target'))));
+    const first = tabs[0];
+    const defaultTarget = (root.querySelector('.tab.active') || first)?.getAttribute('data-target') || 'reg-rules';
+    activate(defaultTarget);
+  }
+
+  // Button click handlers
   $('#btn-home')?.addEventListener('click', ()=> {
     showOnly('home');
     // ensure the home tabs reset to the default (first) tab (Risk Based Supervision)
@@ -2530,18 +2928,24 @@ document.addEventListener('DOMContentLoaded', function(){
     const roleSwitch = document.getElementById('role-switch');
     const regulatorView = document.getElementById('regulator-view');
     const insurerView = document.getElementById('insurer-view');
+    const config = document.getElementById('config-root');
+    const homeBtn = document.getElementById('btn-home');
 
     function setRole(role){
       if(role === 'insurer'){
         if(regulatorView) regulatorView.style.display = 'none';
         if(insurerView) insurerView.style.display = 'block';
-        // hide configuration dashboard for insurer role
         if(config) config.style.display = 'none';
+        // Hide regulator home button when in insurer mode
+        if(homeBtn) homeBtn.style.display = 'none';
       } else {
-        if(regulatorView) regulatorView.style.display = '';
+        if(regulatorView) regulatorView.style.display = 'block';
         if(insurerView) insurerView.style.display = 'none';
-        // show configuration dashboard for regulator role
-        if(config) config.style.display = '';
+        if(config) config.style.display = 'none'; // Keep config hidden initially
+        // Show regulator home button
+        if(homeBtn) homeBtn.style.display = '';
+        // Reset to home view for regulator
+        showOnly('home');
       }
       // small scroll to top to position view
       window.scrollTo({top:0, behavior:'smooth'});
@@ -2550,6 +2954,31 @@ document.addEventListener('DOMContentLoaded', function(){
     roleSwitch?.addEventListener('change', function(){
       setRole(this.value);
     });
+
+    // Insurer tab navigation
+    (function(){
+      const insurerRoot = document.getElementById('insurer-view');
+      if(!insurerRoot) return;
+      const tabs = Array.from(insurerRoot.querySelectorAll('.tabs .tab'));
+      const panels = ['overview', 'requirements', 'reports', 'observations', 'history'];
+
+      function activateInsurerTab(target){
+        // mark active tab
+        tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-insurer-target')===target));
+        // show only the selected panel
+        panels.forEach(p => {
+          const el = document.getElementById('insurer-' + p);
+          if(el) el.style.display = (p === target) ? 'block' : 'none';
+        });
+      }
+
+      // wire up clicks
+      tabs.forEach(t => t.addEventListener('click', () => activateInsurerTab(t.getAttribute('data-insurer-target'))));
+
+      // ensure initial panel visible
+      const active = tabs.find(t => t.classList.contains('active')) || tabs[0];
+      if(active) activateInsurerTab(active.getAttribute('data-insurer-target'));
+    })();
 
     // inspector row click: update details panel
     document.getElementById('insurer-inspections-body')?.addEventListener('click', function(e){
@@ -2933,6 +3362,53 @@ document.addEventListener('DOMContentLoaded', function(){
       if(e.target === editModal) closeEditModal();
     });
   })();
+
+  // === Observation Response Functions ===
+  window.openObservationResponse = function(obsId){
+    const panel = document.getElementById('observation-response-panel');
+    const obsIdEl = document.getElementById('obs-response-id');
+    const textArea = document.getElementById('obs-response-text');
+    const fileInput = document.getElementById('obs-response-file');
+    
+    if(obsIdEl) obsIdEl.textContent = obsId;
+    if(textArea) textArea.value = '';
+    if(fileInput) fileInput.value = '';
+    if(panel) {
+      panel.style.display = 'block';
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  window.closeObservationResponse = function(){
+    const panel = document.getElementById('observation-response-panel');
+    if(panel) panel.style.display = 'none';
+  };
+
+  window.submitObservationResponse = function(){
+    const obsId = document.getElementById('obs-response-id')?.textContent;
+    const responseText = document.getElementById('obs-response-text')?.value.trim();
+    const fileInput = document.getElementById('obs-response-file');
+    
+    if(!responseText){
+      alert('Please provide a response before submitting.');
+      return;
+    }
+    
+    const fileCount = fileInput?.files?.length || 0;
+    const fileMsg = fileCount > 0 ? ` with ${fileCount} attachment(s)` : '';
+    
+    alert(`Response submitted for ${obsId}${fileMsg}\n\nYour response will be reviewed by the inspection team.`);
+    closeObservationResponse();
+  };
+
+  window.saveObservationDraft = function(){
+    const obsId = document.getElementById('obs-response-id')?.textContent;
+    alert(`Draft saved for ${obsId}\n\nYou can continue editing later.`);
+  };
+
+  window.viewObservationResponse = function(obsId){
+    alert(`Viewing response for ${obsId}\n\n[This would show the previously submitted response]`);
+  };
 });
 </script>
 </body>
