@@ -975,6 +975,147 @@
       width: 100%;
     }
   }
+
+  /* ========== Edit Inspection Modal ========== */
+  #edit-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 1200;
+    backdrop-filter: blur(4px);
+  }
+  #edit-modal.show { display: flex; }
+  #edit-modal .dialog {
+    width: 94%;
+    max-width: 720px;
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-border);
+  }
+  #edit-modal .dialog header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--color-border);
+  }
+  #edit-modal .form-group {
+    margin-bottom: var(--spacing-lg);
+  }
+  #edit-modal .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-main);
+    font-size: 0.875rem;
+  }
+  #edit-modal .form-group input,
+  #edit-modal .form-group select,
+  #edit-modal .form-group textarea {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+  }
+  #edit-modal .form-group input:read-only {
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+  #edit-modal .form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  #edit-modal .form-row {
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+  #edit-modal .form-row > * {
+    flex: 1;
+  }
+  #edit-modal .modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+  }
+  #edit-modal .modal-actions button {
+    padding: 0.625rem 1.25rem;
+  }
+  #edit-modal .btn-save {
+    background: var(--color-primary);
+    color: white;
+  }
+  #edit-modal .btn-postpone {
+    background: var(--color-accent-warning);
+    color: white;
+  }
+  #edit-modal .btn-drop {
+    background: var(--color-accent-error);
+    color: white;
+  }
+  #edit-modal .btn-close {
+    background: var(--color-text-main);
+    color: white;
+  }
+
+  /* Disabled edit button styling */
+  .btn.edit-btn:disabled {
+    background: var(--color-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  .btn.edit-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Tooltip for disabled edit button */
+  .edit-btn-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  .edit-btn-wrapper[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background: var(--color-text-main);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+  }
+  .edit-btn-wrapper[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    right: 12px;
+    border: 6px solid transparent;
+    border-top-color: var(--color-text-main);
+    z-index: 1000;
+  }
+
+  /* Center align specific table columns */
+  table td:nth-child(6),  /* Communication column */
+  table td:nth-child(7),  /* Modify column */
+  table th:nth-child(6),
+  table th:nth-child(7) {
+    text-align: center !important;
+  }
 </style>
 </head>
 <body>
@@ -1476,14 +1617,6 @@
                   <div class="muted">Notes / Evidence</div>
                   <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
                   <div class="row" style="margin-top:6px; align-items:center;">
-                    <input type="file" id="onsite-file">
-                    <button id="flag-risk" type="button">Flag High-Risk Issue</button>
-                  </div>
-                </div>
-              </div>
-              <div class="row" style="margin-top:10px;">
-                <button id="btn-proceed7" type="button">Proceed to Observations</button>
-              </div>
             </div>
             <aside class="step-tasks" data-step="6">
               <h4>Tasks in this stage</h4>
@@ -1683,7 +1816,7 @@
   </section>
   
   <!-- ====================== CONFIGURATION DASHBOARD ====================== -->
-<section id="config-root" class="app-shell" style="display:none;">
+  <section id="config-root" class="app-shell" style="display:none;">
   <div class="card" style="margin-bottom:var(--spacing-xl);">
     <h2 style="margin:0; color:var(--color-primary);">System Configuration Dashboard</h2>
     <div class="muted" style="margin-top:var(--spacing-sm);">Define rules, thresholds, weights, and templates that power Prototype</div>
@@ -1965,7 +2098,7 @@ document.addEventListener('DOMContentLoaded', function(){
   function showList(kind){
     const lists = $('#lists');
     const flow  = $('#flow');
-    if(lists) lists.style.display = 'grid';
+    if(lists) lists.style.display = 'block';
     if(flow)  flow.style.display  = 'none';
 
     const SAMPLE = {
@@ -1987,7 +2120,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const headEl = $('#lists thead');
     if(headEl){
       const headHtml = (kind === 'ongoing')
-        ? `<tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Communication</th></tr>`
+        ? `<tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Communication</th><th>Modify</th></tr>`
         : `<tr><th>ID</th><th>Insurer</th><th>Period</th><th>Status</th><th>Owner</th><th>Final Report</th></tr>`;
       headEl.innerHTML = headHtml;
     }
@@ -1995,23 +2128,31 @@ document.addEventListener('DOMContentLoaded', function(){
     const rows = (SAMPLE[kind]||[]).map(r => {
       if(kind === 'completed'){
         const reportBtn = `<button class="btn small view-report" data-id="${r.id}" title="View final report">View</button>`;
-        return `<tr>
+        return `<tr data-inspection='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-status="${r.status}">
                   <td>${r.id}</td>
                   <td>${r.insurer}</td>
                   <td>${r.period}</td>
-                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
+                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status.toUpperCase()}</span></td>
                   <td>${r.owner}</td>
                   <td style="width:140px; text-align:right;">${reportBtn}</td>
                 </tr>`;
       } else {
         const commBtn = `<button class="btn small comm-btn" data-id="${r.id}" title="Message insurer">Message</button>`;
-        return `<tr>
+        const isClosed = r.status === 'Closed';
+        const editBtn = isClosed 
+          ? `<div class="edit-btn-wrapper" data-tooltip="Inspection closed – modification not allowed">
+               <button class="btn small edit-btn" disabled>Edit</button>
+             </div>`
+          : `<button class="btn small edit-btn" data-id="${r.id}" title="Edit inspection">Edit</button>`;
+        
+        return `<tr data-inspection='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-status="${r.status}">
                   <td>${r.id}</td>
                   <td>${r.insurer}</td>
                   <td>${r.period}</td>
-                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status}</span></td>
+                  <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status.toUpperCase()}</span></td>
                   <td>${r.owner}</td>
                   <td style="width:140px; text-align:right;">${commBtn}</td>
+                  <td style="width:140px; text-align:right;">${editBtn}</td>
                 </tr>`;
       }
     }).join('');
@@ -2288,7 +2429,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
   }
   function closeReport(){
-    if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+    if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden', 'true'); }
   }
   // delegated click handler for view buttons (report) and comm buttons
   document.body.addEventListener('click', function(e){
@@ -2577,6 +2718,220 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Initialize on load (show all as pending initially)
     updateStep1Tasks();
+  })();
+
+  // Edit Inspection Modal Handlers
+  (function(){
+    const editModal = document.getElementById('edit-modal');
+    const editForm = document.getElementById('edit-form');
+    const editIdEl = document.getElementById('edit-id');
+    const editInspIdEl = document.getElementById('edit-insp-id');
+    const editInsurerEl = document.getElementById('edit-insurer');
+    const editStartDateEl = document.getElementById('edit-start-date');
+    const editEndDateEl = document.getElementById('edit-end-date');
+    const editStatusEl = document.getElementById('edit-status');
+    const editOwnerEl = document.getElementById('edit-owner');
+    const editRemarksEl = document.getElementById('edit-remarks');
+    
+    let currentRow = null;
+    let originalData = null;
+
+    function openEditModal(rowElement, data){
+      currentRow = rowElement;
+      originalData = JSON.parse(JSON.stringify(data)); // deep clone
+      
+      // Parse period (format: "2025-07-01 → 2025-09-30")
+      const periodParts = data.period.split(' → ');
+      const startDate = periodParts[0] || '';
+      const endDate = periodParts[1] || '';
+      
+      // Populate form
+      if(editIdEl) editIdEl.value = data.id;
+      if(editInspIdEl) editInspIdEl.textContent = data.id;
+      if(editInsurerEl) editInsurerEl.value = data.insurer;
+      if(editStartDateEl) editStartDateEl.value = startDate;
+      if(editEndDateEl) editEndDateEl.value = endDate;
+      if(editStatusEl) editStatusEl.value = data.status;
+      if(editOwnerEl) editOwnerEl.value = data.owner;
+      if(editRemarksEl) editRemarksEl.value = '';
+      
+      // Show modal
+      if(editModal){
+        editModal.classList.add('show');
+        editModal.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    function closeEditModal(){
+      if(editModal){
+        editModal.classList.remove('show');
+        editModal.setAttribute('aria-hidden', 'true');
+      }
+      currentRow = null;
+      originalData = null;
+      if(editForm) editForm.reset();
+    }
+
+    function updateRowInTable(data){
+      if(!currentRow) return;
+      
+      // Update row data attribute
+      currentRow.setAttribute('data-inspection', JSON.stringify(data));
+      currentRow.setAttribute('data-status', data.status);
+      
+      // Update visible cells
+      const cells = currentRow.querySelectorAll('td');
+      if(cells.length >= 5){
+      cells[2].textContent = data.period; // Period
+      
+      // Update status chip
+      const statusChip = cells[3].querySelector('.chip');
+      if(statusChip){
+        statusChip.className = data.status === 'Closed' ? 'chip ok' : 'chip info';
+        statusChip.textContent = data.status.toUpperCase();
+      }
+      
+      cells[4].textContent = data.owner; // Owner
+    }
+    
+    // If status changed to Closed or Dropped, disable edit button
+    if(data.status === 'Closed' || data.status === 'Dropped'){
+      const editBtnCell = cells[6];
+      if(editBtnCell){
+        editBtnCell.innerHTML = `<div class="edit-btn-wrapper" data-tooltip="Inspection ${data.status.toLowerCase()} – modification not allowed">
+                                   <button class="btn small edit-btn" disabled>Edit</button>
+                                 </div>`;
+      }
+    }
+    }
+
+    // Delegated click handler for edit buttons
+    document.body.addEventListener('click', function(e){
+      const t = e.target;
+      
+      // Handle edit button click
+      if(t && t.classList && t.classList.contains('edit-btn') && !t.disabled){
+        const row = t.closest('tr[data-inspection]');
+        if(!row) return;
+        
+        try {
+          const dataStr = row.getAttribute('data-inspection');
+          const data = JSON.parse(dataStr);
+          const status = row.getAttribute('data-status');
+          
+          // Check if closed (additional safety check)
+          if(status === 'Closed'){
+            return;
+          }
+          
+          openEditModal(row, data);
+        } catch(err){
+          console.error('Error opening edit modal:', err);
+        }
+      }
+      
+      // Handle close buttons
+      if(t && (t.id === 'edit-close-btn' || t.id === 'edit-close-btn-2')){
+        closeEditModal();
+      }
+    });
+
+    // Save Changes button
+    document.getElementById('edit-save-btn')?.addEventListener('click', function(){
+      if(!currentRow || !originalData) return;
+      
+      const updatedData = {
+        id: editIdEl?.value || originalData.id,
+        insurer: editInsurerEl?.value || originalData.insurer,
+        period: `${editStartDateEl?.value || ''} → ${editEndDateEl?.value || ''}`,
+        status: editStatusEl?.value || originalData.status,
+        owner: editOwnerEl?.value || originalData.owner
+      };
+      
+      const remarks = editRemarksEl?.value.trim();
+      if(!remarks){
+        alert('Please provide a reason for the modification.');
+        editRemarksEl?.focus();
+        return;
+      }
+      
+      // Validate dates
+      if(!editStartDateEl?.value || !editEndDateEl?.value){
+        alert('Please provide both start and end dates.');
+        return;
+      }
+      
+      updateRowInTable(updatedData);
+      alert(`Inspection ${updatedData.id} updated successfully.\nReason: ${remarks}`);
+      closeEditModal();
+    });
+
+    // Postpone Inspection button
+    document.getElementById('edit-postpone-btn')?.addEventListener('click', function(){
+      if(!currentRow || !originalData) return;
+      
+      const newEndDate = editEndDateEl?.value;
+      const originalEndDate = originalData.period.split(' → ')[1];
+      
+      // TODO: Add validation to ensure new end date is after original end date
+      if(!newEndDate){
+        alert('Please select a new end date to postpone the inspection.');
+        editEndDateEl?.focus();
+        return;
+      }
+      
+      const remarks = editRemarksEl?.value.trim();
+      if(!remarks){
+        alert('Please provide a reason for postponing.');
+        editRemarksEl?.focus();
+        return;
+      }
+      
+      const updatedData = {
+        id: editIdEl?.value || originalData.id,
+        insurer: editInsurerEl?.value || originalData.insurer,
+        period: `${editStartDateEl?.value || originalData.period.split(' → ')[0]} → ${newEndDate}`,
+        status: 'Data Fetch', // Reset to initial status
+        owner: editOwnerEl?.value || originalData.owner
+      };
+      
+      updateRowInTable(updatedData);
+      alert(`Inspection ${updatedData.id} postponed to ${newEndDate}.\nReason: ${remarks}`);
+      closeEditModal();
+    });
+
+    // Drop Inspection button
+    document.getElementById('edit-drop-btn')?.addEventListener('click', function(){
+      if(!currentRow || !originalData) return;
+      
+      const remarks = editRemarksEl?.value.trim();
+      if(!remarks){
+        alert('Please provide a reason for dropping the inspection.');
+        editRemarksEl?.focus();
+        return;
+      }
+      
+      if(!confirm(`Are you sure you want to drop inspection ${originalData.id}?\nThis action will mark the inspection as DROPPED.`)){
+        return;
+      }
+      
+      const updatedData = {
+        id: editIdEl?.value || originalData.id,
+        insurer: editInsurerEl?.value || originalData.insurer,
+        period: originalData.period,
+        status: 'Dropped',
+        owner: editOwnerEl?.value || originalData.owner
+      };
+      
+      updateRowInTable(updatedData);
+      alert(`Inspection ${updatedData.id} has been dropped.\nReason: ${remarks}`);
+      closeEditModal();
+    });
+
+    // Close modal when clicking overlay
+    editModal?.addEventListener('click', function(e){
+      if(e.target === editModal) closeEditModal();
+    });
   })();
 });
 </script>
