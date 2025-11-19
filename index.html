@@ -1156,7 +1156,8 @@
       <div style="margin-top:0.75rem; display:flex; align-items:center; gap:1rem;">
         <label for="role-switch" style="font-size:0.8125rem; margin:0; color:rgba(255,255,255,0.9);">View as:</label>
         <select id="role-switch" style="padding:0.375rem 0.625rem; border-radius:0.375rem; border:1.5px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); color:white; font-size:0.8125rem; font-weight:600;">
-          <option value="regulator" selected style="color:#1f2933; background:white;">Regulator</option>
+          <option value="regulator-admin" selected style="color:#1f2933; background:white;">Regulator - Admin</option>
+          <option value="regulator-user" style="color:#1f2933; background:white;">Regulator - User</option>
           <option value="insurer" style="color:#1f2933; background:white;">Insurer</option>
         </select>
         <button id="logout-btn" type="button" class="link" style="margin:0; font-size:0.8125rem; color:white; padding:0.25rem 0.5rem;">Logout</button>
@@ -1165,7 +1166,8 @@
   </header>
 
   <main class="app-shell" id="app">
-  <div id="regulator-view">
+  <!-- Regulator - Admin View -->
+  <div id="regulator-admin-view">
     <!-- Supervision toolbar: hidden by default, shown only when Home -> Supervision tab is active -->
     <div id="supervision-toolbar" class="toolbar" style="display:none; margin-bottom:var(--spacing-xl); padding-bottom:var(--spacing-lg); border-bottom:2px solid var(--color-border);">
       <button id="btn-start" type="button">Start New Inspection</button>
@@ -1799,7 +1801,248 @@
     </div>
 
     <!-- footer: single copy for all tabs (keeps visual style and appears on every view) -->
-   </div> <!-- end regulator-view -->
+   </div> <!-- end regulator-admin-view -->
+
+    <!-- Regulator - User View (hidden by default) -->
+    <div id="regulator-user-view" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title" style="color:var(--color-primary);">Regulator - User Workspace</h3>
+          <div class="muted">Manage your assigned inspections</div>
+        </div>
+
+        <!-- Regulator User Navigation Tabs -->
+        <div class="tabs">
+          <div class="tab active" data-user-target="assigned">Assigned Inspections</div>
+          <div class="tab" data-user-target="ongoing">View Ongoing</div>
+          <div class="tab" data-user-target="completed">View Completed</div>
+          <div class="tab" data-user-target="config">Configure</div>
+        </div>
+
+        <!-- TAB 1: ASSIGNED INSPECTIONS -->
+        <div id="user-assigned" class="user-content-panel" style="display:block; margin-top:var(--spacing-xl);">
+          <div class="page-header">
+            <h2>Assigned Inspections</h2>
+            <div class="muted">Inspections assigned to you - click Open to start working</div>
+          </div>
+
+          <!-- Current Inspection Summary (shown after selecting) -->
+          <div id="user-current-inspection-summary" class="card" style="display:none; background:var(--color-primary-bg); padding:var(--spacing-lg); margin-top:var(--spacing-xl); border:2px solid var(--color-primary);">
+            <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Current Inspection</h4>
+            <div class="row" style="gap:var(--spacing-xl);">
+              <div><strong>Inspection ID:</strong> <span id="user-current-insp-id">-</span></div>
+              <div><strong>Entity:</strong> <span id="user-current-insp-entity">-</span></div>
+              <div><strong>Status:</strong> <span id="user-current-insp-status">-</span></div>
+              <div><strong>Due Date:</strong> <span id="user-current-insp-due">-</span></div>
+            </div>
+            <div style="margin-top:var(--spacing-md);">
+              <button id="user-btn-open-workflow" type="button" class="btn">Open Workflow (Steps 2-7)</button>
+              <button id="user-btn-clear-selection" type="button" class="btn secondary" style="margin-left:var(--spacing-md);">Back to List</button>
+            </div>
+          </div>
+
+          <!-- Assigned Inspections Table -->
+          <div style="overflow-x:auto; margin-top:var(--spacing-xl);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Inspection ID</th>
+                  <th>Entity Name</th>
+                  <th>Inspection Type</th>
+                  <th>Assigned Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="user-assigned-table">
+                <tr data-insp-id="INSP-2025-001" data-entity="ABC Insurance Company Ltd." data-type="Routine" data-assigned="2025-11-01" data-due="2025-11-30" data-status="In Progress">
+                  <td><strong>INSP-2025-001</strong></td>
+                  <td>ABC Insurance Company Ltd.</td>
+                  <td>Routine</td>
+                  <td>2025-11-01</td>
+                  <td>2025-11-30</td>
+                  <td><span class="chip warn">In Progress</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+                <tr data-insp-id="INSP-2025-002" data-entity="XYZ General Insurance" data-type="Thematic" data-assigned="2025-10-15" data-due="2025-12-15" data-status="Not Started">
+                  <td><strong>INSP-2025-002</strong></td>
+                  <td>XYZ General Insurance</td>
+                  <td>Thematic</td>
+                  <td>2025-10-15</td>
+                  <td>2025-12-15</td>
+                  <td><span class="chip info">Not Started</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+                <tr data-insp-id="INSP-2025-003" data-entity="PQR Life Insurance Ltd." data-type="Trigger-based" data-assigned="2025-11-10" data-due="2025-12-20" data-status="In Progress">
+                  <td><strong>INSP-2025-003</strong></td>
+                  <td>PQR Life Insurance Ltd.</td>
+                  <td>Trigger-based</td>
+                  <td>2025-11-10</td>
+                  <td>2025-12-20</td>
+                  <td><span class="chip warn">In Progress</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: VIEW ONGOING -->
+        <div id="user-ongoing" class="user-content-panel" style="display:none; margin-top:var(--spacing-xl);">
+          <div class="page-header">
+            <h2>Ongoing Inspections</h2>
+            <div class="muted">Inspections currently in progress</div>
+          </div>
+
+          <div style="overflow-x:auto; margin-top:var(--spacing-xl);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Inspection ID</th>
+                  <th>Entity Name</th>
+                  <th>Inspection Type</th>
+                  <th>Assigned Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="user-ongoing-table">
+                <tr data-insp-id="INSP-2025-001" data-entity="ABC Insurance Company Ltd." data-type="Routine" data-assigned="2025-11-01" data-due="2025-11-30" data-status="In Progress">
+                  <td><strong>INSP-2025-001</strong></td>
+                  <td>ABC Insurance Company Ltd.</td>
+                  <td>Routine</td>
+                  <td>2025-11-01</td>
+                  <td>2025-11-30</td>
+                  <td><span class="chip warn">In Progress</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+                <tr data-insp-id="INSP-2025-003" data-entity="PQR Life Insurance Ltd." data-type="Trigger-based" data-assigned="2025-11-10" data-due="2025-12-20" data-status="In Progress">
+                  <td><strong>INSP-2025-003</strong></td>
+                  <td>PQR Life Insurance Ltd.</td>
+                  <td>Trigger-based</td>
+                  <td>2025-11-10</td>
+                  <td>2025-12-20</td>
+                  <td><span class="chip warn">In Progress</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: VIEW COMPLETED -->
+        <div id="user-completed" class="user-content-panel" style="display:none; margin-top:var(--spacing-xl);">
+          <div class="page-header">
+            <h2>Completed Inspections</h2>
+            <div class="muted">Inspections you have completed</div>
+          </div>
+
+          <div style="overflow-x:auto; margin-top:var(--spacing-xl);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Inspection ID</th>
+                  <th>Entity Name</th>
+                  <th>Inspection Type</th>
+                  <th>Assigned Date</th>
+                  <th>Completion Date</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="user-completed-table">
+                <tr data-insp-id="INSP-2024-045" data-entity="DEF Reinsurance Corp." data-type="Routine" data-assigned="2025-09-20" data-due="2025-11-20" data-status="Completed">
+                  <td><strong>INSP-2024-045</strong></td>
+                  <td>DEF Reinsurance Corp.</td>
+                  <td>Routine</td>
+                  <td>2025-09-20</td>
+                  <td>2025-11-20</td>
+                  <td><span class="chip ok">Completed</span></td>
+                  <td style="text-align:center;"><button class="btn small user-btn-open">Open</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: CONFIGURE -->
+        <div id="user-config" class="user-content-panel" style="display:none; margin-top:var(--spacing-xl);">
+          <div class="page-header">
+            <h2>User Configuration</h2>
+            <div class="muted">Customize your workspace preferences</div>
+          </div>
+
+          <div class="card" style="margin-top:var(--spacing-xl); padding:var(--spacing-xl);">
+            <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-primary);">Workspace Preferences</h4>
+            
+            <div style="margin-bottom:var(--spacing-lg);">
+              <label style="display:block; font-weight:600; margin-bottom:var(--spacing-xs);">Default Landing Tab</label>
+              <select style="width:100%; max-width:400px; padding:0.625rem 0.75rem; border-radius:var(--radius-md); border:1.5px solid var(--color-border);">
+                <option>Assigned Inspections</option>
+                <option>View Ongoing</option>
+                <option>View Completed</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:var(--spacing-lg);">
+              <label style="display:block; font-weight:600; margin-bottom:var(--spacing-xs);">Default Sorting</label>
+              <select style="width:100%; max-width:400px; padding:0.625rem 0.75rem; border-radius:var(--radius-md); border:1.5px solid var(--color-border);">
+                <option>By Due Date (Ascending)</option>
+                <option>By Due Date (Descending)</option>
+                <option>By Status</option>
+                <option>By Entity Name</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom:var(--spacing-lg);">
+              <label style="display:block; font-weight:600; margin-bottom:var(--spacing-xs);">Items Per Page</label>
+              <select style="width:100%; max-width:400px; padding:0.625rem 0.75rem; border-radius:var(--radius-md); border:1.5px solid var(--color-border);">
+                <option>10</option>
+                <option>25</option>
+                <option selected>50</option>
+                <option>100</option>
+              </select>
+            </div>
+
+            <div style="margin-top:var(--spacing-xl);">
+              <button type="button" class="btn">Save Preferences</button>
+              <button type="button" class="btn secondary" style="margin-left:var(--spacing-md);">Reset to Defaults</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regulator User - Workflow Area (Steps 2-7 only) -->
+      <div id="user-workflow" style="display:none; margin-top:var(--spacing-2xl);">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title" style="color:var(--color-primary);">Inspection Workflow</h3>
+            <div class="muted">Working on: <span id="user-workflow-insp-id">-</span></div>
+          </div>
+
+          <!-- Step indicators (2-7 only for user) -->
+          <div class="steps" id="user-steps" style="margin-top:var(--spacing-xl);">
+            <div class="step" data-step="2">2. Data Fetch (Status)</div>
+            <div class="step" data-step="3">3. Data Validation</div>
+            <div class="step" data-step="4">4. Regulatory Check</div>
+            <div class="step" data-step="5">5. Analytics & Risk-Based Sampling</div>
+            <div class="step" data-step="6">6. Onsite Inspection Support</div>
+            <div class="step" data-step="7">7. Observations & Report</div>
+          </div>
+
+          <div id="user-workflow-content" style="margin-top:var(--spacing-xl);">
+            <!-- Steps 2-7 content will be dynamically shown here (reuse admin step content) -->
+            <div class="muted" style="text-align:center; padding:var(--spacing-2xl);">Select a step from above to view workflow details</div>
+          </div>
+
+          <div style="margin-top:var(--spacing-xl);">
+            <button id="user-btn-back-to-list" type="button" class="btn secondary">← Back to Inspections List</button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- end regulator-user-view -->
 
     <!-- Insurer view (hidden by default) -->
     <div id="insurer-view" style="display:none;">
@@ -3007,31 +3250,41 @@ document.addEventListener('DOMContentLoaded', function(){
     steps.forEach(s => updateStepState(s));
   })();
 
-  // Role switch: Regulator <-> Insurer
+  // Role switch: Regulator-Admin <-> Regulator-User <-> Insurer
   (function(){
     const roleSwitch = document.getElementById('role-switch');
-    const regulatorView = document.getElementById('regulator-view');
+    const regulatorAdminView = document.getElementById('regulator-admin-view');
+    const regulatorUserView = document.getElementById('regulator-user-view');
     const insurerView = document.getElementById('insurer-view');
     const config = document.getElementById('config-root');
     const homeBtn = document.getElementById('btn-home');
 
     function setRole(role){
       if(role === 'insurer'){
-        if(regulatorView) regulatorView.style.display = 'none';
+        // Show Insurer view only
+        if(regulatorAdminView) regulatorAdminView.style.display = 'none';
+        if(regulatorUserView) regulatorUserView.style.display = 'none';
         if(insurerView) insurerView.style.display = 'block';
         if(config) config.style.display = 'none';
-        // Hide regulator home button when in insurer mode
         if(homeBtn) homeBtn.style.display = 'none';
-      } else {
-        if(regulatorView) regulatorView.style.display = 'block';
+      } else if(role === 'regulator-user'){
+        // Show Regulator-User view only
+        if(regulatorAdminView) regulatorAdminView.style.display = 'none';
+        if(regulatorUserView) regulatorUserView.style.display = 'block';
         if(insurerView) insurerView.style.display = 'none';
-        if(config) config.style.display = 'none'; // Keep config hidden initially
-        // Show regulator home button
+        if(config) config.style.display = 'none';
+        if(homeBtn) homeBtn.style.display = 'none'; // User view has its own navigation
+      } else {
+        // Show Regulator-Admin view (default)
+        if(regulatorAdminView) regulatorAdminView.style.display = 'block';
+        if(regulatorUserView) regulatorUserView.style.display = 'none';
+        if(insurerView) insurerView.style.display = 'none';
+        if(config) config.style.display = 'none';
         if(homeBtn) homeBtn.style.display = '';
-        // Reset to home view for regulator
+        // Reset to home view for regulator admin
         showOnly('home');
       }
-      // small scroll to top to position view
+      // Scroll to top
       window.scrollTo({top:0, behavior:'smooth'});
     }
 
@@ -3821,6 +4074,187 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Initialize on load
     checkStep7Completion();
+  })();
+
+  // === Regulator User - Tab Navigation ===
+  (function(){
+    const userView = document.getElementById('regulator-user-view');
+    if(!userView) return;
+    
+    const tabs = Array.from(userView.querySelectorAll('.tabs .tab'));
+    const panels = ['assigned', 'ongoing', 'completed', 'config'];
+
+    function activateUserTab(target){
+      // Mark active tab
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-user-target') === target));
+      
+      // Show only the selected panel
+      panels.forEach(p => {
+        const el = document.getElementById('user-' + p);
+        if(el) el.style.display = (p === target) ? 'block' : 'none';
+      });
+    }
+
+    // Wire up tab clicks
+    tabs.forEach(t => t.addEventListener('click', () => activateUserTab(t.getAttribute('data-user-target'))));
+
+    // Ensure initial panel visible
+    const activeTab = tabs.find(t => t.classList.contains('active')) || tabs[0];
+    if(activeTab) activateUserTab(activeTab.getAttribute('data-user-target'));
+  })();
+
+  // === Regulator User - Assigned Inspections Logic ===
+  (function(){
+    let currentUserInspection = null;
+
+    // Get DOM elements
+    const summaryPanel = document.getElementById('user-current-inspection-summary');
+    const currentIdEl = document.getElementById('user-current-insp-id');
+    const currentEntityEl = document.getElementById('user-current-insp-entity');
+    const currentStatusEl = document.getElementById('user-current-insp-status');
+    const currentDueEl = document.getElementById('user-current-insp-due');
+    const btnOpenWorkflow = document.getElementById('user-btn-open-workflow');
+    const btnClearSelection = document.getElementById('user-btn-clear-selection');
+    const workflowArea = document.getElementById('user-workflow');
+    const workflowInspIdEl = document.getElementById('user-workflow-insp-id');
+    const btnBackToList = document.getElementById('user-btn-back-to-list');
+
+    // Handle Open button clicks in all three tables
+    function handleOpenInspection(e){
+      const openBtn = e.target.closest('.user-btn-open');
+      if(!openBtn) return;
+
+      const row = openBtn.closest('tr');
+      if(!row) return;
+
+      // Extract inspection data from row
+      currentUserInspection = {
+        id: row.getAttribute('data-insp-id'),
+        entity: row.getAttribute('data-entity'),
+        type: row.getAttribute('data-type'),
+        assigned: row.getAttribute('data-assigned'),
+        due: row.getAttribute('data-due'),
+        status: row.getAttribute('data-status')
+      };
+
+      // Update summary panel
+      if(currentIdEl) currentIdEl.textContent = currentUserInspection.id;
+      if(currentEntityEl) currentEntityEl.textContent = currentUserInspection.entity;
+      if(currentStatusEl){
+        let chipClass = 'chip info';
+        if(currentUserInspection.status === 'In Progress') chipClass = 'chip warn';
+        else if(currentUserInspection.status === 'Completed') chipClass = 'chip ok';
+        currentStatusEl.innerHTML = `<span class="${chipClass}">${currentUserInspection.status}</span>`;
+      }
+      if(currentDueEl) currentDueEl.textContent = currentUserInspection.due;
+
+      // Show summary panel
+      if(summaryPanel){
+        summaryPanel.style.display = 'block';
+        summaryPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Attach event listeners to all three tables
+    document.getElementById('user-assigned-table')?.addEventListener('click', handleOpenInspection);
+    document.getElementById('user-ongoing-table')?.addEventListener('click', handleOpenInspection);
+    document.getElementById('user-completed-table')?.addEventListener('click', handleOpenInspection);
+
+    // Handle "Open Workflow" button
+    if(btnOpenWorkflow){
+      btnOpenWorkflow.addEventListener('click', function(){
+        if(!currentUserInspection) return;
+
+        // Hide the list/summary view
+        document.querySelectorAll('.user-content-panel').forEach(p => p.style.display = 'none');
+        if(summaryPanel) summaryPanel.style.display = 'none';
+
+        // Show workflow area
+        if(workflowArea) workflowArea.style.display = 'block';
+        if(workflowInspIdEl) workflowInspIdEl.textContent = currentUserInspection.id;
+
+        // Activate first step (Step 2) in user workflow
+        const userSteps = document.querySelectorAll('#user-steps .step');
+        userSteps.forEach(s => s.classList.remove('active'));
+        const firstStep = document.querySelector('#user-steps .step[data-step="2"]');
+        if(firstStep) firstStep.classList.add('active');
+
+        // Show actual step content from admin view (reuse Step 2)
+        showUserWorkflowStep(2);
+
+        // Scroll to workflow
+        workflowArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    // Handle "Back to List" button from summary
+    if(btnClearSelection){
+      btnClearSelection.addEventListener('click', function(){
+        currentUserInspection = null;
+        if(summaryPanel) summaryPanel.style.display = 'none';
+        if(currentIdEl) currentIdEl.textContent = '-';
+        if(currentEntityEl) currentEntityEl.textContent = '-';
+        if(currentStatusEl) currentStatusEl.textContent = '-';
+        if(currentDueEl) currentDueEl.textContent = '-';
+      });
+    }
+
+    // Handle "Back to Inspections List" from workflow
+    if(btnBackToList){
+      btnBackToList.addEventListener('click', function(){
+        // Hide workflow area
+        if(workflowArea) workflowArea.style.display = 'none';
+        
+        // Show the assigned inspections tab
+        const assignedPanel = document.getElementById('user-assigned');
+        if(assignedPanel) assignedPanel.style.display = 'block';
+        
+        // Clear current inspection
+        currentUserInspection = null;
+        if(summaryPanel) summaryPanel.style.display = 'none';
+      });
+    }
+
+    // Function to show workflow step content (reuse admin steps 2-7)
+    function showUserWorkflowStep(stepNum){
+      const workflowContent = document.getElementById('user-workflow-content');
+      if(!workflowContent) return;
+
+      // Get the actual step content from admin view
+      const adminStep = document.getElementById('step-' + stepNum);
+      if(adminStep){
+        // Clone the content (without modifying original)
+        const clonedContent = adminStep.cloneNode(true);
+        clonedContent.id = 'user-step-' + stepNum;
+        clonedContent.style.display = 'block';
+        
+        // Clear previous content and show new
+        workflowContent.innerHTML = '';
+        workflowContent.appendChild(clonedContent);
+      } else {
+        workflowContent.innerHTML = '<div class="muted" style="text-align:center; padding:var(--spacing-2xl);">Step content not available</div>';
+      }
+    }
+
+    // Handle step navigation in user workflow
+    const userSteps = document.querySelectorAll('#user-steps .step');
+    userSteps.forEach(step => {
+      step.addEventListener('click', function(){
+        const stepNum = parseInt(this.getAttribute('data-step'));
+        
+        // Update active step indicator
+        userSteps.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Show step content
+        showUserWorkflowStep(stepNum);
+      });
+    });
+
+    // Public API
+    window.getCurrentUserInspection = function(){
+      return currentUserInspection;
+    };
   })();
 
   // Edit Inspection Modal Handlers
