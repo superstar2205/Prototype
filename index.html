@@ -1399,6 +1399,15 @@
         <!-- Step 2: Data Fetch -->
         <div class="card" id="step-2" style="display:none; margin-top:var(--spacing-xl);">
           <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Data Fetch (Status) <span class="chip stage-chip" data-step="2" style="display:none;">Stage completed</span></h3>
+          
+          <!-- Action Tabs for Step 2 -->
+          <div style="display:flex; gap:var(--spacing-sm); margin-bottom:var(--spacing-xl); flex-wrap:wrap;">
+            <button type="button" id="tab-review-dsf" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Review DSF Status</button>
+            <button type="button" id="tab-confirm-datasets" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Confirm Datasets Received</button>
+            <button type="button" id="tab-trigger-refetch" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Trigger Re-fetch</button>
+            <button type="button" id="tab-check-submissions" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Check Insurer Submissions</button>
+          </div>
+
           <div class="step-layout">
             <div class="step-main">
               <div class="row" style="margin-top:var(--spacing-lg);">
@@ -1411,9 +1420,9 @@
                     <button id="btn-proceed3" type="button" class="secondary" disabled>Proceed to Validation</button>
                   </div>
                 </div>
-                <div class="col">
+                <div class="col" id="section-dataset-status">
                   <div style="font-weight:700; margin-bottom:6px;">Dataset status</div>
-                  <table>
+                  <table id="table-dataset-status">
                     <thead><tr><th>Dataset</th><th>Status</th><th>Last Fetch</th></tr></thead>
                     <tbody id="ds-status">
                       <tr><td>Claims</td><td><span class="chip ok">✓ Fetched</span></td><td>12-Nov-2025 10:05</td></tr>
@@ -1424,9 +1433,9 @@
                   </table>
                 </div>
               </div>
-              <div style="margin-top:12px;">
+              <div style="margin-top:12px;" id="section-insurer-submissions">
                 <div style="font-weight:700; margin-bottom:6px;">Insurer submissions</div>
-                <table>
+                <table id="table-insurer-submissions">
                   <thead><tr><th>Dataset</th><th>Period</th><th>Submission</th><th>Status</th></tr></thead>
                   <tbody>
                     <tr><td>Claims</td><td>2025-Q3</td><td>claims_2025_q3.xlsx</td><td><span class="chip ok">✓ Received</span></td></tr>
@@ -1439,12 +1448,22 @@
             </div>
             <aside class="step-tasks" data-step="2">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Review DSF status for all datasets</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Confirm datasets received from insurer</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Trigger re-fetch for missing datasets</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="2"> Check insurer submissions table</label></li>
-              </ul>
+              <div class="task-item" id="task-review-dsf" data-task="reviewDSF">
+                <span class="task-icon status-pending">✕</span>
+                <span>Review DSF status for all datasets</span>
+              </div>
+              <div class="task-item" id="task-confirm-datasets" data-task="confirmDatasets">
+                <span class="task-icon status-pending">✕</span>
+                <span>Confirm datasets received from insurer</span>
+              </div>
+              <div class="task-item" id="task-trigger-refetch" data-task="triggerRefetch">
+                <span class="task-icon status-pending">✕</span>
+                <span>Trigger re-fetch for missing datasets</span>
+              </div>
+              <div class="task-item" id="task-check-submissions" data-task="checkSubmissions">
+                <span class="task-icon status-pending">✕</span>
+                <span>Check insurer submissions table</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -1462,8 +1481,9 @@
                     <div style="margin-top:6px;"><b>Exceptions:</b> <span id="val-exc">27</span></div>
                     <div style="margin-top:6px;"><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
                     <div style="margin-top:8px;">
-                      <button id="btn-exception" type="button">Download Exception Report</button>
-                      <button id="btn-req-fix" type="button" class="secondary">Request Corrected Data</button>
+                      <button id="btn-run-validation" type="button">Run Validation</button>
+                      <button id="btn-download-exceptions" type="button">Download Exception Report</button>
+                      <button id="btn-request-corrected-data" type="button" class="secondary">Request Corrected Data</button>
                     </div>
                   </div>
                 </div>
@@ -1474,18 +1494,28 @@
                     <li>Invalid Date Format (6)</li>
                     <li>Claim TAT value out of range (12)</li>
                   </ul>
-                  <button id="btn-proceed4" type="button">Proceed to Regulatory Checks</button>
+                  <button id="btn-proceed-reg-checks" type="button">Proceed to Regulatory Checks</button>
                 </div>
               </div>
             </div>
             <aside class="step-tasks" data-step="3">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Run validation rules on all datasets</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Review failed records and error counts</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Send validation issues to insurer</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="3"> Finalize cleaned dataset for analysis</label></li>
-              </ul>
+              <div class="task-item" id="task-run-validation" data-task="runValidation">
+                <span class="task-icon status-pending">✕</span>
+                <span>Run validation rules on all datasets</span>
+              </div>
+              <div class="task-item" id="task-review-errors" data-task="reviewErrors">
+                <span class="task-icon status-pending">✕</span>
+                <span>Review failed records and error counts</span>
+              </div>
+              <div class="task-item" id="task-send-to-insurer" data-task="sendToInsurer">
+                <span class="task-icon status-pending">✕</span>
+                <span>Send validation issues to insurer</span>
+              </div>
+              <div class="task-item" id="task-finalize-dataset" data-task="finalizeDataset">
+                <span class="task-icon status-pending">✕</span>
+                <span>Finalize cleaned dataset for analysis</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -1512,17 +1542,30 @@
                 </tbody>
               </table>
               <div style="margin-top:10px;">
-                <button id="btn-proceed5" type="button">Proceed to Analytics & Sampling</button>
+                <button id="btn4-run-reg-checks" type="button">Run Regulatory Checks</button>
+                <button id="btn4-review-breaches" type="button" class="secondary">Review Breaches</button>
+                <button id="btn4-tag-for-observations" type="button" class="secondary">Tag for Observations</button>
+                <button id="btn4-proceed-analytics" type="button">Proceed to Analytics & Sampling</button>
               </div>
             </div>
             <aside class="step-tasks" data-step="4">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Run regulatory checklist rules</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Review HIGH severity breaches</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Tag breaches for observation drafting</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="4"> Park items needing more data or clarification</label></li>
-              </ul>
+              <div class="task-item" id="task4-run-reg-checks" data-task="runRegChecks">
+                <span class="task-icon status-pending">✕</span>
+                <span>Run regulatory checklist rules</span>
+              </div>
+              <div class="task-item" id="task4-review-high-severity" data-task="reviewHighSeverity">
+                <span class="task-icon status-pending">✕</span>
+                <span>Review HIGH severity breaches</span>
+              </div>
+              <div class="task-item" id="task4-tag-breaches" data-task="tagBreaches">
+                <span class="task-icon status-pending">✕</span>
+                <span>Tag breaches for observation drafting</span>
+              </div>
+              <div class="task-item" id="task4-park-items" data-task="parkItems">
+                <span class="task-icon status-pending">✕</span>
+                <span>Park items needing more data or clarification</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -1581,17 +1624,30 @@
                 </div>
               </div>
               <div class="row" style="margin-top:10px;">
-                <button id="finalize-sample" type="button" class="secondary">Finalize Sample (for Onsite)</button>
+                <button id="btn5-run-analytics" type="button">Run Analytics</button>
+                <button id="btn5-generate-risk-scores" type="button" class="secondary">Generate Risk Scores</button>
+                <button id="btn5-create-sample" type="button" class="secondary">Create Sample</button>
+                <button id="btn5-finalize-sample" type="button">Finalize Sample (for Onsite)</button>
               </div>
             </div>
             <aside class="step-tasks" data-step="5">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Review analytics results and risk scores</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Adjust sampling logic if required</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Generate recommended sample list</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="5"> Finalize sample set for onsite inspection</label></li>
-              </ul>
+              <div class="task-item" id="task5-run-analytics" data-task="runAnalytics">
+                <span class="task-icon status-pending">✕</span>
+                <span>Review analytics results and risk scores</span>
+              </div>
+              <div class="task-item" id="task5-adjust-sampling" data-task="adjustSampling">
+                <span class="task-icon status-pending">✕</span>
+                <span>Adjust sampling logic if required</span>
+              </div>
+              <div class="task-item" id="task5-generate-sample" data-task="generateSample">
+                <span class="task-icon status-pending">✕</span>
+                <span>Generate recommended sample list</span>
+              </div>
+              <div class="task-item" id="task5-finalize-sample" data-task="finalizeSample">
+                <span class="task-icon status-pending">✕</span>
+                <span>Finalize sample set for onsite inspection</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -1617,7 +1673,10 @@
                   <div class="muted">Notes / Evidence</div>
                   <textarea id="onsite-notes" placeholder="Record interviews, walkthroughs, findings..." style="width:100%; height:120px; margin-top:6px;"></textarea>
                   <div class="row" style="margin-top:6px; align-items:center;">
-                    <button type="button" class="btn small">Upload Evidence</button>
+                    <button id="btn6-download-sample-file" type="button" class="btn small">Download Sample</button>
+                    <button id="btn6-save-notes" type="button" class="btn small">Save Notes</button>
+                    <button id="btn6-upload-evidence" type="button" class="btn small">Upload Evidence</button>
+                    <button id="btn6-proceed-report" type="button">Proceed to Report</button>
                   </div>
                 </div>
               </div>
@@ -1625,12 +1684,22 @@
 
             <aside class="step-tasks" data-step="6">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Download final sample file for fieldwork</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Capture onsite notes / interviews in the portal</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Upload evidence (documents / screenshots)</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="6"> Flag high-risk issues found onsite</label></li>
-              </ul>
+              <div class="task-item" id="task6-download-sample" data-task="downloadSample">
+                <span class="task-icon status-pending">✕</span>
+                <span>Download final sample file for fieldwork</span>
+              </div>
+              <div class="task-item" id="task6-capture-notes" data-task="captureNotes">
+                <span class="task-icon status-pending">✕</span>
+                <span>Capture onsite notes / interviews in the portal</span>
+              </div>
+              <div class="task-item" id="task6-upload-evidence" data-task="uploadEvidence">
+                <span class="task-icon status-pending">✕</span>
+                <span>Upload evidence (documents / screenshots)</span>
+              </div>
+              <div class="task-item" id="task6-flag-issues" data-task="flagIssues">
+                <span class="task-icon status-pending">✕</span>
+                <span>Flag high-risk issues found onsite</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -1674,7 +1743,7 @@
                   <option>Medium</option>
                   <option>Low</option>
                 </select>
-                <button id="add-obs-step7" type="button">Add Observation</button>
+                <button id="btn7-add-observation" type="button">Add Observation</button>
               </div>
 
               <!-- Inspection Report -->
@@ -1691,8 +1760,10 @@
                   </div>
                 </div>
                 <div class="row" style="margin-top:var(--spacing-lg); gap:var(--spacing-md);">
-                  <button id="btn-generate-step7" type="button">Generate Report (PDF)</button>
-                  <button id="btn-download-step7" type="button" class="secondary">Export Word</button>
+                  <button id="btn7-draft-report" type="button" class="secondary">Draft Report</button>
+                  <button id="btn7-generate-pdf" type="button">Generate Report (PDF)</button>
+                  <button id="btn7-finalize-report" type="button">Finalize & Lock Report</button>
+                  <button id="btn7-share-report" type="button" class="secondary">Share with Insurer</button>
                 </div>
               </div>
             </div>
@@ -1700,13 +1771,26 @@
             <!-- Right Sidebar Tasks -->
             <aside class="step-tasks" data-step="7">
               <h4>Tasks in this stage</h4>
-              <ul class="task-list">
-                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Draft observations for key issues</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Attach evidence to each observation</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Review & refine observations</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Generate draft inspection report</label></li>
-                <li><label><input type="checkbox" class="task-checkbox" data-step="7"> Mark report ready for management review</label></li>
-              </ul>
+              <div class="task-item" id="task7-draft-observations" data-task="draftObservations">
+                <span class="task-icon status-pending">✕</span>
+                <span>Draft observations for key issues</span>
+              </div>
+              <div class="task-item" id="task7-attach-evidence" data-task="attachEvidence">
+                <span class="task-icon status-pending">✕</span>
+                <span>Attach evidence to each observation</span>
+              </div>
+              <div class="task-item" id="task7-review-observations" data-task="reviewObservations">
+                <span class="task-icon status-pending">✕</span>
+                <span>Review & refine observations</span>
+              </div>
+              <div class="task-item" id="task7-generate-report" data-task="generateReport">
+                <span class="task-icon status-pending">✕</span>
+                <span>Generate draft inspection report</span>
+              </div>
+              <div class="task-item" id="task7-finalize-report" data-task="finalizeReport">
+                <span class="task-icon status-pending">✕</span>
+                <span>Mark report ready for management review</span>
+              </div>
             </aside>
           </div>
         </div>
@@ -3147,6 +3231,596 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Initialize on load (show all as pending initially)
     updateStep1Tasks();
+  })();
+
+  // === Shared Helper: Update Stage Completion Status ===
+  function updateStageCompletion(stepNumber, isComplete){
+    const chip = document.querySelector(`.stage-chip[data-step="${stepNumber}"]`);
+    const navStep = document.querySelector(`.steps .step[data-step="${stepNumber}"]`);
+    
+    if(isComplete){
+      if(chip) chip.style.display = 'inline-block';
+      if(navStep) navStep.classList.add('done');
+    } else {
+      if(chip) chip.style.display = 'none';
+      if(navStep) navStep.classList.remove('done');
+    }
+  }
+
+  // === Step 2: Tab-Driven Task Completion Logic ===
+  (function(){
+    // State object to track Step 2 task completion
+    const step2Tasks = {
+      reviewDSF: false,
+      confirmDatasets: false,
+      triggerRefetch: false,
+      checkSubmissions: false
+    };
+
+    // Get all tab buttons
+    const tabReviewDSF = $('#tab-review-dsf');
+    const tabConfirmDatasets = $('#tab-confirm-datasets');
+    const tabTriggerRefetch = $('#tab-trigger-refetch');
+    const tabCheckSubmissions = $('#tab-check-submissions');
+
+    // Get all task items
+    const taskReviewDSF = $('#task-review-dsf');
+    const taskConfirmDatasets = $('#task-confirm-datasets');
+    const taskTriggerRefetch = $('#task-trigger-refetch');
+    const taskCheckSubmissions = $('#task-check-submissions');
+
+    // Get sections for scrolling
+    const sectionDatasetStatus = $('#section-dataset-status');
+    const sectionInsurerSubmissions = $('#section-insurer-submissions');
+    const btnFetchAll = $('#btn-fetch-all');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step2Tasks[taskKey] = true;
+      checkStep2Completion();
+    }
+
+    // Check if Step 2 is fully complete
+    function checkStep2Completion(){
+      const allTasksComplete = Object.values(step2Tasks).every(v => v === true);
+      updateStageCompletion(2, allTasksComplete);
+    }
+
+    // Tab 1: Review DSF Status
+    if(tabReviewDSF){
+      tabReviewDSF.addEventListener('click', function(){
+        // Scroll to dataset status table
+        sectionDatasetStatus?.scrollIntoView({behavior:'smooth', block:'center'});
+        
+        // Mark task as complete
+        markTaskComplete(taskReviewDSF, 'reviewDSF');
+        
+        // Visual feedback on tab
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 2000);
+      });
+    }
+
+    // Tab 2: Confirm Datasets Received
+    if(tabConfirmDatasets){
+      tabConfirmDatasets.addEventListener('click', function(){
+        // Scroll to insurer submissions table
+        sectionInsurerSubmissions?.scrollIntoView({behavior:'smooth', block:'center'});
+        
+        // Mark task as complete
+        markTaskComplete(taskConfirmDatasets, 'confirmDatasets');
+        
+        // Visual feedback on tab
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 2000);
+      });
+    }
+
+    // Tab 3: Trigger Re-fetch
+    if(tabTriggerRefetch){
+      tabTriggerRefetch.addEventListener('click', function(){
+        // Scroll to Re-fetch button
+        btnFetchAll?.scrollIntoView({behavior:'smooth', block:'center'});
+        
+        // Mark task as complete
+        markTaskComplete(taskTriggerRefetch, 'triggerRefetch');
+        
+        // Visual feedback on tab
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 2000);
+        
+        // Optionally trigger the actual re-fetch
+        // btnFetchAll?.click();
+      });
+    }
+
+    // Tab 4: Check Insurer Submissions
+    if(tabCheckSubmissions){
+      tabCheckSubmissions.addEventListener('click', function(){
+        // Scroll to insurer submissions table
+        sectionInsurerSubmissions?.scrollIntoView({behavior:'smooth', block:'center'});
+        
+        // Mark task as complete
+        markTaskComplete(taskCheckSubmissions, 'checkSubmissions');
+        
+        // Visual feedback on tab
+        this.classList.add('active');
+        setTimeout(() => this.classList.remove('active'), 2000);
+      });
+    }
+
+    // Initialize on load
+    checkStep2Completion();
+  })();
+
+  // === Step 3: Button-Driven Task Completion Logic (Data Validation) ===
+  (function(){
+    // State object to track Step 3 task completion
+    const step3Tasks = {
+      runValidation: false,
+      reviewErrors: false,
+      sendToInsurer: false,
+      finalizeDataset: false
+    };
+
+    // Get all buttons that trigger task completion
+    const btnRunValidation = $('#btn-run-validation');
+    const btnDownloadExceptions = $('#btn-download-exceptions');
+    const btnRequestCorrectedData = $('#btn-request-corrected-data');
+    const btnProceedRegChecks = $('#btn-proceed-reg-checks');
+
+    // Get all task items
+    const taskRunValidation = $('#task-run-validation');
+    const taskReviewErrors = $('#task-review-errors');
+    const taskSendToInsurer = $('#task-send-to-insurer');
+    const taskFinalizeDataset = $('#task-finalize-dataset');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step3Tasks[taskKey] = true;
+      checkStep3Completion();
+    }
+
+    // Check if Step 3 is fully complete
+    function checkStep3Completion(){
+      const allTasksComplete = Object.values(step3Tasks).every(v => v === true);
+      updateStageCompletion(3, allTasksComplete);
+    }
+
+    // Button 1: Run Validation
+    if(btnRunValidation){
+      btnRunValidation.addEventListener('click', function(){
+        // Mark task as complete
+        markTaskComplete(taskRunValidation, 'runValidation');
+        
+        // Visual feedback - briefly highlight button
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => {
+          this.style.background = '';
+        }, 1000);
+      });
+    }
+
+    // Button 2: Download Exception Report (counts as "Review failed records")
+    if(btnDownloadExceptions){
+      btnDownloadExceptions.addEventListener('click', function(){
+        // Mark task as complete
+        markTaskComplete(taskReviewErrors, 'reviewErrors');
+        
+        // Visual feedback
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => {
+          this.style.background = '';
+        }, 1000);
+        
+        // Original download functionality could go here
+        // e.g., trigger file download
+      });
+    }
+
+    // Button 3: Request Corrected Data (counts as "Send validation issues to insurer")
+    if(btnRequestCorrectedData){
+      btnRequestCorrectedData.addEventListener('click', function(){
+        // Mark task as complete
+        markTaskComplete(taskSendToInsurer, 'sendToInsurer');
+        
+        // Visual feedback
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => {
+          this.style.background = '';
+        }, 1000);
+        
+        // Original request functionality could go here
+        // e.g., open modal or send request
+      });
+    }
+
+    // Button 4: Proceed to Regulatory Checks (counts as "Finalize cleaned dataset")
+    if(btnProceedRegChecks){
+      btnProceedRegChecks.addEventListener('click', function(){
+        // Mark task as complete
+        markTaskComplete(taskFinalizeDataset, 'finalizeDataset');
+        
+        // Visual feedback
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => {
+          this.style.background = '';
+        }, 1000);
+        
+        // Proceed to next step
+        gotoStep(4);
+      });
+    }
+
+    // Initialize on load
+    checkStep3Completion();
+  })();
+
+  // === Step 4: Button-Driven Task Completion Logic (Regulatory Check) ===
+  (function(){
+    // State object to track Step 4 task completion
+    const step4Tasks = {
+      runRegChecks: false,
+      reviewHighSeverity: false,
+      tagBreaches: false,
+      parkItems: false
+    };
+
+    // Get all buttons that trigger task completion
+    const btnRunRegChecks = $('#btn4-run-reg-checks');
+    const btnReviewBreaches = $('#btn4-review-breaches');
+    const btnTagForObservations = $('#btn4-tag-for-observations');
+    const btnProceedAnalytics = $('#btn4-proceed-analytics');
+
+    // Get all task items
+    const taskRunRegChecks = $('#task4-run-reg-checks');
+    const taskReviewHighSeverity = $('#task4-review-high-severity');
+    const taskTagBreaches = $('#task4-tag-breaches');
+    const taskParkItems = $('#task4-park-items');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step4Tasks[taskKey] = true;
+      checkStep4Completion();
+    }
+
+    // Check if Step 4 is fully complete
+    function checkStep4Completion(){
+      const allTasksComplete = Object.values(step4Tasks).every(v => v === true);
+      updateStageCompletion(4, allTasksComplete);
+    }
+
+    // Button 1: Run Regulatory Checks
+    if(btnRunRegChecks){
+      btnRunRegChecks.addEventListener('click', function(){
+        markTaskComplete(taskRunRegChecks, 'runRegChecks');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 2: Review Breaches (counts as review HIGH severity breaches)
+    if(btnReviewBreaches){
+      btnReviewBreaches.addEventListener('click', function(){
+        markTaskComplete(taskReviewHighSeverity, 'reviewHighSeverity');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 3: Tag for Observations (counts as tag breaches)
+    if(btnTagForObservations){
+      btnTagForObservations.addEventListener('click', function(){
+        markTaskComplete(taskTagBreaches, 'tagBreaches');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 4: Proceed to Analytics (counts as park items needing clarification)
+    if(btnProceedAnalytics){
+      btnProceedAnalytics.addEventListener('click', function(){
+        markTaskComplete(taskParkItems, 'parkItems');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+        gotoStep(5);
+      });
+    }
+
+    // Initialize on load
+    checkStep4Completion();
+  })();
+
+  // === Step 5: Button-Driven Task Completion Logic (Analytics & Risk-Based Sampling) ===
+  (function(){
+    // State object to track Step 5 task completion
+    const step5Tasks = {
+      runAnalytics: false,
+      adjustSampling: false,
+      generateSample: false,
+      finalizeSample: false
+    };
+
+    // Get all buttons that trigger task completion
+    const btnRunAnalytics = $('#btn5-run-analytics');
+    const btnGenerateRiskScores = $('#btn5-generate-risk-scores');
+    const btnCreateSample = $('#btn5-create-sample');
+    const btnFinalizeSample = $('#btn5-finalize-sample');
+
+    // Get all task items
+    const taskRunAnalytics = $('#task5-run-analytics');
+    const taskAdjustSampling = $('#task5-adjust-sampling');
+    const taskGenerateSample = $('#task5-generate-sample');
+    const taskFinalizeSample = $('#task5-finalize-sample');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step5Tasks[taskKey] = true;
+      checkStep5Completion();
+    }
+
+    // Check if Step 5 is fully complete
+    function checkStep5Completion(){
+      const allTasksComplete = Object.values(step5Tasks).every(v => v === true);
+      updateStageCompletion(5, allTasksComplete);
+    }
+
+    // Button 1: Run Analytics
+    if(btnRunAnalytics){
+      btnRunAnalytics.addEventListener('click', function(){
+        markTaskComplete(taskRunAnalytics, 'runAnalytics');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 2: Generate Risk Scores (counts as adjust sampling logic)
+    if(btnGenerateRiskScores){
+      btnGenerateRiskScores.addEventListener('click', function(){
+        markTaskComplete(taskAdjustSampling, 'adjustSampling');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 3: Create Sample (counts as generate sample list)
+    if(btnCreateSample){
+      btnCreateSample.addEventListener('click', function(){
+        markTaskComplete(taskGenerateSample, 'generateSample');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 4: Finalize Sample
+    if(btnFinalizeSample){
+      btnFinalizeSample.addEventListener('click', function(){
+        markTaskComplete(taskFinalizeSample, 'finalizeSample');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+        gotoStep(6);
+      });
+    }
+
+    // Initialize on load
+    checkStep5Completion();
+  })();
+
+  // === Step 6: Button-Driven Task Completion Logic (Onsite Inspection Support) ===
+  (function(){
+    // State object to track Step 6 task completion
+    const step6Tasks = {
+      downloadSample: false,
+      captureNotes: false,
+      uploadEvidence: false,
+      flagIssues: false
+    };
+
+    // Get all buttons that trigger task completion
+    const btnDownloadSampleFile = $('#btn6-download-sample-file');
+    const btnSaveNotes = $('#btn6-save-notes');
+    const btnUploadEvidence = $('#btn6-upload-evidence');
+    const btnProceedReport = $('#btn6-proceed-report');
+
+    // Get all task items
+    const taskDownloadSample = $('#task6-download-sample');
+    const taskCaptureNotes = $('#task6-capture-notes');
+    const taskUploadEvidence = $('#task6-upload-evidence');
+    const taskFlagIssues = $('#task6-flag-issues');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step6Tasks[taskKey] = true;
+      checkStep6Completion();
+    }
+
+    // Check if Step 6 is fully complete
+    function checkStep6Completion(){
+      const allTasksComplete = Object.values(step6Tasks).every(v => v === true);
+      updateStageCompletion(6, allTasksComplete);
+    }
+
+    // Button 1: Download Sample File
+    if(btnDownloadSampleFile){
+      btnDownloadSampleFile.addEventListener('click', function(){
+        markTaskComplete(taskDownloadSample, 'downloadSample');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 2: Save Notes (counts as capture onsite notes)
+    if(btnSaveNotes){
+      btnSaveNotes.addEventListener('click', function(){
+        markTaskComplete(taskCaptureNotes, 'captureNotes');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 3: Upload Evidence
+    if(btnUploadEvidence){
+      btnUploadEvidence.addEventListener('click', function(){
+        markTaskComplete(taskUploadEvidence, 'uploadEvidence');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 4: Proceed to Report (counts as flag high-risk issues)
+    if(btnProceedReport){
+      btnProceedReport.addEventListener('click', function(){
+        markTaskComplete(taskFlagIssues, 'flagIssues');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+        gotoStep(7);
+      });
+    }
+
+    // Initialize on load
+    checkStep6Completion();
+  })();
+
+  // === Step 7: Button-Driven Task Completion Logic (Observations & Report) ===
+  (function(){
+    // State object to track Step 7 task completion
+    const step7Tasks = {
+      draftObservations: false,
+      attachEvidence: false,
+      reviewObservations: false,
+      generateReport: false,
+      finalizeReport: false
+    };
+
+    // Get all buttons that trigger task completion
+    const btnAddObservation = $('#btn7-add-observation');
+    const btnDraftReport = $('#btn7-draft-report');
+    const btnGeneratePdf = $('#btn7-generate-pdf');
+    const btnFinalizeReport = $('#btn7-finalize-report');
+    const btnShareReport = $('#btn7-share-report');
+
+    // Get all task items
+    const taskDraftObservations = $('#task7-draft-observations');
+    const taskAttachEvidence = $('#task7-attach-evidence');
+    const taskReviewObservations = $('#task7-review-observations');
+    const taskGenerateReport = $('#task7-generate-report');
+    const taskFinalizeReport = $('#task7-finalize-report');
+
+    // Helper: Mark a task as complete
+    function markTaskComplete(taskElement, taskKey){
+      if(!taskElement) return;
+      
+      const icon = taskElement.querySelector('.task-icon');
+      if(icon){
+        icon.textContent = '✓';
+        icon.classList.remove('status-pending');
+        icon.classList.add('status-done');
+      }
+      
+      step7Tasks[taskKey] = true;
+      checkStep7Completion();
+    }
+
+    // Check if Step 7 is fully complete
+    function checkStep7Completion(){
+      const allTasksComplete = Object.values(step7Tasks).every(v => v === true);
+      updateStageCompletion(7, allTasksComplete);
+    }
+
+    // Button 1: Add Observation (counts as draft observations)
+    if(btnAddObservation){
+      btnAddObservation.addEventListener('click', function(){
+        markTaskComplete(taskDraftObservations, 'draftObservations');
+        // Mark attach evidence as well since adding observations includes evidence
+        markTaskComplete(taskAttachEvidence, 'attachEvidence');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 2: Draft Report (counts as review observations)
+    if(btnDraftReport){
+      btnDraftReport.addEventListener('click', function(){
+        markTaskComplete(taskReviewObservations, 'reviewObservations');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 3: Generate PDF (counts as generate report)
+    if(btnGeneratePdf){
+      btnGeneratePdf.addEventListener('click', function(){
+        markTaskComplete(taskGenerateReport, 'generateReport');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 4: Finalize Report
+    if(btnFinalizeReport){
+      btnFinalizeReport.addEventListener('click', function(){
+        markTaskComplete(taskFinalizeReport, 'finalizeReport');
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+      });
+    }
+
+    // Button 5: Share Report (optional additional action)
+    if(btnShareReport){
+      btnShareReport.addEventListener('click', function(){
+        this.style.background = 'var(--color-accent-success)';
+        setTimeout(() => { this.style.background = ''; }, 1000);
+        alert('Report shared with insurer and management!');
+      });
+    }
+
+    // Initialize on load
+    checkStep7Completion();
   })();
 
   // Edit Inspection Modal Handlers
