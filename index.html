@@ -1402,70 +1402,136 @@
         <div class="card" id="step-2" style="display:none; margin-top:var(--spacing-xl);">
           <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Data Fetch (Status) <span class="chip stage-chip" data-step="2" style="display:none;">Stage completed</span></h3>
           
-          <!-- Action Tabs for Step 2 -->
-          <div style="display:flex; gap:var(--spacing-sm); margin-bottom:var(--spacing-xl); flex-wrap:wrap;">
-            <button type="button" id="tab-review-dsf" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Review DSF Status</button>
-            <button type="button" id="tab-confirm-datasets" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Confirm Datasets Received</button>
-            <button type="button" id="tab-trigger-refetch" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Trigger Re-fetch</button>
-            <button type="button" id="tab-check-submissions" class="nav-pill" style="font-size:0.8125rem; padding:0.5rem 1rem;">Check Insurer Submissions</button>
-          </div>
-
           <div class="step-layout">
             <div class="step-main">
-              <div class="row" style="margin-top:var(--spacing-lg);">
-                <div class="col">
-                  <div style="font-weight:700; margin-bottom:var(--spacing-md); color:var(--color-primary);">Checklist</div>
-                  <div id="chk-fields" class="chip miss" style="margin-bottom:var(--spacing-sm);"><span class="tick">✗</span> All requested fields fetched</div>
-                  <div id="chk-period" class="chip warn"><span class="tick">!</span> Requested time period fetched</div>
-                  <div style="margin-top:var(--spacing-xl); display:flex; gap:var(--spacing-md); flex-wrap:wrap;">
-                    <button id="btn-fetch-all" type="button">Re-fetch All</button>
-                    <button id="btn-proceed3" type="button" class="secondary" disabled>Proceed to Validation</button>
+              
+              <!-- 1️⃣ Summary Card -->
+              <div class="card" id="data-fetch-summary-card" style="background:var(--color-primary-bg); border:2px solid var(--color-primary); padding:var(--spacing-xl); margin-bottom:var(--spacing-xl);">
+                <h4 style="margin:0 0 var(--spacing-sm) 0; color:var(--color-primary);">Data Fetch Summary</h4>
+                <p class="muted" style="margin-bottom:var(--spacing-lg);">Check whether all requested datasets, periods and submissions have been received before proceeding to validation.</p>
+                
+                <div style="display:flex; gap:var(--spacing-2xl); flex-wrap:wrap; margin-bottom:var(--spacing-xl);">
+                  <div>
+                    <div style="font-weight:600; font-size:0.875rem; color:var(--color-text-muted); margin-bottom:var(--spacing-xs);">Datasets received:</div>
+                    <div id="summary-datasets" style="font-size:1.5rem; font-weight:700; color:var(--color-primary);">1 / 4</div>
+                  </div>
+                  <div>
+                    <div style="font-weight:600; font-size:0.875rem; color:var(--color-text-muted); margin-bottom:var(--spacing-xs);">Insurer submissions:</div>
+                    <div id="summary-submissions" style="font-size:1.5rem; font-weight:700; color:var(--color-primary);">1 / 4</div>
+                  </div>
+                  <div>
+                    <div style="font-weight:600; font-size:0.875rem; color:var(--color-text-muted); margin-bottom:var(--spacing-xs);">Period status:</div>
+                    <div id="summary-periods" style="font-size:1.125rem; font-weight:700; color:var(--color-accent-warning);">1 issue found</div>
                   </div>
                 </div>
-                <div class="col" id="section-dataset-status">
-                  <div style="font-weight:700; margin-bottom:6px;">Dataset status</div>
-                  <table id="table-dataset-status">
-                    <thead><tr><th>Dataset</th><th>Status</th><th>Last Fetch</th></tr></thead>
-                    <tbody id="ds-status">
-                      <tr><td>Claims</td><td><span class="chip ok">✓ Fetched</span></td><td>12-Nov-2025 10:05</td></tr>
-                      <tr><td>Underwriting</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                      <tr><td>Grievances</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                      <tr><td>Sales/Agents</td><td><span class="chip miss">✗ Missing</span></td><td>—</td></tr>
-                    </tbody>
-                  </table>
+                
+                <div style="display:flex; gap:var(--spacing-md); flex-wrap:wrap; align-items:center;">
+                  <button id="btn-resolve-pending" type="button">Resolve Pending Items</button>
+                  <button id="btn-proceed-validation" type="button" class="secondary" disabled>Proceed to Validation</button>
+                  <div id="proceed-help-text" class="muted" style="font-size:0.8125rem; font-style:italic;">Complete all datasets and submissions before proceeding to Validation.</div>
                 </div>
               </div>
-              <div style="margin-top:12px;" id="section-insurer-submissions">
-                <div style="font-weight:700; margin-bottom:6px;">Insurer submissions</div>
-                <table id="table-insurer-submissions">
-                  <thead><tr><th>Dataset</th><th>Period</th><th>Submission</th><th>Status</th></tr></thead>
-                  <tbody>
-                    <tr><td>Claims</td><td>2025-Q3</td><td>claims_2025_q3.xlsx</td><td><span class="chip ok">✓ Received</span></td></tr>
-                    <tr><td>Underwriting</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
-                    <tr><td>Grievances</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
-                    <tr><td>Sales/Agents</td><td>—</td><td>—</td><td><span class="chip miss">✗ Not received</span></td></tr>
+              
+              <!-- 2️⃣ Unified Dataset + Submissions Table -->
+              <div style="margin-bottom:var(--spacing-xl);">
+                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-text-main);">Dataset & Submission Status</h4>
+                <table id="unified-data-table">
+                  <thead>
+                    <tr>
+                      <th>Dataset</th>
+                      <th>Required</th>
+                      <th>DSF Status</th>
+                      <th>Period</th>
+                      <th>Insurer Submission</th>
+                      <th>Last Updated</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="unified-data-tbody">
+                    <!-- Row 1: Claims - Complete -->
+                    <tr data-required="true" data-dsf-status="fetched" data-submission-status="received" data-period-ok="true" data-dataset="Claims">
+                      <td><strong>Claims</strong></td>
+                      <td>Yes</td>
+                      <td><span class="chip ok">✓ Fetched</span></td>
+                      <td>2025-Q3</td>
+                      <td>
+                        <span class="chip ok">✓ Received</span>
+                        <div style="font-size:0.75rem; color:var(--color-text-muted); margin-top:0.25rem;">claims_2025_q3.xlsx</div>
+                      </td>
+                      <td>12-Nov-2025 10:05</td>
+                      <td><button class="btn small link" type="button" onclick="alert('View details for Claims')">View details</button></td>
+                    </tr>
+                    
+                    <!-- Row 2: Underwriting - Missing -->
+                    <tr data-required="true" data-dsf-status="missing" data-submission-status="not-received" data-period-ok="false" data-dataset="Underwriting">
+                      <td><strong>Underwriting</strong></td>
+                      <td>Yes</td>
+                      <td><span class="chip miss">✗ Missing</span></td>
+                      <td>—</td>
+                      <td><span class="chip miss">✗ Not received</span></td>
+                      <td>—</td>
+                      <td><button class="btn small request-again-btn" type="button" data-dataset="Underwriting">Request again</button></td>
+                    </tr>
+                    
+                    <!-- Row 3: Grievances - Missing -->
+                    <tr data-required="true" data-dsf-status="missing" data-submission-status="not-received" data-period-ok="false" data-dataset="Grievances">
+                      <td><strong>Grievances</strong></td>
+                      <td>Yes</td>
+                      <td><span class="chip miss">✗ Missing</span></td>
+                      <td>—</td>
+                      <td><span class="chip miss">✗ Not received</span></td>
+                      <td>—</td>
+                      <td><button class="btn small request-again-btn" type="button" data-dataset="Grievances">Request again</button></td>
+                    </tr>
+                    
+                    <!-- Row 4: Sales/Agents - Missing -->
+                    <tr data-required="true" data-dsf-status="missing" data-submission-status="not-received" data-period-ok="false" data-dataset="Sales/Agents">
+                      <td><strong>Sales/Agents</strong></td>
+                      <td>Yes</td>
+                      <td><span class="chip miss">✗ Missing</span></td>
+                      <td>—</td>
+                      <td><span class="chip miss">✗ Not received</span></td>
+                      <td>—</td>
+                      <td><button class="btn small request-again-btn" type="button" data-dataset="Sales/Agents">Request again</button></td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
+              
             </div>
-            <aside class="step-tasks" data-step="2">
-              <h4>Tasks in this stage</h4>
-              <div class="task-item" id="task-review-dsf" data-task="reviewDSF">
-                <span class="task-icon status-pending">✕</span>
-                <span>Review DSF status for all datasets</span>
+            
+            <!-- 3️⃣ Gaps & Required Actions Panel (Sidebar) -->
+            <aside id="gaps-panel" class="step-tasks" data-step="2">
+              <h4>Gaps & Required Actions</h4>
+              
+              <div style="margin-bottom:var(--spacing-lg);">
+                <div style="font-weight:600; font-size:0.875rem; margin-bottom:var(--spacing-sm); color:var(--color-accent-error-text);">Missing datasets:</div>
+                <ul id="gaps-missing-datasets" style="list-style:none; padding-left:0; margin:0; font-size:0.875rem;">
+                  <li style="margin-bottom:var(--spacing-xs);">• Underwriting</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Grievances</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Sales/Agents</li>
+                </ul>
               </div>
-              <div class="task-item" id="task-confirm-datasets" data-task="confirmDatasets">
-                <span class="task-icon status-pending">✕</span>
-                <span>Confirm datasets received from insurer</span>
+              
+              <div style="margin-bottom:var(--spacing-lg);">
+                <div style="font-weight:600; font-size:0.875rem; margin-bottom:var(--spacing-sm); color:var(--color-accent-error-text);">Missing submissions:</div>
+                <ul id="gaps-missing-submissions" style="list-style:none; padding-left:0; margin:0; font-size:0.875rem;">
+                  <li style="margin-bottom:var(--spacing-xs);">• Underwriting</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Grievances</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Sales/Agents</li>
+                </ul>
               </div>
-              <div class="task-item" id="task-trigger-refetch" data-task="triggerRefetch">
-                <span class="task-icon status-pending">✕</span>
-                <span>Trigger re-fetch for missing datasets</span>
+              
+              <div style="margin-bottom:var(--spacing-lg);">
+                <div style="font-weight:600; font-size:0.875rem; margin-bottom:var(--spacing-sm); color:var(--color-accent-warning-text);">Period issues:</div>
+                <ul id="gaps-period-issues" style="list-style:none; padding-left:0; margin:0; font-size:0.875rem;">
+                  <li style="margin-bottom:var(--spacing-xs);">• Underwriting</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Grievances</li>
+                  <li style="margin-bottom:var(--spacing-xs);">• Sales/Agents</li>
+                </ul>
               </div>
-              <div class="task-item" id="task-check-submissions" data-task="checkSubmissions">
-                <span class="task-icon status-pending">✕</span>
-                <span>Check insurer submissions table</span>
-              </div>
+              
+              <button id="btn-trigger-all-reminders" type="button" style="width:100%; padding:0.625rem; font-size:0.875rem;">Trigger All Reminders</button>
             </aside>
           </div>
         </div>
@@ -1476,46 +1542,55 @@
           <div class="step-layout">
             <div class="step-main">
               <div class="muted">Automatic checks for structure, completeness, mandatory fields, and formats.</div>
-              <div class="row" style="margin-top:10px;">
+              <div class="row" style="margin-top:var(--spacing-lg); gap:var(--spacing-xl);">
                 <div class="col">
-                  <div class="card" style="padding:12px;">
-                    <div><b>Records processed:</b> <span id="val-rows">12,432</span></div>
-                    <div style="margin-top:6px;"><b>Exceptions:</b> <span id="val-exc">27</span></div>
-                    <div style="margin-top:6px;"><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
-                    <div style="margin-top:8px;">
-                      <button id="btn-run-validation" type="button">Run Validation</button>
-                      <button id="btn-download-exceptions" type="button">Download Exception Report</button>
-                      <button id="btn-request-corrected-data" type="button" class="secondary">Request Corrected Data</button>
+                  <div class="card" style="padding:var(--spacing-xl); background:var(--color-surface);">
+                    <h4 style="margin:0 0 var(--spacing-lg) 0; color:var(--color-text-main);">Validation Results</h4>
+                    <div style="display:grid; gap:var(--spacing-md); margin-bottom:var(--spacing-lg);">
+                      <div><b>Records processed:</b> <span id="val-rows">12,432</span></div>
+                      <div><b>Exceptions:</b> <span id="val-exc">27</span></div>
+                      <div><b>High severity:</b> <span id="val-high">5</span> <span class="chip miss">High</span></div>
+                    </div>
+                    <div style="padding:var(--spacing-md); background:var(--color-primary-bg); border-radius:var(--radius-md); margin-bottom:var(--spacing-lg);">
+                      <p id="validationStatusText" class="muted" style="font-size:0.875rem; margin:0 0 var(--spacing-xs) 0;">Validation not run yet.</p>
+                      <p id="validationLastRunText" class="muted" style="font-size:0.875rem; margin:0;">Last run: –</p>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:var(--spacing-md);">
+                      <button id="runValidationBtn" type="button" style="width:100%;">Run Validation</button>
+                      <button id="downloadExceptionBtn" type="button" style="width:100%;">Download Exception Report</button>
+                      <button id="requestCorrectedDataBtn" type="button" class="secondary" style="width:100%;">Request Corrected Data</button>
                     </div>
                   </div>
                 </div>
                 <div class="col">
-                  <div class="muted">Sample issues</div>
-                  <ul>
-                    <li>Missing Policy ID (9)</li>
-                    <li>Invalid Date Format (6)</li>
-                    <li>Claim TAT value out of range (12)</li>
-                  </ul>
-                  <button id="btn-proceed-reg-checks" type="button">Proceed to Regulatory Checks</button>
+                  <div class="card" style="padding:var(--spacing-xl); background:var(--color-surface); display:flex; flex-direction:column; height:100%;">
+                    <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-text-main);">Sample Issues</h4>
+                    <ul style="flex:1; margin:0; padding-left:var(--spacing-xl);">
+                      <li style="margin-bottom:var(--spacing-sm);">Missing Policy ID (9)</li>
+                      <li style="margin-bottom:var(--spacing-sm);">Invalid Date Format (6)</li>
+                      <li style="margin-bottom:var(--spacing-sm);">Claim TAT value out of range (12)</li>
+                    </ul>
+                    <button id="proceedToRegChecksBtn" type="button" disabled style="width:100%; margin-top:var(--spacing-xl);">Proceed to Regulatory Checks</button>
+                  </div>
                 </div>
               </div>
             </div>
             <aside class="step-tasks" data-step="3">
               <h4>Tasks in this stage</h4>
-              <div class="task-item" id="task-run-validation" data-task="runValidation">
-                <span class="task-icon status-pending">✕</span>
+              <div class="task-item" id="task-run-validation" data-task="runValidation" data-task-id="runValidationTask">
+                <span class="task-icon status-pending task-status-icon">✕</span>
                 <span>Run validation rules on all datasets</span>
               </div>
-              <div class="task-item" id="task-review-errors" data-task="reviewErrors">
-                <span class="task-icon status-pending">✕</span>
+              <div class="task-item" id="task-review-errors" data-task="reviewErrors" data-task-id="reviewErrorsTask">
+                <span class="task-icon status-pending task-status-icon">✕</span>
                 <span>Review failed records and error counts</span>
               </div>
-              <div class="task-item" id="task-send-to-insurer" data-task="sendToInsurer">
-                <span class="task-icon status-pending">✕</span>
+              <div class="task-item" id="task-send-to-insurer" data-task="sendToInsurer" data-task-id="sendToInsurerTask">
+                <span class="task-icon status-pending task-status-icon">✕</span>
                 <span>Send validation issues to insurer</span>
               </div>
-              <div class="task-item" id="task-finalize-dataset" data-task="finalizeDataset">
-                <span class="task-icon status-pending">✕</span>
+              <div class="task-item" id="task-finalize-dataset" data-task="finalizeDataset" data-task-id="finalizeDatasetTask">
+                <span class="task-icon status-pending task-status-icon">✕</span>
                 <span>Finalize cleaned dataset for analysis</span>
               </div>
             </aside>
@@ -3067,16 +3142,225 @@ document.addEventListener('DOMContentLoaded', function(){
     gotoStep(2);
   });
 
-  // Fetch -> proceed
-  $('#btn-fetch-all')?.addEventListener('click', ()=>{
-    $$('#ds-status td:nth-child(2)').forEach(td=> td.innerHTML = '<span class="chip ok">✓ Fetched</span>');
-    const ts = new Date().toLocaleString('en-GB',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'short',year:'numeric'});
-    $$('#ds-status td:nth-child(3)').forEach(td=> td.textContent = ts);
-    const cf = $('#chk-fields'); if(cf){ cf.className='chip ok'; cf.textContent='✓ All requested fields fetched'; }
-    const cp = $('#chk-period'); if(cp){ cp.className='chip ok'; cp.textContent='✓ Requested time period fetched'; }
-    const p3 = $('#btn-proceed3'); if(p3) p3.disabled=false;
+  // ========== STAGE 2: Data Fetch (Refactored) ==========
+  
+  // Function to update Stage 2 summary and gaps based on table data
+  function updateStage2Summary() {
+    const rows = $$('#unified-data-tbody tr[data-required="true"]');
+    
+    let totalRequired = rows.length;
+    let datasetsFetched = 0;
+    let submissionsReceived = 0;
+    let periodIssues = 0;
+    
+    const missingDatasets = [];
+    const missingSubmissions = [];
+    const periodIssuesList = [];
+    
+    rows.forEach(row => {
+      const dataset = row.getAttribute('data-dataset');
+      const dsfStatus = row.getAttribute('data-dsf-status');
+      const submissionStatus = row.getAttribute('data-submission-status');
+      const periodOk = row.getAttribute('data-period-ok') === 'true';
+      
+      // Count fetched datasets
+      if (dsfStatus === 'fetched') {
+        datasetsFetched++;
+      } else {
+        missingDatasets.push(dataset);
+      }
+      
+      // Count received submissions
+      if (submissionStatus === 'received') {
+        submissionsReceived++;
+      } else {
+        missingSubmissions.push(dataset);
+      }
+      
+      // Count period issues
+      if (!periodOk) {
+        periodIssues++;
+        periodIssuesList.push(dataset);
+      }
+    });
+    
+    // Update summary card
+    const summaryDatasets = $('#summary-datasets');
+    if (summaryDatasets) {
+      summaryDatasets.textContent = `${datasetsFetched} / ${totalRequired}`;
+    }
+    
+    const summarySubmissions = $('#summary-submissions');
+    if (summarySubmissions) {
+      summarySubmissions.textContent = `${submissionsReceived} / ${totalRequired}`;
+    }
+    
+    const summaryPeriods = $('#summary-periods');
+    if (summaryPeriods) {
+      if (periodIssues === 0) {
+        summaryPeriods.textContent = 'All periods OK';
+        summaryPeriods.style.color = 'var(--color-accent-success)';
+      } else {
+        summaryPeriods.textContent = `${periodIssues} issue${periodIssues > 1 ? 's' : ''} found`;
+        summaryPeriods.style.color = 'var(--color-accent-warning)';
+      }
+    }
+    
+    // Update Proceed to Validation button state
+    const allComplete = (datasetsFetched === totalRequired) && 
+                        (submissionsReceived === totalRequired) && 
+                        (periodIssues === 0);
+    
+    const proceedBtn = $('#btn-proceed-validation');
+    const helpText = $('#proceed-help-text');
+    
+    if (proceedBtn) {
+      proceedBtn.disabled = !allComplete;
+    }
+    
+    if (helpText) {
+      helpText.style.display = allComplete ? 'none' : 'block';
+    }
+    
+    // Update Gaps panel
+    const gapsMissingDatasets = $('#gaps-missing-datasets');
+    if (gapsMissingDatasets) {
+      if (missingDatasets.length === 0) {
+        gapsMissingDatasets.innerHTML = '<li style="margin-bottom:var(--spacing-xs); color:var(--color-accent-success-text);">✓ None – all good</li>';
+      } else {
+        gapsMissingDatasets.innerHTML = missingDatasets.map(ds => 
+          `<li style="margin-bottom:var(--spacing-xs);">• ${ds}</li>`
+        ).join('');
+      }
+    }
+    
+    const gapsMissingSubmissions = $('#gaps-missing-submissions');
+    if (gapsMissingSubmissions) {
+      if (missingSubmissions.length === 0) {
+        gapsMissingSubmissions.innerHTML = '<li style="margin-bottom:var(--spacing-xs); color:var(--color-accent-success-text);">✓ None – all good</li>';
+      } else {
+        gapsMissingSubmissions.innerHTML = missingSubmissions.map(ds => 
+          `<li style="margin-bottom:var(--spacing-xs);">• ${ds}</li>`
+        ).join('');
+      }
+    }
+    
+    const gapsPeriodIssues = $('#gaps-period-issues');
+    if (gapsPeriodIssues) {
+      if (periodIssuesList.length === 0) {
+        gapsPeriodIssues.innerHTML = '<li style="margin-bottom:var(--spacing-xs); color:var(--color-accent-success-text);">✓ None – all good</li>';
+      } else {
+        gapsPeriodIssues.innerHTML = periodIssuesList.map(ds => 
+          `<li style="margin-bottom:var(--spacing-xs);">• ${ds}</li>`
+        ).join('');
+      }
+    }
+  }
+  
+  // Resolve Pending Items button - scroll to gaps panel
+  $('#btn-resolve-pending')?.addEventListener('click', () => {
+    const gapsPanel = $('#gaps-panel');
+    if (gapsPanel) {
+      gapsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Highlight effect
+      gapsPanel.style.transition = 'background 0.3s ease';
+      const originalBg = gapsPanel.style.background;
+      gapsPanel.style.background = '#fef3c7';
+      setTimeout(() => {
+        gapsPanel.style.background = originalBg || '';
+      }, 1000);
+    }
   });
-  $('#btn-proceed3')?.addEventListener('click', ()=> gotoStep(3));
+  
+  // Proceed to Validation button
+  $('#btn-proceed-validation')?.addEventListener('click', () => {
+    gotoStep(3);
+  });
+  
+  // Request again buttons (individual datasets)
+  document.body.addEventListener('click', (e) => {
+    if (e.target.classList.contains('request-again-btn')) {
+      const dataset = e.target.getAttribute('data-dataset');
+      alert(`Request sent to insurer for dataset: ${dataset} (simulated)`);
+      
+      // Simulate data being received after request
+      const row = e.target.closest('tr');
+      if (row) {
+        // Update row attributes
+        row.setAttribute('data-dsf-status', 'fetched');
+        row.setAttribute('data-submission-status', 'received');
+        row.setAttribute('data-period-ok', 'true');
+        
+        // Update DSF Status cell
+        const dsfCell = row.children[2];
+        if (dsfCell) {
+          dsfCell.innerHTML = '<span class="chip ok">✓ Fetched</span>';
+        }
+        
+        // Update Period cell
+        const periodCell = row.children[3];
+        if (periodCell) {
+          periodCell.textContent = '2025-Q3';
+        }
+        
+        // Update Insurer Submission cell
+        const submissionCell = row.children[4];
+        if (submissionCell) {
+          const filename = `${dataset.toLowerCase().replace(/\//g, '_')}_2025_q3.xlsx`;
+          submissionCell.innerHTML = `
+            <span class="chip ok">✓ Received</span>
+            <div style="font-size:0.75rem; color:var(--color-text-muted); margin-top:0.25rem;">${filename}</div>
+          `;
+        }
+        
+        // Update Last Updated cell
+        const ts = new Date().toLocaleString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+        const lastUpdatedCell = row.children[5];
+        if (lastUpdatedCell) {
+          lastUpdatedCell.textContent = ts;
+        }
+        
+        // Update Actions cell
+        const actionsCell = row.children[6];
+        if (actionsCell) {
+          actionsCell.innerHTML = '<button class="btn small link" type="button" onclick="alert(\'View details for ' + dataset + '\')">View details</button>';
+        }
+        
+        // Refresh summary
+        updateStage2Summary();
+      }
+    }
+  });
+  
+  // Trigger All Reminders button
+  $('#btn-trigger-all-reminders')?.addEventListener('click', () => {
+    const rows = $$('#unified-data-tbody tr[data-required="true"]');
+    const missingDatasets = [];
+    
+    rows.forEach(row => {
+      const dsfStatus = row.getAttribute('data-dsf-status');
+      const submissionStatus = row.getAttribute('data-submission-status');
+      
+      if (dsfStatus === 'missing' || submissionStatus === 'not-received') {
+        missingDatasets.push(row.getAttribute('data-dataset'));
+      }
+    });
+    
+    if (missingDatasets.length === 0) {
+      alert('All datasets and submissions are complete. No reminders needed.');
+    } else {
+      alert(`Reminders/re-fetch triggered for: ${missingDatasets.join(', ')} (simulated)`);
+    }
+  });
+  
+  // Initialize Stage 2 summary on page load
+  updateStage2Summary();
 
   // Validation -> proceed
   $('#btn-exception')?.addEventListener('click', ()=>{
@@ -3500,232 +3784,194 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  // === Step 2: Tab-Driven Task Completion Logic ===
-  (function(){
-    // State object to track Step 2 task completion
-    const step2Tasks = {
-      reviewDSF: false,
-      confirmDatasets: false,
-      triggerRefetch: false,
-      checkSubmissions: false
-    };
+  // === Step 2: Completion Logic (Refactored) ===
+  // Step 2 completion is now automatically handled by the updateStage2Summary function
+  // which checks if all datasets and submissions are complete
 
-    // Get all tab buttons
-    const tabReviewDSF = $('#tab-review-dsf');
-    const tabConfirmDatasets = $('#tab-confirm-datasets');
-    const tabTriggerRefetch = $('#tab-trigger-refetch');
-    const tabCheckSubmissions = $('#tab-check-submissions');
+  // ========== STAGE 3: Data Validation (Improved with Auto Task Tracking) ==========
+  
+  // --- Stage 3: Data Validation state ---
+  let stage3State = {
+    validationRun: false,
+    errorsReviewed: false,
+    sentToInsurer: false,
+    datasetFinalized: false
+  };
 
-    // Get all task items
-    const taskReviewDSF = $('#task-review-dsf');
-    const taskConfirmDatasets = $('#task-confirm-datasets');
-    const taskTriggerRefetch = $('#task-trigger-refetch');
-    const taskCheckSubmissions = $('#task-check-submissions');
+  // Function to update Stage 3 task icons based on state
+  function updateStage3TasksUI() {
+    // Helper to set task status icon
+    function setTaskStatus(taskId, done) {
+      const taskItem = document.querySelector(`[data-task-id="${taskId}"]`);
+      if (!taskItem) return;
+      const icon = taskItem.querySelector('.task-status-icon');
+      if (!icon) return;
 
-    // Get sections for scrolling
-    const sectionDatasetStatus = $('#section-dataset-status');
-    const sectionInsurerSubmissions = $('#section-insurer-submissions');
-    const btnFetchAll = $('#btn-fetch-all');
-
-    // Helper: Mark a task as complete
-    function markTaskComplete(taskElement, taskKey){
-      if(!taskElement) return;
-      
-      const icon = taskElement.querySelector('.task-icon');
-      if(icon){
+      if (done) {
         icon.textContent = '✓';
         icon.classList.remove('status-pending');
         icon.classList.add('status-done');
+      } else {
+        icon.textContent = '✕';
+        icon.classList.remove('status-done');
+        icon.classList.add('status-pending');
+      }
+    }
+
+    // Update all task icons
+    setTaskStatus('runValidationTask', stage3State.validationRun);
+    setTaskStatus('reviewErrorsTask', stage3State.errorsReviewed);
+    setTaskStatus('sendToInsurerTask', stage3State.sentToInsurer);
+    setTaskStatus('finalizeDatasetTask', stage3State.datasetFinalized);
+
+    // Enable Proceed button when first 3 tasks are done (not including finalize)
+    const proceedBtn = $('#proceedToRegChecksBtn');
+    if (proceedBtn) {
+      const first3Done = stage3State.validationRun && stage3State.errorsReviewed && stage3State.sentToInsurer;
+      proceedBtn.disabled = !first3Done;
+    }
+
+    // Mark Stage 3 as completed when all 4 tasks are done
+    const allDone = Object.values(stage3State).every(Boolean);
+    updateStageCompletion(3, allDone);
+  }
+
+  // Utility to update validation status text
+  function setValidationRunStatus(message) {
+    const statusText = $('#validationStatusText');
+    if (statusText) statusText.textContent = message;
+
+    const lastRunText = $('#validationLastRunText');
+    if (lastRunText) {
+      const now = new Date();
+      lastRunText.textContent = 'Last run: ' + now.toLocaleString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+  }
+
+  // Wire up Stage 3 button click events
+  const runValidationBtn = $('#runValidationBtn');
+  const downloadExceptionBtn = $('#downloadExceptionBtn');
+  const requestCorrectedDataBtn = $('#requestCorrectedDataBtn');
+  const proceedToRegChecksBtn = $('#proceedToRegChecksBtn');
+
+  if (runValidationBtn) {
+    runValidationBtn.addEventListener('click', function() {
+      setValidationRunStatus('Running validation on all datasets...');
+      
+      // Visual feedback on button
+      this.style.background = 'var(--color-accent-warning)';
+      
+      // Simulate validation run
+      setTimeout(() => {
+        stage3State.validationRun = true;
+        setValidationRunStatus('Validation completed. Review exceptions and error counts.');
+        updateStage3TasksUI();
+        checkStage3DataCleanup();
+        
+        // Reset button color
+        this.style.background = '';
+      }, 800);
+    });
+  }
+
+  if (downloadExceptionBtn) {
+    downloadExceptionBtn.addEventListener('click', function() {
+      // Mark as reviewed after download
+      stage3State.errorsReviewed = true;
+      updateStage3TasksUI();
+      checkStage3DataCleanup();
+      
+      // Visual feedback
+      this.style.background = 'var(--color-accent-success)';
+      setTimeout(() => {
+        this.style.background = '';
+      }, 800);
+      
+      // Original download functionality
+      const content = 'CaseID,Issue,Severity\nCL-2100,Invalid date,High\nCL-2115,Missing policy ID,Medium';
+      const blob = new Blob([content], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; 
+      a.download = 'validation_exceptions.csv'; 
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      console.log('Exception report downloaded - task marked as reviewed.');
+    });
+  }
+
+  if (requestCorrectedDataBtn) {
+    requestCorrectedDataBtn.addEventListener('click', function() {
+      // Mark as sent to insurer
+      stage3State.sentToInsurer = true;
+      updateStage3TasksUI();
+      checkStage3DataCleanup();
+      
+      // Visual feedback
+      this.style.background = 'var(--color-accent-success)';
+      setTimeout(() => {
+        this.style.background = '';
+      }, 800);
+      
+      // Show alert
+      alert('Request for corrected data sent to insurer (simulated).');
+      console.log('Validation issues sent to insurer for correction.');
+    });
+  }
+
+  // Helper function to check if all 3 actions are done and clear exceptions
+  function checkStage3DataCleanup() {
+    if (stage3State.validationRun && stage3State.errorsReviewed && stage3State.sentToInsurer) {
+      // Clear exceptions - set to 0
+      const valExc = $('#val-exc');
+      const valHigh = $('#val-high');
+      
+      if (valExc) {
+        valExc.textContent = '0';
       }
       
-      step2Tasks[taskKey] = true;
-      checkStep2Completion();
-    }
-
-    // Check if Step 2 is fully complete
-    function checkStep2Completion(){
-      const allTasksComplete = Object.values(step2Tasks).every(v => v === true);
-      updateStageCompletion(2, allTasksComplete);
-    }
-
-    // Tab 1: Review DSF Status
-    if(tabReviewDSF){
-      tabReviewDSF.addEventListener('click', function(){
-        // Scroll to dataset status table
-        sectionDatasetStatus?.scrollIntoView({behavior:'smooth', block:'center'});
-        
-        // Mark task as complete
-        markTaskComplete(taskReviewDSF, 'reviewDSF');
-        
-        // Visual feedback on tab
-        this.classList.add('active');
-        setTimeout(() => this.classList.remove('active'), 2000);
-      });
-    }
-
-    // Tab 2: Confirm Datasets Received
-    if(tabConfirmDatasets){
-      tabConfirmDatasets.addEventListener('click', function(){
-        // Scroll to insurer submissions table
-        sectionInsurerSubmissions?.scrollIntoView({behavior:'smooth', block:'center'});
-        
-        // Mark task as complete
-        markTaskComplete(taskConfirmDatasets, 'confirmDatasets');
-        
-        // Visual feedback on tab
-        this.classList.add('active');
-        setTimeout(() => this.classList.remove('active'), 2000);
-      });
-    }
-
-    // Tab 3: Trigger Re-fetch
-    if(tabTriggerRefetch){
-      tabTriggerRefetch.addEventListener('click', function(){
-        // Scroll to Re-fetch button
-        btnFetchAll?.scrollIntoView({behavior:'smooth', block:'center'});
-        
-        // Mark task as complete
-        markTaskComplete(taskTriggerRefetch, 'triggerRefetch');
-        
-        // Visual feedback on tab
-        this.classList.add('active');
-        setTimeout(() => this.classList.remove('active'), 2000);
-        
-        // Optionally trigger the actual re-fetch
-        // btnFetchAll?.click();
-      });
-    }
-
-    // Tab 4: Check Insurer Submissions
-    if(tabCheckSubmissions){
-      tabCheckSubmissions.addEventListener('click', function(){
-        // Scroll to insurer submissions table
-        sectionInsurerSubmissions?.scrollIntoView({behavior:'smooth', block:'center'});
-        
-        // Mark task as complete
-        markTaskComplete(taskCheckSubmissions, 'checkSubmissions');
-        
-        // Visual feedback on tab
-        this.classList.add('active');
-        setTimeout(() => this.classList.remove('active'), 2000);
-      });
-    }
-
-    // Initialize on load
-    checkStep2Completion();
-  })();
-
-  // === Step 3: Button-Driven Task Completion Logic (Data Validation) ===
-  (function(){
-    // State object to track Step 3 task completion
-    const step3Tasks = {
-      runValidation: false,
-      reviewErrors: false,
-      sendToInsurer: false,
-      finalizeDataset: false
-    };
-
-    // Get all buttons that trigger task completion
-    const btnRunValidation = $('#btn-run-validation');
-    const btnDownloadExceptions = $('#btn-download-exceptions');
-    const btnRequestCorrectedData = $('#btn-request-corrected-data');
-    const btnProceedRegChecks = $('#btn-proceed-reg-checks');
-
-    // Get all task items
-    const taskRunValidation = $('#task-run-validation');
-    const taskReviewErrors = $('#task-review-errors');
-    const taskSendToInsurer = $('#task-send-to-insurer');
-    const taskFinalizeDataset = $('#task-finalize-dataset');
-
-    // Helper: Mark a task as complete
-    function markTaskComplete(taskElement, taskKey){
-      if(!taskElement) return;
-      
-      const icon = taskElement.querySelector('.task-icon');
-      if(icon){
-        icon.textContent = '✓';
-        icon.classList.remove('status-pending');
-        icon.classList.add('status-done');
+      if (valHigh) {
+        valHigh.textContent = '0';
+        // Also hide the HIGH chip
+        const highChip = valHigh.nextElementSibling;
+        if (highChip && highChip.classList.contains('chip')) {
+          highChip.style.display = 'none';
+        }
       }
       
-      step3Tasks[taskKey] = true;
-      checkStep3Completion();
+      // Update status text
+      setValidationRunStatus('All exceptions resolved. Data is clean and ready for regulatory checks.');
     }
+  }
 
-    // Check if Step 3 is fully complete
-    function checkStep3Completion(){
-      const allTasksComplete = Object.values(step3Tasks).every(v => v === true);
-      updateStageCompletion(3, allTasksComplete);
-    }
+  if (proceedToRegChecksBtn) {
+    proceedToRegChecksBtn.addEventListener('click', function() {
+      // Mark dataset as finalized
+      if (!stage3State.datasetFinalized) {
+        stage3State.datasetFinalized = true;
+        updateStage3TasksUI();
+      }
+      
+      // Visual feedback
+      this.style.background = 'var(--color-accent-success)';
+      setTimeout(() => {
+        this.style.background = '';
+      }, 500);
+      
+      // Navigate to Stage 4
+      gotoStep(4);
+    });
+  }
 
-    // Button 1: Run Validation
-    if(btnRunValidation){
-      btnRunValidation.addEventListener('click', function(){
-        // Mark task as complete
-        markTaskComplete(taskRunValidation, 'runValidation');
-        
-        // Visual feedback - briefly highlight button
-        this.style.background = 'var(--color-accent-success)';
-        setTimeout(() => {
-          this.style.background = '';
-        }, 1000);
-      });
-    }
-
-    // Button 2: Download Exception Report (counts as "Review failed records")
-    if(btnDownloadExceptions){
-      btnDownloadExceptions.addEventListener('click', function(){
-        // Mark task as complete
-        markTaskComplete(taskReviewErrors, 'reviewErrors');
-        
-        // Visual feedback
-        this.style.background = 'var(--color-accent-success)';
-        setTimeout(() => {
-          this.style.background = '';
-        }, 1000);
-        
-        // Original download functionality could go here
-        // e.g., trigger file download
-      });
-    }
-
-    // Button 3: Request Corrected Data (counts as "Send validation issues to insurer")
-    if(btnRequestCorrectedData){
-      btnRequestCorrectedData.addEventListener('click', function(){
-        // Mark task as complete
-        markTaskComplete(taskSendToInsurer, 'sendToInsurer');
-        
-        // Visual feedback
-        this.style.background = 'var(--color-accent-success)';
-        setTimeout(() => {
-          this.style.background = '';
-        }, 1000);
-        
-        // Original request functionality could go here
-        // e.g., open modal or send request
-      });
-    }
-
-    // Button 4: Proceed to Regulatory Checks (counts as "Finalize cleaned dataset")
-    if(btnProceedRegChecks){
-      btnProceedRegChecks.addEventListener('click', function(){
-        // Mark task as complete
-        markTaskComplete(taskFinalizeDataset, 'finalizeDataset');
-        
-        // Visual feedback
-        this.style.background = 'var(--color-accent-success)';
-        setTimeout(() => {
-          this.style.background = '';
-        }, 1000);
-        
-        // Proceed to next step
-        gotoStep(4);
-      });
-    }
-
-    // Initialize on load
-    checkStep3Completion();
-  })();
+  // Initialize Stage 3 UI on page load
+  updateStage3TasksUI();
 
   // === Step 4: Button-Driven Task Completion Logic (Regulatory Check) ===
   (function(){
