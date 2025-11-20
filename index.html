@@ -2610,98 +2610,288 @@
     <div class="tab active" data-target="data-validation">Data Validation Rules</div>
     <div class="tab" data-target="reg-rules">Regulatory Check</div>
     <div class="tab" data-target="analytics">Analytics</div>
-    <div class="tab" data-target="risk-matrix">Risk Metrics</div>
-    <div class="tab" data-target="early-warning">Early Warning Indicators</div>
     <div class="tab" data-target="insp-templates">Inspection Templates</div>
     <div class="tab" data-target="integrations">Integrations</div>
   </div>
 
   <section id="reg-rules" class="card">
-    <div class="row" style="justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--color-primary);">Configure Regulatory Checks</h3>
-      <label class="switch"><input id="reg-enable" type="checkbox" checked><span class="slider"></span></label>
+    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-sm);">Regulatory Check</h3>
+    <div class="muted" style="margin-bottom:var(--spacing-xl);">Configure regulatory checks that will be run after data validation is complete. These checks map regulatory clauses to automated tests.</div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-lg);">
+      <h4 style="margin:0; font-size:1rem;">Sample Regulatory Checks</h4>
+      <button id="btnAddRegCheck" type="button" class="btn small">+ Add Regulatory Check</button>
     </div>
-    <div class="muted">Define rules applied during Regulatory Checks (Step 4).</div>
-    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
-      <thead><tr><th>Rule Name</th><th>Condition</th><th>Severity</th><th>Status</th><th>Action</th></tr></thead>
-      <tbody id="reg-body">
-        <tr>
-          <td>Claims TAT ≤ 30 days</td>
-          <td>avg(claim_settlement_days) &gt; 30</td>
-          <td><span class="chip miss">High</span></td>
-          <td><span class="chip ok">Active</span></td>
-          <td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td>
+    
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--color-border); text-align:left;">
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Check Name</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Regulation / Clause Reference</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Check Logic</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Severity</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Status</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Solvency Margin Check</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">IRDAI (Assets, Liabilities & Solvency Margin) Regulations – Reg. 7</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem;">Solvency ratio ≥ 150%</td>
+          <td style="padding:var(--spacing-md);"><span class="chip miss">High</span></td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Claims Turnaround Time</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Protection of Policyholders' Interests – Reg. 15</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem;">&gt; 95% claims settled within 30 days</td>
+          <td style="padding:var(--spacing-md);"><span class="chip warn">Medium</span></td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Unclaimed Amount Ageing</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Circular on Unclaimed Amounts</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem;">All amounts &gt; 10 years flagged</td>
+          <td style="padding:var(--spacing-md);"><span class="chip miss">High</span></td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
         </tr>
       </tbody>
     </table>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><input id="reg-name" placeholder="Rule name (e.g., Claims TAT ≤ 30 days)"></div>
-      <div class="col"><input id="reg-cond" placeholder="Condition (e.g., avg(claim_settlement_days) > 30)"></div>
-      <div class="col"><select id="reg-sev"><option>High</option><option>Medium</option><option>Low</option></select></div>
-      <div class="col" style="max-width:160px;"><button id="reg-add" type="button" class="btn">Add Rule</button></div>
-    </div>
   </section>
 
   <section id="analytics" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <div class="row" style="justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--color-primary);">Configure Analytics Models</h3>
-      <label class="switch"><input id="ana-enable" type="checkbox" checked><span class="slider"></span></label>
+    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-sm);">Analytics</h3>
+    <div class="muted" style="margin-bottom:var(--spacing-lg);">Configure analytics thresholds and KPIs used for dashboards and early insights.</div>
+    
+    <!-- Analytics Sub-tabs -->
+    <div class="nav-pills" style="margin-bottom:var(--spacing-xl);">
+      <div class="nav-pill active analytics-subtab" data-subtarget="analytics-thresholds">Thresholds</div>
+      <div class="nav-pill analytics-subtab" data-subtarget="analytics-kpis">KPIs</div>
+      <div class="nav-pill analytics-subtab" data-subtarget="analytics-alerts">Alerts</div>
     </div>
-    <div class="muted">Select algorithms and set sensitivity/thresholds.</div>
-    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
-      <thead><tr><th>Model Name</th><th>Type</th><th>Dataset</th><th>Sensitivity</th><th>Status</th><th>Action</th></tr></thead>
-      <tbody id="ana-body">
-        <tr><td>Repudiation Outlier</td><td>Z-score</td><td>Claims</td><td>0.85</td><td><span class="chip ok">Active</span></td><td><button class="btn" type="button" style="background:#fff;color:#0f172a;">Edit</button></td></tr>
-      </tbody>
-    </table>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><input id="ana-name" placeholder="Model name"></div>
-      <div class="col"><select id="ana-type"><option>Z-score</option><option>IQR</option><option>Clustering (K-Means)</option><option>Regression</option><option>Time-series</option></select></div>
-      <div class="col"><select id="ana-data"><option>Claims</option><option>Underwriting</option><option>Grievances</option><option>Sales/Agents</option></select></div>
-      <div class="col"><input id="ana-sens" placeholder="Sensitivity (0-1)" value="0.75"></div>
-      <div class="col" style="max-width:160px;"><button id="ana-add" type="button" class="btn">Add Model</button></div>
+    
+    <!-- Thresholds Subtab -->
+    <div id="analytics-thresholds" class="analytics-subtab-content">
+      <div class="muted" style="margin-bottom:var(--spacing-lg); font-size:0.875rem;">Set global thresholds used for dashboards and automated alerts.</div>
+      
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:var(--spacing-lg); margin-bottom:var(--spacing-xl);">
+        <!-- KPI Card 1 -->
+        <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:white;">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; font-size:1rem; color:var(--color-primary);">Exception Rate Threshold</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;">Maximum allowed data exception rate before flagging an inspection.</p>
+          <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+            <input type="number" value="5" style="flex:1; padding:0.5rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" />
+            <span style="font-weight:600; color:var(--color-text-main);">%</span>
+          </div>
+        </div>
+        
+        <!-- KPI Card 2 -->
+        <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:white;">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; font-size:1rem; color:var(--color-primary);">High Severity Rule Breach Count</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;">Number of high severity rule breaches that trigger a red alert.</p>
+          <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+            <span style="font-weight:600; color:var(--color-text-main);">&gt;</span>
+            <input type="number" value="10" style="flex:1; padding:0.5rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" />
+          </div>
+        </div>
+        
+        <!-- KPI Card 3 -->
+        <div style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:white;">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; font-size:1rem; color:var(--color-primary);">Claim TAT Breach Threshold</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;">Percentage of claims breaching TAT limit that triggers enhanced supervision.</p>
+          <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+            <span style="font-weight:600; color:var(--color-text-main);">&gt;</span>
+            <input type="number" value="15" style="flex:1; padding:0.5rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" />
+            <span style="font-weight:600; color:var(--color-text-main);">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- KPIs Subtab -->
+    <div id="analytics-kpis" class="analytics-subtab-content" style="display:none;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--color-border); text-align:left;">
+            <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">KPI Name</th>
+            <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Description</th>
+            <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); width:120px;">Target Value</th>
+            <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); width:80px;">Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--color-border);">
+            <td style="padding:var(--spacing-md); font-weight:600;">Data Exception Rate</td>
+            <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Exceptions as % of records processed</td>
+            <td style="padding:var(--spacing-md);"><input type="number" value="5" style="width:100%; padding:0.375rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" /></td>
+            <td style="padding:var(--spacing-md); text-align:center; font-weight:600;">%</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--color-border);">
+            <td style="padding:var(--spacing-md); font-weight:600;">Claims Settled Within TAT</td>
+            <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">% of claims settled within agreed TAT</td>
+            <td style="padding:var(--spacing-md);"><input type="number" value="95" style="width:100%; padding:0.375rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" /></td>
+            <td style="padding:var(--spacing-md); text-align:center; font-weight:600;">%</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--color-border);">
+            <td style="padding:var(--spacing-md); font-weight:600;">High Severity Breaches Resolved</td>
+            <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">% of high severity breaches resolved within 15 days</td>
+            <td style="padding:var(--spacing-md);"><input type="number" value="90" style="width:100%; padding:0.375rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" /></td>
+            <td style="padding:var(--spacing-md); text-align:center; font-weight:600;">%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Alerts Subtab -->
+    <div id="analytics-alerts" class="analytics-subtab-content" style="display:none;">
+      <div class="muted" style="margin-bottom:var(--spacing-lg); font-size:0.875rem;">Configure automatic alerts based on threshold breaches and system events.</div>
+      
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <div style="margin-bottom:var(--spacing-md);">
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); cursor:pointer;">
+            <input type="checkbox" checked />
+            <span style="font-weight:600;">Email alert when Exception Rate > Threshold</span>
+          </label>
+        </div>
+        <div style="margin-left:1.75rem;">
+          <label style="display:block; margin-bottom:var(--spacing-sm); font-size:0.875rem;">Escalation Email List (comma-separated):</label>
+          <input type="text" placeholder="admin@example.com, supervisor@example.com" style="width:100%; padding:0.5rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" />
+        </div>
+      </div>
+      
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <div style="margin-bottom:var(--spacing-md);">
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); cursor:pointer;">
+            <input type="checkbox" checked />
+            <span style="font-weight:600;">Dashboard red flag when High Severity Breach Count > threshold</span>
+          </label>
+        </div>
+        <div style="margin-left:1.75rem;">
+          <label style="display:block; margin-bottom:var(--spacing-sm); font-size:0.875rem;">Minimum days before repeating same alert:</label>
+          <input type="number" value="7" style="width:200px; padding:0.5rem; border:1.5px solid var(--color-border); border-radius:var(--radius-sm);" />
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align:right; margin-top:var(--spacing-xl);">
+      <button type="button" class="btn" onclick="alert('Analytics configuration saved!');">Save Analytics Configuration</button>
     </div>
   </section>
 
-  <section id="risk-matrix" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <div class="row" style="justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--color-primary);">Configure Risk Scoring Matrix</h3>
-      <label class="switch"><input id="risk-enable" type="checkbox" checked><span class="slider"></span></label>
-    </div>
-    <div class="muted">Define weights and cutoffs used for composite insurer risk scores.</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><label>Grievances Weight (%)</label><input id="w-griev" value="30"></div>
-      <div class="col"><label>Regulatory Breaches Weight (%)</label><input id="w-breach" value="35"></div>
-      <div class="col"><label>Data Quality Weight (%)</label><input id="w-quality" value="15"></div>
-      <div class="col"><label>Persistency / Claims Ratios (%)</label><input id="w-metrics" value="20"></div>
-    </div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><label>High-Risk Cutoff</label><input id="risk-cutoff" value="80"></div>
-      <div class="col" style="max-width:180px; align-self:end;"><button id="risk-save" type="button" class="btn">Save Weights</button></div>
-    </div>
-    <div id="risk-msg" class="muted" style="margin-top:8px;"></div>
-  </section>
+
 
   <section id="data-validation" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Data Validation Rules</h3>
-    <div class="muted">Create and maintain structural and business rule checks for incoming datasets.</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><input placeholder="Rule name (e.g., Policy ID not null)"></div>
-      <div class="col"><input placeholder="Expression (e.g., not isnull(policy_id))"></div>
-      <div class="col"><select><option>High</option><option>Medium</option><option>Low</option></select></div>
-      <div class="col" style="max-width:160px;"><button class="btn" type="button">Add Rule</button></div>
+    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-sm);">Data Validation Rules</h3>
+    <div class="muted" style="margin-bottom:var(--spacing-xl);">Create and maintain structural and business rule checks for incoming datasets.</div>
+    
+    <div style="background:var(--color-primary-bg); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-xl);">
+      <h4 style="margin:0 0 var(--spacing-md) 0; font-size:0.9375rem;">Add New Rule</h4>
+      <div class="row" style="gap:var(--spacing-md);">
+        <div class="col"><input placeholder="Rule name (e.g., Policy ID rule)" style="width:100%;"></div>
+        <div class="col"><input placeholder="Expression (e.g., NOT ISNULL(Policy_ID) AND LENGTH(Policy_ID) = 10)" style="width:100%;"></div>
+        <div class="col" style="flex:0 0 140px;"><select style="width:100%;"><option>High</option><option>Medium</option><option>Low</option></select></div>
+        <div class="col" style="flex:0 0 120px;"><button id="btnAddRule" class="btn" type="button" style="width:100%;">Add Rule</button></div>
+      </div>
     </div>
+    
+    <div class="muted" style="margin-bottom:var(--spacing-md); font-size:0.875rem;">Below are sample system-level data validation rules. Use the form above to add more or edit existing ones.</div>
+    
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--color-border); text-align:left;">
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Rule Name</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Expression</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Severity</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Applies To</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Status</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Last Updated</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Policy ID Not Null</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">NOT ISNULL(Policy_ID)</td>
+          <td style="padding:var(--spacing-md);"><span class="chip miss">High</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Policy Master</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">12-Nov-2025</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Premium > 0</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">Premium_Amount > 0</td>
+          <td style="padding:var(--spacing-md);"><span class="chip miss">High</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Policy Master</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">12-Nov-2025</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Claim Date After Policy Start</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">Claim_Date >= Policy_Start_Date</td>
+          <td style="padding:var(--spacing-md);"><span class="chip warn">Medium</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Claims</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">10-Nov-2025</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Valid Product Code</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">Product_Code IN ('MOTOR01','HEALTH02','LIFE03')</td>
+          <td style="padding:var(--spacing-md);"><span class="chip warn">Medium</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Policy Master</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">08-Nov-2025</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Age at Entry ≤ 70</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">Age_At_Entry <= 70</td>
+          <td style="padding:var(--spacing-md);"><span class="chip" style="background:var(--color-text-light); color:white;">Low</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Policy Master</td>
+          <td style="padding:var(--spacing-md);"><span class="chip" style="background:var(--color-text-light); color:white;">Inactive</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">05-Nov-2025</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-accent-success); box-shadow:none;" title="Activate">▶️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
-  <section id="early-warning" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Early Warning Indicators</h3>
-    <div class="muted">Configure grievance trends, anomaly thresholds, and triggers for automated alerts.</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><label>Complaint spike threshold (%)</label><input value="25"></div>
-      <div class="col"><label>Repudiation rate z-score</label><input value="2.0"></div>
-      <div class="col"><label>Refunds volume anomaly</label><input value="3σ"></div>
-    </div>
-  </section>
+
 
   <section id="dash-kpis" class="card" style="margin-top:18px; display:none;">
     <h3>Dashboard & KPIs</h3>
@@ -2714,11 +2904,107 @@
   </section>
 
   <section id="insp-templates" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Inspection Templates</h3>
-    <div class="muted">Manage document templates for DSF, exception reports, and final reports.</div>
-    <div class="row" style="margin-top:10px;">
-      <div class="col"><input placeholder="Template name (e.g., DSF Claims 2025)"></div>
-      <div class="col" style="max-width:160px;"><button class="btn" type="button">Upload</button></div>
+    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-sm);">Inspection Templates</h3>
+    <div class="muted" style="margin-bottom:var(--spacing-xl);">Maintain reusable templates for different types of inspections.</div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-xl);">
+      <!-- Left: Template List -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-md);">
+          <h4 style="margin:0; font-size:0.9375rem;">Template Library</h4>
+          <button id="btnAddTemplate" type="button" class="btn small">+ Add New Template</button>
+        </div>
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:2px solid var(--color-border); text-align:left;">
+              <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); font-size:0.875rem;">Template Name</th>
+              <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); font-size:0.875rem; width:100px;">Type</th>
+              <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); font-size:0.875rem; width:120px;">Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--color-border); cursor:pointer;" onclick="document.getElementById('template-detail-1').style.display='block'; document.getElementById('template-detail-2').style.display='none'; document.getElementById('template-detail-3').style.display='none';">
+              <td style="padding:var(--spacing-md); font-weight:600; color:var(--color-primary);">Comprehensive Onsite Inspection</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Onsite</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">10-Oct-2025</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-border); cursor:pointer;" onclick="document.getElementById('template-detail-1').style.display='none'; document.getElementById('template-detail-2').style.display='block'; document.getElementById('template-detail-3').style.display='none';">
+              <td style="padding:var(--spacing-md); font-weight:600; color:var(--color-primary);">Thematic Review – Motor Claims</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Thematic</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">05-Sep-2025</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--color-border); cursor:pointer;" onclick="document.getElementById('template-detail-1').style.display='none'; document.getElementById('template-detail-2').style.display='none'; document.getElementById('template-detail-3').style.display='block';">
+              <td style="padding:var(--spacing-md); font-weight:600; color:var(--color-primary);">Remote Offsite Monitoring – Life</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Offsite</td>
+              <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">21-Aug-2025</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Right: Template Details -->
+      <div>
+        <h4 style="margin:0 0 var(--spacing-md) 0; font-size:0.9375rem;">Template Details</h4>
+        
+        <!-- Template 1 Details -->
+        <div id="template-detail-1" style="border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:var(--color-primary-bg);">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; color:var(--color-primary);">Comprehensive Onsite Inspection</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Applicable Entities:</strong> General Insurers</p>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Purpose:</strong> Full-scale onsite inspection covering all functional areas including governance, operations, compliance, and risk management.</p>
+          
+          <div style="margin-bottom:var(--spacing-md);">
+            <strong style="font-size:0.875rem; color:var(--color-text-main);">Sections:</strong>
+            <ul style="margin:var(--spacing-sm) 0; padding-left:1.25rem; font-size:0.875rem; color:var(--color-text-muted);">
+              <li>1. Governance & Board Oversight</li>
+              <li>2. Product & Pricing</li>
+              <li>3. Claims Management</li>
+              <li>4. Policyholder Servicing</li>
+              <li>5. Risk Management & Reinsurance</li>
+            </ul>
+          </div>
+          
+          <button type="button" class="btn small" style="width:100%;">View / Edit Template</button>
+        </div>
+        
+        <!-- Template 2 Details -->
+        <div id="template-detail-2" style="display:none; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:var(--color-primary-bg);">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; color:var(--color-primary);">Thematic Review – Motor Claims</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Applicable Entities:</strong> General Insurers</p>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Purpose:</strong> Focused review of motor claims processing, settlement patterns, and TAT compliance.</p>
+          
+          <div style="margin-bottom:var(--spacing-md);">
+            <strong style="font-size:0.875rem; color:var(--color-text-main);">Sections:</strong>
+            <ul style="margin:var(--spacing-sm) 0; padding-left:1.25rem; font-size:0.875rem; color:var(--color-text-muted);">
+              <li>1. Claims Registration Process</li>
+              <li>2. Settlement Patterns & TAT</li>
+              <li>3. Repudiation Analysis</li>
+              <li>4. Customer Complaints</li>
+            </ul>
+          </div>
+          
+          <button type="button" class="btn small" style="width:100%;">View / Edit Template</button>
+        </div>
+        
+        <!-- Template 3 Details -->
+        <div id="template-detail-3" style="display:none; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); background:var(--color-primary-bg);">
+          <h4 style="margin:0 0 var(--spacing-sm) 0; color:var(--color-primary);">Remote Offsite Monitoring – Life</h4>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Applicable Entities:</strong> Life Insurers</p>
+          <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;"><strong>Purpose:</strong> Remote monitoring of key operational and financial metrics for life insurance entities.</p>
+          
+          <div style="margin-bottom:var(--spacing-md);">
+            <strong style="font-size:0.875rem; color:var(--color-text-main);">Sections:</strong>
+            <ul style="margin:var(--spacing-sm) 0; padding-left:1.25rem; font-size:0.875rem; color:var(--color-text-muted);">
+              <li>1. Solvency & Financial Health</li>
+              <li>2. Persistency Ratios</li>
+              <li>3. Product Mix Analysis</li>
+              <li>4. Grievance Trends</li>
+              <li>5. Regulatory Compliance</li>
+            </ul>
+          </div>
+          
+          <button type="button" class="btn small" style="width:100%;">View / Edit Template</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2745,27 +3031,57 @@
   </section>
 
   <section id="integrations" class="card" style="margin-top:var(--spacing-xl); display:none;">
-    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-md);">Integrations</h3>
-    <div class="muted">Connect external systems and view connection status.</div>
-    <div style="margin-top:12px;">
-      <div class="row" style="align-items:center; margin-bottom:10px;">
-        <div style="flex:1; font-weight:700;">Bima Bharosa</div>
-        <div style="flex:0 0 420px;"><input placeholder="Endpoint URL" style="width:100%;"></div>
-        <div style="flex:0 0 120px; text-align:right;"><span class="chip ok">Integrated</span></div>
-      </div>
-
-      <div class="row" style="align-items:center; margin-bottom:10px;">
-        <div style="flex:1; font-weight:700;">IIB</div>
-        <div style="flex:0 0 420px;"><input placeholder="Endpoint / API Key" style="width:100%;"></div>
-        <div style="flex:0 0 120px; text-align:right;"><span class="chip miss">Not connected</span></div>
-      </div>
-
-      <div class="row" style="align-items:center;">
-        <div style="flex:1; font-weight:700;">Other Links</div>
-        <div style="flex:0 0 420px;"><input placeholder="Add URL or notes" style="width:100%;"></div>
-        <div style="flex:0 0 120px; text-align:right;"><span class="chip warn">Partial</span></div>
-      </div>
+    <h3 style="color:var(--color-primary); margin-bottom:var(--spacing-sm);">Integrations</h3>
+    <div class="muted" style="margin-bottom:var(--spacing-xl);">Configure integrations with external systems and data sources.</div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-lg);">
+      <h4 style="margin:0; font-size:1rem;">Connected Systems</h4>
+      <button type="button" class="btn small">+ Add Integration</button>
     </div>
+    
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--color-border); text-align:left;">
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Integration Name</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Type</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Status</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main);">Last Sync</th>
+          <th style="padding:var(--spacing-md); font-weight:600; color:var(--color-text-main); text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">IIB System</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">API</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Connected</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Synced 10 mins ago</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.75rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none; border:1px solid var(--color-primary);">Configure</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">Grievance Redressal Portal</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">API</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Connected</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">Synced 1 hr ago</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.75rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none; border:1px solid var(--color-primary);">Configure</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">External Data Source</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">SFTP</td>
+          <td style="padding:var(--spacing-md);"><span class="chip miss">Not Connected</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">No recent sync</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.75rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none; border:1px solid var(--color-primary);">Configure</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </section> <!-- end config-root -->
 </section> <!-- end app-root -->
 
@@ -2810,6 +3126,256 @@
         <button id="comm-send" class="btn">Send</button>
         <button id="comm-close-2" class="btn small" style="background:#0f172a; color:white;">Close</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Rule Modal (Data Validation) -->
+<div id="modalAddRule" class="modal" aria-hidden="true">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-add-rule-title" style="max-width:720px;">
+    <header>
+      <h3 id="modal-add-rule-title" style="margin:0;">Create Data Validation Rule</h3>
+      <div><button class="close" onclick="closeModal('modalAddRule')" aria-label="Close">✕</button></div>
+    </header>
+    <div style="padding:var(--spacing-lg) 0;">
+      <p class="muted" style="margin:0 0 var(--spacing-lg) 0;">Use this form to define a structural or business rule check for incoming datasets.</p>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <div>
+          <label>Rule Name</label>
+          <input id="rule-name" type="text" placeholder="e.g., Policy ID Not Null" style="width:100%;" />
+        </div>
+        <div>
+          <label>Dataset / Applies To</label>
+          <select id="rule-dataset" style="width:100%;">
+            <option>Policy Master</option>
+            <option>Claims</option>
+            <option>Endorsements</option>
+            <option>Grievances</option>
+            <option>Finance</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:var(--spacing-lg);">
+        <label>Severity</label>
+        <select id="rule-severity" style="width:100%;">
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+      </div>
+      
+      <div style="margin-bottom:var(--spacing-lg);">
+        <label>Rule Description</label>
+        <textarea id="rule-description" rows="3" placeholder="Brief description of what this rule validates..." style="width:100%; font-family:inherit; resize:vertical;"></textarea>
+      </div>
+      
+      <div style="margin-bottom:var(--spacing-lg);">
+        <label>Rule Expression</label>
+        <input id="rule-expression" type="text" placeholder="e.g., NOT ISNULL(Policy_ID) AND LENGTH(Policy_ID) = 10" style="width:100%; font-family:monospace;" />
+      </div>
+      
+      <div style="background:var(--color-primary-bg); padding:var(--spacing-md); border-radius:var(--radius-md); border-left:3px solid var(--color-primary);">
+        <strong style="font-size:0.875rem; color:var(--color-primary);">Example</strong>
+        <p class="muted" style="margin:var(--spacing-sm) 0 0 0; font-size:0.875rem;">Policy ID Not Null – Applies to Policy Master, Severity: High, Expression: NOT ISNULL(Policy_ID)</p>
+      </div>
+    </div>
+    <div style="display:flex; gap:var(--spacing-md); justify-content:flex-end; padding-top:var(--spacing-lg); border-top:1px solid var(--color-border);">
+      <button type="button" class="btn secondary" onclick="closeModal('modalAddRule')">Cancel</button>
+      <button type="button" class="btn" onclick="saveRule()">Save Rule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Regulatory Check Modal -->
+<div id="modalAddRegCheck" class="modal" aria-hidden="true">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-add-reg-title" style="max-width:720px;">
+    <header>
+      <h3 id="modal-add-reg-title" style="margin:0;">Create Regulatory Check</h3>
+      <div><button class="close" onclick="closeModal('modalAddRegCheck')" aria-label="Close">✕</button></div>
+    </header>
+    <div style="padding:var(--spacing-lg) 0;">
+      <p class="muted" style="margin:0 0 var(--spacing-lg) 0;">Link a regulatory clause to an automated check that will be run after data validation.</p>
+      
+      <div style="margin-bottom:var(--spacing-lg);">
+        <label>Regulation</label>
+        <select id="reg-regulation" style="width:100%;">
+          <option>IRDAI (Assets, Liabilities & Solvency Margin) Regulations</option>
+          <option>Protection of Policyholders' Interests Regulations</option>
+          <option>Circular on Unclaimed Amounts</option>
+          <option>IRDAI (Registration of Indian Insurance Companies) Regulations</option>
+          <option>IRDAI (Appointed Actuary) Regulations</option>
+        </select>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:2fr 1fr; gap:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <div>
+          <label>Check Name</label>
+          <input id="reg-check-name" type="text" placeholder="e.g., Solvency Margin Check" style="width:100%;" />
+        </div>
+        <div>
+          <label>Clause / Reference</label>
+          <input id="reg-clause" type="text" placeholder="e.g., Reg. 7" style="width:100%;" />
+        </div>
+      </div>
+      
+      <div style="margin-bottom:var(--spacing-lg);">
+        <label>Check Logic</label>
+        <textarea id="reg-logic" rows="3" placeholder="Describe the automated check logic..." style="width:100%; font-family:inherit; resize:vertical;"></textarea>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <div>
+          <label>Severity</label>
+          <select id="reg-severity" style="width:100%;">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+        <div>
+          <label>Applies To</label>
+          <select id="reg-applies-to" style="width:100%;">
+            <option>All</option>
+            <option>Life Insurers</option>
+            <option>General Insurers</option>
+            <option>Health Insurers</option>
+          </select>
+        </div>
+      </div>
+      
+      <div style="background:var(--color-primary-bg); padding:var(--spacing-md); border-radius:var(--radius-md); border-left:3px solid var(--color-primary);">
+        <strong style="font-size:0.875rem; color:var(--color-primary);">How this works</strong>
+        <ul style="margin:var(--spacing-sm) 0 0 0; padding-left:1.25rem; font-size:0.875rem; color:var(--color-text-muted);">
+          <li>Select a regulation and clause reference</li>
+          <li>Define the name and logic for the automated check</li>
+          <li>Map its severity and applicable entity type</li>
+        </ul>
+      </div>
+    </div>
+    <div style="display:flex; gap:var(--spacing-md); justify-content:flex-end; padding-top:var(--spacing-lg); border-top:1px solid var(--color-border);">
+      <button type="button" class="btn secondary" onclick="closeModal('modalAddRegCheck')">Cancel</button>
+      <button type="button" class="btn" onclick="saveRegCheck()">Save Check</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Template Modal -->
+<div id="modalAddTemplate" class="modal" aria-hidden="true">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-add-template-title" style="max-width:800px;">
+    <header>
+      <h3 id="modal-add-template-title" style="margin:0;">Create Inspection Template</h3>
+      <div><button class="close" onclick="closeModal('modalAddTemplate')" aria-label="Close">✕</button></div>
+    </header>
+    <div style="padding:var(--spacing-lg) 0; max-height:70vh; overflow-y:auto;">
+      <p class="muted" style="margin:0 0 var(--spacing-xl) 0;">Define a reusable inspection template by selecting data categories and key fields.</p>
+      
+      <!-- Section 1: Basic Details -->
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary); font-size:1rem;">Section 1 – Basic Details</h4>
+        
+        <div style="margin-bottom:var(--spacing-lg);">
+          <label>Template Name</label>
+          <input id="template-name" type="text" placeholder="e.g., Comprehensive Onsite Inspection" style="width:100%;" />
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-lg);">
+          <div>
+            <label>Inspection Type</label>
+            <select id="template-type" style="width:100%;">
+              <option>Onsite</option>
+              <option>Offsite</option>
+              <option>Thematic</option>
+            </select>
+          </div>
+          <div>
+            <label>Applicable Entities</label>
+            <select id="template-entities" style="width:100%;">
+              <option>All</option>
+              <option>Life Insurers</option>
+              <option>General Insurers</option>
+              <option>Health Insurers</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Section 2: Data Category -->
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary); font-size:1rem;">Section 2 – Data Category</h4>
+        
+        <div style="margin-bottom:var(--spacing-md);">
+          <label>Data Category</label>
+          <select id="template-category" style="width:100%;" onchange="updateCategoryHelper()">
+            <option value="">Select a category...</option>
+            <option value="policy">Policy Data</option>
+            <option value="claims">Claims Data</option>
+            <option value="finance">Finance</option>
+            <option value="reinsurance">Reinsurance</option>
+            <option value="governance">Governance & Board</option>
+            <option value="grievance">Grievance Data</option>
+          </select>
+        </div>
+        
+        <div id="category-helper" class="muted" style="font-size:0.875rem; padding:var(--spacing-sm); background:var(--color-bg); border-radius:var(--radius-sm); display:none;">
+          <!-- Dynamic helper text -->
+        </div>
+      </div>
+      
+      <!-- Section 3: Data Fields -->
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg); margin-bottom:var(--spacing-lg);">
+        <h4 style="margin:0 0 var(--spacing-sm) 0; color:var(--color-primary); font-size:1rem;">Section 3 – Data Fields</h4>
+        <p class="muted" style="margin:0 0 var(--spacing-md) 0; font-size:0.875rem;">These fields will be pre-loaded into the inspection data request and analytics views.</p>
+        
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--spacing-sm);">
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="policy_number" /> Policy Number
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="policy_start_date" /> Policy Start Date
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="policy_end_date" /> Policy End Date
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="product_code" /> Product Code
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="premium_amount" /> Premium Amount
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="sum_insured" /> Sum Insured
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="channel" /> Channel
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" value="agent_code" /> Agent Code
+          </label>
+        </div>
+      </div>
+      
+      <!-- Section 4: Options -->
+      <div style="background:white; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--spacing-lg);">
+        <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary); font-size:1rem;">Section 4 – Options</h4>
+        
+        <div style="display:flex; flex-direction:column; gap:var(--spacing-sm);">
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" checked /> Include standard governance & compliance checks
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" checked /> Include data quality summary section
+          </label>
+          <label style="display:flex; align-items:center; gap:var(--spacing-sm); font-weight:400; cursor:pointer;">
+            <input type="checkbox" /> Enable custom question set when inspection is created
+          </label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:var(--spacing-md); justify-content:flex-end; padding-top:var(--spacing-lg); border-top:1px solid var(--color-border);">
+      <button type="button" class="btn secondary" onclick="closeModal('modalAddTemplate')">Cancel</button>
+      <button type="button" class="btn" onclick="saveTemplate()">Create Template</button>
     </div>
   </div>
 </div>
@@ -3026,8 +3592,8 @@ document.addEventListener('DOMContentLoaded', function(){
     const root = document.getElementById('config-root');
     if(!root) return;
     const tabs = root.querySelectorAll('.tab');
-    // new ordered list of sections (matches the reduced tabs)
-    const sectionIds = ['data-validation','reg-rules','analytics','risk-matrix','early-warning','insp-templates','integrations'];
+    // Updated list of sections (removed risk-matrix and early-warning)
+    const sectionIds = ['data-validation','reg-rules','analytics','insp-templates','integrations'];
     const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
     function activate(target){
       tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-target')===target));
@@ -3035,7 +3601,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     tabs.forEach(t => t.addEventListener('click', ()=> activate(t.getAttribute('data-target'))));
     const first = tabs[0];
-    const defaultTarget = (root.querySelector('.tab.active') || first)?.getAttribute('data-target') || 'reg-rules';
+    const defaultTarget = (root.querySelector('.tab.active') || first)?.getAttribute('data-target') || 'data-validation';
     activate(defaultTarget);
   }
 
@@ -4762,6 +5328,204 @@ document.addEventListener('DOMContentLoaded', function(){
 
   window.viewObservationResponse = function(obsId){
     alert(`Viewing response for ${obsId}\n\n[This would show the previously submitted response]`);
+  };
+
+  // ========== Modal Functions ==========
+  window.openModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if(modal) {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  window.closeModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if(modal) {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Close modal on outside click
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if(e.target === this) {
+        closeModal(this.id);
+      }
+    });
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function(e) {
+    if(e.key === 'Escape') {
+      document.querySelectorAll('.modal.show').forEach(modal => {
+        closeModal(modal.id);
+      });
+    }
+  });
+
+  // ========== Data Validation Rule Functions ==========
+  $('#btnAddRule')?.addEventListener('click', () => openModal('modalAddRule'));
+
+  window.saveRule = function() {
+    const name = $('#rule-name')?.value;
+    const dataset = $('#rule-dataset')?.value;
+    const severity = $('#rule-severity')?.value;
+    const expression = $('#rule-expression')?.value;
+
+    if(!name || !expression) {
+      alert('Please fill in Rule Name and Expression');
+      return;
+    }
+
+    // Add dummy row to table
+    const tbody = document.querySelector('#data-validation tbody');
+    if(tbody) {
+      const severityClass = severity === 'High' ? 'miss' : severity === 'Medium' ? 'warn' : 'chip';
+      const newRow = `
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">${name}</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem; color:var(--color-text-muted);">${expression}</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ${severityClass}">${severity}</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">${dataset}</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">${new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'})}</td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-accent-error); box-shadow:none;" title="Delete">🗑️</button>
+          </td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML('afterbegin', newRow);
+    }
+
+    // Clear form
+    $('#rule-name').value = '';
+    $('#rule-expression').value = '';
+    $('#rule-description').value = '';
+    
+    closeModal('modalAddRule');
+    alert('Rule added successfully!');
+  };
+
+  // ========== Regulatory Check Functions ==========
+  $('#btnAddRegCheck')?.addEventListener('click', () => openModal('modalAddRegCheck'));
+
+  window.saveRegCheck = function() {
+    const regulation = $('#reg-regulation')?.value;
+    const clause = $('#reg-clause')?.value;
+    const checkName = $('#reg-check-name')?.value;
+    const logic = $('#reg-logic')?.value;
+    const severity = $('#reg-severity')?.value;
+
+    if(!checkName || !logic) {
+      alert('Please fill in Check Name and Logic');
+      return;
+    }
+
+    // Add dummy row to table
+    const tbody = document.querySelector('#reg-rules tbody');
+    if(tbody) {
+      const severityClass = severity === 'High' ? 'miss' : severity === 'Medium' ? 'warn' : 'chip';
+      const newRow = `
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:var(--spacing-md); font-weight:600;">${checkName}</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">${regulation} – ${clause}</td>
+          <td style="padding:var(--spacing-md); font-family:monospace; font-size:0.8125rem;">${logic.substring(0, 50)}${logic.length > 50 ? '...' : ''}</td>
+          <td style="padding:var(--spacing-md);"><span class="chip ${severityClass}">${severity}</span></td>
+          <td style="padding:var(--spacing-md);"><span class="chip ok">Active</span></td>
+          <td style="padding:var(--spacing-md); text-align:right;">
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; margin-right:0.25rem; background:transparent; color:var(--color-primary); box-shadow:none;" title="Edit">✏️</button>
+            <button type="button" class="btn small" style="padding:0.25rem 0.5rem; background:transparent; color:var(--color-text-muted); box-shadow:none;" title="Disable">⏸️</button>
+          </td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML('afterbegin', newRow);
+    }
+
+    // Clear form
+    $('#reg-check-name').value = '';
+    $('#reg-clause').value = '';
+    $('#reg-logic').value = '';
+    
+    closeModal('modalAddRegCheck');
+    alert('Regulatory check added successfully!');
+  };
+
+  // ========== Analytics Subtabs ==========
+  const analyticsSubtabs = $$('.analytics-subtab');
+  analyticsSubtabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const target = this.getAttribute('data-subtarget');
+      
+      // Update active tab
+      analyticsSubtabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Show/hide content
+      $$('.analytics-subtab-content').forEach(content => {
+        content.style.display = content.id === target ? 'block' : 'none';
+      });
+    });
+  });
+
+  // ========== Template Functions ==========
+  $('#btnAddTemplate')?.addEventListener('click', () => openModal('modalAddTemplate'));
+
+  window.updateCategoryHelper = function() {
+    const category = $('#template-category')?.value;
+    const helper = $('#category-helper');
+    
+    const helpers = {
+      'policy': 'Policy data includes policy numbers, coverage details, premium information, and policyholder demographics.',
+      'claims': 'Claims data includes claim registration, settlement details, TAT metrics, and repudiation information.',
+      'finance': 'Financial data includes solvency ratios, investment portfolios, income statements, and balance sheets.',
+      'reinsurance': 'Reinsurance data includes treaty details, claims ceded, premium paid to reinsurers, and recovery information.',
+      'governance': 'Governance data includes board composition, meeting minutes, committee structures, and compliance frameworks.',
+      'grievance': 'Grievance data includes complaint registration, resolution timelines, escalation patterns, and customer satisfaction metrics.'
+    };
+    
+    if(category && helper) {
+      helper.textContent = helpers[category] || '';
+      helper.style.display = 'block';
+    } else if(helper) {
+      helper.style.display = 'none';
+    }
+  };
+
+  window.saveTemplate = function() {
+    const name = $('#template-name')?.value;
+    const type = $('#template-type')?.value;
+
+    if(!name) {
+      alert('Please enter a Template Name');
+      return;
+    }
+
+    // Add dummy row to table
+    const tbody = document.querySelector('#insp-templates tbody');
+    if(tbody) {
+      const newRow = `
+        <tr style="border-bottom:1px solid var(--color-border); cursor:pointer;">
+          <td style="padding:var(--spacing-md); font-weight:600; color:var(--color-primary);">${name}</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem;">${type}</td>
+          <td style="padding:var(--spacing-md); color:var(--color-text-muted); font-size:0.875rem);">${new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'})}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML('afterbegin', newRow);
+    }
+
+    // Clear form
+    $('#template-name').value = '';
+    $('#template-category').value = '';
+    updateCategoryHelper();
+    
+    closeModal('modalAddTemplate');
+    alert('Template created successfully!');
   };
 });
 </script>
