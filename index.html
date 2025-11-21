@@ -1116,6 +1116,476 @@
   table th:nth-child(7) {
     text-align: center !important;
   }
+
+  /* ========== Company Dashboard Styles ========== */
+  .company-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-soft) 100%);
+    color: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-2xl);
+    box-shadow: var(--shadow-lg);
+  }
+  .company-header h1 {
+    color: white;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+  .company-type-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .company-meta {
+    display: flex;
+    gap: var(--spacing-2xl);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-lg);
+    font-size: 0.9375rem;
+    opacity: 0.95;
+  }
+  .company-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .company-meta-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .company-meta-value {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .snapshot-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+  }
+  .snapshot-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .snapshot-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--color-primary);
+  }
+  .snapshot-card-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin-bottom: var(--spacing-sm);
+  }
+  .snapshot-card-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: var(--spacing-sm) 0;
+  }
+  .snapshot-card-trend {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .dashboard-section {
+    margin-bottom: var(--spacing-2xl);
+  }
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+  }
+  .section-title:hover {
+    color: var(--color-primary);
+  }
+  .section-toggle-icon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    transition: transform 0.3s ease;
+    margin-right: var(--spacing-md);
+  }
+  .section-toggle-icon.collapsed {
+    transform: rotate(-90deg);
+  }
+  .section-content {
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  .section-content.collapsed {
+    display: none;
+  }
+
+  .dashboard-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+  }
+  .dashboard-row > .card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: var(--spacing-xl);
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-border);
+  }
+  .timeline-item {
+    position: relative;
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    background: white;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+  }
+  .timeline-item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary);
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -21px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--color-primary);
+    z-index: 2;
+  }
+  .timeline-date {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.375rem;
+  }
+  .timeline-type {
+    font-weight: 600;
+    color: var(--color-text-main);
+    margin-bottom: 0.25rem;
+  }
+
+  .risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  .risk-badge-high {
+    background: var(--color-accent-error-bg);
+    color: var(--color-accent-error-text);
+    border: 1.5px solid var(--color-accent-error);
+  }
+  .risk-badge-medium {
+    background: var(--color-accent-warning-bg);
+    color: var(--color-accent-warning-text);
+    border: 1.5px solid var(--color-accent-warning);
+  }
+  .risk-badge-low {
+    background: var(--color-accent-success-bg);
+    color: var(--color-accent-success-text);
+    border: 1.5px solid var(--color-accent-success);
+  }
+
+  .trend-arrow {
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .trend-up { color: var(--color-accent-error); }
+  .trend-stable { color: var(--color-accent-warning); }
+  .trend-down { color: var(--color-accent-success); }
+
+  .risk-heatmap {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0.375rem;
+  }
+  .risk-heatmap th {
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    font-weight: 700;
+    padding: var(--spacing-md);
+    text-align: center;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  .risk-heatmap td {
+    padding: var(--spacing-lg);
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .risk-heatmap td:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+  }
+  .risk-high {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+  }
+  .risk-medium {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+  }
+  .risk-low {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #10b981;
+  }
+
+  .quality-score {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-primary-bg) 0%, white 100%);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+  }
+  .quality-score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: var(--spacing-sm) 0;
+  }
+  .quality-score-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mini-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+  }
+  .mini-stat {
+    padding: var(--spacing-lg);
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+  .mini-stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin-bottom: 0.375rem;
+  }
+  .mini-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .scorecard-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .scorecard-table th {
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    font-weight: 700;
+    padding: var(--spacing-md);
+    text-align: left;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    border-bottom: 2px solid var(--color-primary);
+  }
+  .scorecard-table td {
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+  }
+  .scorecard-table tbody tr:hover {
+    background: var(--color-primary-bg);
+  }
+
+  .action-list {
+    background: #fffbeb;
+    border: 2px solid #f59e0b;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+  }
+  .action-list h4 {
+    color: #92400e;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  .action-list ol {
+    margin: 0;
+    padding-left: var(--spacing-xl);
+  }
+  .action-list li {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-main);
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .grievance-bars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+  }
+  .grievance-bar-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+  .grievance-bar-label {
+    flex: 0 0 140px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-main);
+  }
+  .grievance-bar-track {
+    flex: 1;
+    height: 24px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    position: relative;
+    overflow: hidden;
+  }
+  .grievance-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-lighter), var(--color-primary));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 var(--spacing-sm);
+    color: white;
+    font-weight: 700;
+    font-size: 0.75rem;
+    transition: width 0.3s ease;
+  }
+
+  .badge-green {
+    background: var(--color-accent-success-bg);
+    color: var(--color-accent-success-text);
+    border: 1.5px solid var(--color-accent-success);
+  }
+  .badge-amber {
+    background: var(--color-accent-warning-bg);
+    color: var(--color-accent-warning-text);
+    border: 1.5px solid var(--color-accent-warning);
+  }
+  .badge-red {
+    background: var(--color-accent-error-bg);
+    color: var(--color-accent-error-text);
+    border: 1.5px solid var(--color-accent-error);
+  }
+
+  .compliance-score {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, #fef3c7 0%, white 100%);
+    border-radius: var(--radius-lg);
+    border: 2px solid #f59e0b;
+    margin-bottom: var(--spacing-lg);
+  }
+  .compliance-score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: var(--spacing-sm) 0;
+  }
+
+  .severity-chips {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: var(--spacing-lg) 0;
+  }
+  .severity-chip {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 2px solid transparent;
+  }
+  .severity-critical {
+    background: var(--color-accent-error-bg);
+    color: var(--color-accent-error-text);
+    border-color: var(--color-accent-error);
+  }
+  .severity-moderate {
+    background: var(--color-accent-warning-bg);
+    color: var(--color-accent-warning-text);
+    border-color: var(--color-accent-warning);
+  }
+  .severity-minor {
+    background: #e0e7ff;
+    color: #3730a3;
+    border-color: #6366f1;
+  }
 </style>
 </head>
 <body>
@@ -1174,6 +1644,8 @@
       <button id="btn-view-ongoing" type="button">View Ongoing</button>
       <button id="btn-view-completed" type="button">View Completed</button>
       <button id="btn-config" type="button">Configure</button>
+      <div style="border-left:2px solid var(--color-border); height:32px; margin:0 var(--spacing-sm);"></div>
+      <button id="btn-view-company-dashboard" type="button" class="secondary" onclick="showCompanyDashboard('Wisdom General Insurance Co. Ltd.')">Supervision Dashboard</button>
     </div>
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--spacing-xl);">
@@ -1875,6 +2347,454 @@
       </div>
     </div>
 
+    <!-- ========== COMPANY DASHBOARD ========== -->
+    <div id="company-dashboard" style="display:none;">
+      <div style="margin-bottom:var(--spacing-xl); display:flex; align-items:center; gap:var(--spacing-lg); flex-wrap:wrap;">
+        <button id="btn-back-to-inspections" type="button" class="btn secondary">← Back to Inspections List</button>
+        <div style="display:flex; align-items:center; gap:var(--spacing-md);">
+          <label for="company-selector" style="font-weight:600; color:var(--color-text-main); margin:0; white-space:nowrap;">Select Insurer:</label>
+          <select id="company-selector" style="min-width:280px; padding:0.625rem 0.875rem; border:2px solid var(--color-primary); border-radius:var(--radius-md); font-weight:600; color:var(--color-primary); background:white;">
+            <option value="">-- Select Insurer --</option>
+            <option value="LIC">LIC</option>
+            <option value="ICICI Lombard">ICICI Lombard</option>
+            <option value="SBI Life">SBI Life</option>
+            <option value="HDFC Ergo">HDFC Ergo</option>
+            <option value="Wisdom General Insurance Co. Ltd." selected>Wisdom General Insurance Co. Ltd.</option>
+          </select>
+        </div>
+        <button type="button" class="btn" onclick="console.log('View all inspections for this insurer')">View All Inspections for This Insurer</button>
+      </div>
+
+      <!-- Row 1: Company Header & Snapshot -->
+      <div class="company-header">
+        <h1>
+          <span id="company-name">Wisdom General Insurance Company Ltd.</span>
+          <span class="company-type-badge">General Insurance</span>
+        </h1>
+        
+        <div class="company-meta">
+          <div class="company-meta-item">
+            <div class="company-meta-label">Total Inspections (Last 3 Years)</div>
+            <div class="company-meta-value" id="meta-total-inspections">7</div>
+          </div>
+          <div class="company-meta-item">
+            <div class="company-meta-label">Data Quality Score</div>
+            <div class="company-meta-value" id="meta-data-quality">72/100</div>
+          </div>
+          <div class="company-meta-item">
+            <div class="company-meta-label">Regulatory Compliance Score</div>
+            <div class="company-meta-value" id="meta-compliance-score">68/100</div>
+          </div>
+          <div class="company-meta-item">
+            <div class="company-meta-label">Overall Risk Rating</div>
+            <div class="company-meta-value" id="meta-risk-rating" style="color:#ef4444; font-weight:700;">High <span class="trend-arrow trend-up" style="font-size:1.25rem;">↑</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Inspection History Timeline + Stats -->
+      <div class="dashboard-section">
+        <h3 class="section-title" onclick="toggleSection('section-1')">
+          <span class="section-toggle-icon" id="toggle-icon-1">▼</span>
+          <span>Inspection History & Statistics</span>
+        </h3>
+        <div class="dashboard-row section-content" id="section-1">
+          <!-- Left: Timeline -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Inspection Timeline</h4>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-date">Nov 2024</div>
+                <div class="timeline-type">On-site Inspection</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Jun 2024</div>
+                <div class="timeline-type">Thematic Review – Health Claims</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Feb 2024</div>
+                <div class="timeline-type">Off-site Inspection</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Sep 2023</div>
+                <div class="timeline-type">On-site Inspection</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Apr 2023</div>
+                <div class="timeline-type">Off-site Inspection</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Nov 2022</div>
+                <div class="timeline-type">Thematic Review – Motor OD</div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-date">Mar 2022</div>
+                <div class="timeline-type">On-site Inspection</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Stats -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Inspection Statistics</h4>
+            
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <div class="mini-stat-label">Total (5 Years)</div>
+                <div class="mini-stat-value">12</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">Avg. Gap (Months)</div>
+                <div class="mini-stat-value">5.2</div>
+              </div>
+            </div>
+
+            <div style="margin-top:var(--spacing-2xl);">
+              <h5 style="margin-bottom:var(--spacing-lg); color:var(--color-text-main);">Breakdown by Type</h5>
+              <table style="font-size:0.9375rem;">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                    <th>Last Conducted</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>On-site</td>
+                    <td><strong>4</strong></td>
+                    <td>Nov 2024</td>
+                  </tr>
+                  <tr>
+                    <td>Off-site</td>
+                    <td><strong>5</strong></td>
+                    <td>Feb 2024</td>
+                  </tr>
+                  <tr>
+                    <td>Thematic</td>
+                    <td><strong>3</strong></td>
+                    <td>Jun 2024</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top:var(--spacing-2xl); padding:var(--spacing-lg); background:var(--color-primary-bg); border-radius:var(--radius-md);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:var(--spacing-sm);">
+                <span style="font-weight:600; font-size:0.875rem;">Last Inspection:</span>
+                <span style="color:var(--color-primary); font-weight:700;">15-Nov-2024</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="font-weight:600; font-size:0.875rem;">Next Inspection Planned:</span>
+                <span style="color:var(--color-primary); font-weight:700;">Q2 FY 2025–26</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Recurring Issues & Risk Drivers -->
+      <div class="dashboard-section">
+        <h3 class="section-title" onclick="toggleSection('section-2')">
+          <span class="section-toggle-icon" id="toggle-icon-2">▼</span>
+          <span>Recurring Issues & Risk Profile</span>
+        </h3>
+        <div class="dashboard-row section-content" id="section-2">
+          <!-- Left: Recurring Issues -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Recurring Supervisory Issues</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>Times Observed</th>
+                  <th>Last Observed</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Delayed claim settlement in motor OD</td>
+                  <td><strong>4</strong></td>
+                  <td>Nov 2024</td>
+                  <td><span class="trend-arrow trend-up">↑</span> <span style="color:var(--color-accent-error); font-weight:600;">Worsening</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">High grievance ratio in health products</td>
+                  <td><strong>3</strong></td>
+                  <td>Sep 2024</td>
+                  <td><span class="trend-arrow trend-stable">→</span> <span style="color:var(--color-accent-warning); font-weight:600;">Stable</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Inadequate board oversight on risk management</td>
+                  <td><strong>3</strong></td>
+                  <td>Jun 2024</td>
+                  <td><span class="trend-arrow trend-down">↓</span> <span style="color:var(--color-accent-success); font-weight:600;">Improving</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Data quality issues in policy master</td>
+                  <td><strong>5</strong></td>
+                  <td>Nov 2024</td>
+                  <td><span class="trend-arrow trend-up">↑</span> <span style="color:var(--color-accent-error); font-weight:600;">Worsening</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Mis-selling through bancassurance channel</td>
+                  <td><strong>2</strong></td>
+                  <td>Apr 2024</td>
+                  <td><span class="trend-arrow trend-stable">→</span> <span style="color:var(--color-accent-warning); font-weight:600;">Stable</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right: Risk Heatmap -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Entity Risk Heatmap</h4>
+            <table class="risk-heatmap">
+              <thead>
+                <tr>
+                  <th>Risk Area</th>
+                  <th>Current Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600; text-align:left; padding-left:var(--spacing-lg);">Underwriting</td>
+                  <td class="risk-medium">Medium</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; text-align:left; padding-left:var(--spacing-lg);">Claims</td>
+                  <td class="risk-high">High</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; text-align:left; padding-left:var(--spacing-lg);">Operations</td>
+                  <td class="risk-medium">Medium</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; text-align:left; padding-left:var(--spacing-lg);">Sales & Distribution</td>
+                  <td class="risk-high">High</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; text-align:left; padding-left:var(--spacing-lg);">Governance & Compliance</td>
+                  <td class="risk-medium">Medium</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top:var(--spacing-2xl); padding:var(--spacing-lg); background:#fff3cd; border:2px solid #f59e0b; border-radius:var(--radius-md);">
+              <strong style="color:#92400e; display:block; margin-bottom:var(--spacing-sm);">Key Risk Drivers:</strong>
+              <ul style="margin:0; padding-left:var(--spacing-xl); color:var(--color-text-main);">
+                <li>Persistent claim settlement delays (Claims)</li>
+                <li>Elevated mis-selling incidents (Distribution)</li>
+                <li>Data quality gaps impacting regulatory reporting</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Data Quality Profile + Regulatory Compliance -->
+      <div class="dashboard-section">
+        <h3 class="section-title" onclick="toggleSection('section-3')">
+          <span class="section-toggle-icon" id="toggle-icon-3">▼</span>
+          <span>Data Quality & Regulatory Compliance</span>
+        </h3>
+        <div class="dashboard-row section-content" id="section-3">
+          <!-- Left: Data Quality -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Data Quality Profile</h4>
+            
+            <div class="quality-score">
+              <div class="quality-score-label">Data Quality Score</div>
+              <div class="quality-score-value">72<span style="font-size:1.5rem; color:var(--color-text-muted);">/100</span></div>
+            </div>
+
+            <div class="mini-stats">
+              <div class="mini-stat">
+                <div class="mini-stat-label">Avg. Validation Exceptions</div>
+                <div class="mini-stat-value">48</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">Clean Data Inspections</div>
+                <div class="mini-stat-value">2/7</div>
+              </div>
+              <div class="mini-stat">
+                <div class="mini-stat-label">Avg. Submission Delay</div>
+                <div class="mini-stat-value">3 days</div>
+              </div>
+            </div>
+
+            <h5 style="margin:var(--spacing-xl) 0 var(--spacing-lg) 0; color:var(--color-text-main);">Top Validation Breaches</h5>
+            <table style="font-size:0.875rem;">
+              <thead>
+                <tr>
+                  <th>Validation Rule</th>
+                  <th>Breaches</th>
+                  <th>Inspections</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sum of portfolio premiums ≠ total premium</td>
+                  <td><span class="chip miss">3</span></td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>Missing mandatory fields in policy master</td>
+                  <td><span class="chip miss">5</span></td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <td>Negative claim amounts / invalid dates</td>
+                  <td><span class="chip warn">2</span></td>
+                  <td>2</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right: Regulatory Compliance -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Regulatory Compliance Behaviour</h4>
+            
+            <div class="compliance-score">
+              <div class="quality-score-label">Regulatory Compliance Score</div>
+              <div class="compliance-score-value">68<span style="font-size:1.5rem; color:var(--color-text-muted);">/100</span></div>
+            </div>
+
+            <div class="severity-chips">
+              <div class="severity-chip severity-critical">
+                <strong>3</strong> Critical Breaches
+              </div>
+              <div class="severity-chip severity-moderate">
+                <strong>7</strong> Moderate Breaches
+              </div>
+              <div class="severity-chip severity-minor">
+                <strong>15</strong> Minor Observations
+              </div>
+            </div>
+
+            <h5 style="margin:var(--spacing-xl) 0 var(--spacing-lg) 0; color:var(--color-text-main);">Top Failed Regulations</h5>
+            <table style="font-size:0.875rem;">
+              <thead>
+                <tr>
+                  <th>Regulation / Guideline</th>
+                  <th>Breaches</th>
+                  <th>Last Observed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Health Regulations 2016 – TPA management</td>
+                  <td><span class="chip miss">4</span></td>
+                  <td>Nov 2024</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Protection of Policyholders' Interests – Sec 6 (Claims)</td>
+                  <td><span class="chip miss">3</span></td>
+                  <td>Sep 2024</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">IRDAI Circular IRDA/F&I/CIR/INV/042/03/2016 – Investments</td>
+                  <td><span class="chip warn">2</span></td>
+                  <td>Jun 2024</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Corporate Governance Guidelines – Board Oversight</td>
+                  <td><span class="chip warn">3</span></td>
+                  <td>Jun 2024</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 5: Supervisory Scorecard & Forward Actions -->
+      <div class="dashboard-section">
+        <h3 class="section-title" onclick="toggleSection('section-4')">
+          <span class="section-toggle-icon" id="toggle-icon-4">▼</span>
+          <span>Supervisory Focus & Forward Actions</span>
+        </h3>
+        <div class="dashboard-row section-content" id="section-4">
+          <!-- Left: Scorecard -->
+          <div class="card">
+            <h4 style="color:var(--color-primary); margin-bottom:var(--spacing-lg);">Supervisory Focus</h4>
+            <table class="Focus-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Status</th>
+                  <th>Comment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;">Claims</td>
+                  <td><span class="chip badge-red">Red</span></td>
+                  <td style="font-size:0.875rem;">Persistent delays in settlement for motor & health</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Data Quality</td>
+                  <td><span class="chip badge-amber">Amber</span></td>
+                  <td style="font-size:0.875rem;">Improving, but recurring validation failures</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Governance</td>
+                  <td><span class="chip badge-amber">Amber</span></td>
+                  <td style="font-size:0.875rem;">Board oversight adequate; follow-up on previous directions pending</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Distribution</td>
+                  <td><span class="chip badge-red">Red</span></td>
+                  <td style="font-size:0.875rem;">Mis-selling complaints in bancassurance channels</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;">Product Filing</td>
+                  <td><span class="chip badge-green">Green</span></td>
+                  <td style="font-size:0.875rem;">No major recent issues</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Right: Forward Actions -->
+          <div class="card">
+            <div class="action-list">
+              <h4>
+                <span style="font-size:1.5rem;">📋</span>
+                Forward Supervisory Actions (Next 12–24 months)
+              </h4>
+              <ol>
+                <li><strong>Thematic review of health claims processing</strong> – Scheduled for Q3 FY 2025–26</li>
+                <li><strong>Focused inspection on motor OD underwriting quality</strong> – To assess pricing adequacy and risk selection</li>
+                <li><strong>Review of grievance redressal framework and escalation matrix</strong> – Follow-up from Sec 34 direction</li>
+                <li><strong>Follow-up on compliance with Sec 34 directions issued in Nov 2024</strong> – Pending resolution</li>
+                <li><strong>Data quality enhancement program</strong> – Monitoring improvement in validation exception rates</li>
+              </ol>
+            </div>
+
+            <div style="margin-top:var(--spacing-2xl); padding:var(--spacing-xl); background:var(--color-primary-bg); border-radius:var(--radius-lg); border:2px solid var(--color-primary);">
+              <h5 style="color:var(--color-primary); margin:0 0 var(--spacing-lg) 0;">📊 Recommended Supervision Intensity</h5>
+              <div style="display:flex; align-items:center; gap:var(--spacing-lg); margin-bottom:var(--spacing-md);">
+                <div style="flex:1;">
+                  <div style="font-weight:600; font-size:0.875rem; color:var(--color-text-muted); margin-bottom:0.25rem;">Current Rating:</div>
+                  <div style="font-size:1.5rem; font-weight:700; color:#ef4444;">HIGH</div>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-weight:600; font-size:0.875rem; color:var(--color-text-muted); margin-bottom:0.25rem;">Recommended Frequency:</div>
+                  <div style="font-size:1.25rem; font-weight:700; color:var(--color-primary);">Quarterly</div>
+                </div>
+              </div>
+              <div class="muted" style="font-size:0.8125rem; font-style:italic;">Based on risk profile, compliance history, and open issues</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- ========== END COMPANY DASHBOARD ========== -->
+
     <!-- footer: single copy for all tabs (keeps visual style and appears on every view) -->
    </div> <!-- end regulator-admin-view -->
 
@@ -2131,8 +3051,8 @@
         <div class="tabs">
           <div class="tab active" data-insurer-target="overview">Overview</div>
           <div class="tab" data-insurer-target="requirements">Requirements & Uploads</div>
-          <div class="tab" data-insurer-target="reports">Reports</div>
           <div class="tab" data-insurer-target="observations">Responses to Observations</div>
+          <div class="tab" data-insurer-target="reports">Reports</div>
           <div class="tab" data-insurer-target="history">History</div>
         </div>
 
@@ -2171,11 +3091,6 @@
               <div class="muted" style="margin-top:var(--spacing-xs);">2 Submitted, 1 Overdue</div>
             </div>
             <div class="card">
-              <h4 style="margin:0 0 var(--spacing-sm) 0;">Exit Report</h4>
-              <div class="big" style="color:var(--color-text-muted);">Not Available</div>
-              <div class="muted" style="margin-top:var(--spacing-xs);">Awaiting completion</div>
-            </div>
-            <div class="card">
               <h4 style="margin:0 0 var(--spacing-sm) 0;">Final Report</h4>
               <div class="big" style="color:var(--color-text-muted);">Not Available</div>
               <div class="muted" style="margin-top:var(--spacing-xs);">Inspection ongoing</div>
@@ -2198,13 +3113,6 @@
                 <div style="flex:1;">
                   <strong>Onsite Inspection</strong>
                   <div class="muted">In Progress - Started 2025-11-05</div>
-                </div>
-              </div>
-              <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-bg); border-radius:var(--radius-md);">
-                <span class="chip info" style="margin-right:var(--spacing-md);">◯</span>
-                <div style="flex:1;">
-                  <strong>Exit Report</strong>
-                  <div class="muted">Pending</div>
                 </div>
               </div>
               <div class="row" style="align-items:center; padding:var(--spacing-md); background:var(--color-bg); border-radius:var(--radius-md);">
@@ -2365,18 +3273,8 @@
 
           <div class="row" style="margin-top:var(--spacing-xl);">
             <div class="col">
-              <!-- Exit Report -->
-              <div class="card">
-                <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Exit Report</h4>
-                <div class="muted">Final exit report from onsite inspection</div>
-                <div style="margin-top:var(--spacing-lg);">
-                  <button type="button" class="btn" disabled>Download Exit Report</button>
-                  <div class="muted" style="margin-top:var(--spacing-sm);">Not yet available</div>
-                </div>
-              </div>
-
               <!-- Pending Requirements -->
-              <div class="card" style="margin-top:var(--spacing-xl);">
+              <div class="card">
                 <h4 style="margin:0 0 var(--spacing-md) 0; color:var(--color-primary);">Pending Requirements List</h4>
                 <div class="muted">Summary of outstanding requirements</div>
                 <div style="margin-top:var(--spacing-lg);">
@@ -3478,7 +4376,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const reportBtn = `<button class="btn small view-report" data-id="${r.id}" title="View final report">View</button>`;
         return `<tr data-inspection='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-status="${r.status}">
                   <td>${r.id}</td>
-                  <td>${r.insurer}</td>
+                  <td><a href="#" class="insurer-link" data-insurer="${r.insurer}" style="color:var(--color-primary); font-weight:600; text-decoration:none;" title="View Company Dashboard">${r.insurer}</a></td>
                   <td>${r.period}</td>
                   <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status.toUpperCase()}</span></td>
                   <td>${r.owner}</td>
@@ -3495,7 +4393,7 @@ document.addEventListener('DOMContentLoaded', function(){
         
         return `<tr data-inspection='${JSON.stringify(r).replace(/'/g, "&apos;")}' data-status="${r.status}">
                   <td>${r.id}</td>
-                  <td>${r.insurer}</td>
+                  <td><a href="#" class="insurer-link" data-insurer="${r.insurer}" style="color:var(--color-primary); font-weight:600; text-decoration:none;" title="View Company Dashboard">${r.insurer}</a></td>
                   <td>${r.period}</td>
                   <td><span class="${r.status==='Closed'?'chip ok':'chip info'}">${r.status.toUpperCase()}</span></td>
                   <td>${r.owner}</td>
@@ -3515,6 +4413,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const lists = $('#lists');
     const flow  = $('#flow');
     const home = $('#home');
+    const companyDashboard = $('#company-dashboard');
     const supToolbar = $('#supervision-toolbar');
     const homeBtn = $('#btn-home');
     
@@ -3523,6 +4422,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(flow)  flow.style.display='none';
     if(config) config.style.display='none';
     if(home) home.style.display='none';
+    if(companyDashboard) companyDashboard.style.display='none';
 
     // Update Home button active state
     if(homeBtn) {
@@ -3554,6 +4454,40 @@ document.addEventListener('DOMContentLoaded', function(){
       if(supToolbar) supToolbar.style.display='flex'; // Show toolbar
     }
   }
+
+  // Show Company Dashboard
+  function showCompanyDashboard(insurerName){
+    const lists = $('#lists');
+    const flow = $('#flow');
+    const home = $('#home');
+    const companyDashboard = $('#company-dashboard');
+    const supToolbar = $('#supervision-toolbar');
+    const homeBtn = $('#btn-home');
+
+    // Hide all main sections
+    if(lists) lists.style.display='none';
+    if(flow) flow.style.display='none';
+    if(home) home.style.display='none';
+    if(config) config.style.display='none';
+    if(supToolbar) supToolbar.style.display='none';
+    
+    // Show company dashboard
+    if(companyDashboard) {
+      companyDashboard.style.display='block';
+      // Update company name if provided
+      if(insurerName) {
+        const companyNameEl = $('#company-name');
+        if(companyNameEl) companyNameEl.textContent = insurerName;
+      }
+    }
+
+    // Update Home button active state
+    if(homeBtn) homeBtn.classList.remove('active');
+
+    // Scroll to top
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  window.showCompanyDashboard = showCompanyDashboard;
 
   // Go to a specific step section and show flow
   function gotoStep(n){
@@ -3618,6 +4552,111 @@ document.addEventListener('DOMContentLoaded', function(){
   $('#btn-view-ongoing')?.addEventListener('click', ()=> showOnly('ongoing'));
   $('#btn-view-completed')?.addEventListener('click', ()=> showOnly('completed'));
   $('#btn-config')?.addEventListener('click', ()=> { showOnly('config'); initConfigTabs(); });
+  
+  // Company Dashboard navigation
+  $('#btn-back-to-inspections')?.addEventListener('click', ()=> {
+    showOnly('completed'); // Return to completed inspections list by default
+  });
+
+  // Toggle section visibility in company dashboard
+  window.toggleSection = function(sectionId) {
+    const section = document.getElementById(sectionId);
+    const iconId = 'toggle-icon-' + sectionId.split('-')[1];
+    const icon = document.getElementById(iconId);
+    
+    if(section && icon) {
+      section.classList.toggle('collapsed');
+      icon.classList.toggle('collapsed');
+    }
+  };
+
+  // Company selector dropdown handler
+  $('#company-selector')?.addEventListener('change', function(){
+    const selectedInsurer = this.value;
+    if(!selectedInsurer) return;
+    
+    // Update company name in dashboard
+    const companyNameEl = $('#company-name');
+    if(companyNameEl) companyNameEl.textContent = selectedInsurer;
+    
+    // Update dashboard data based on selection
+    updateDashboardData(selectedInsurer);
+  });
+
+  // Function to update dashboard data based on selected insurer
+  function updateDashboardData(insurerName){
+    // Sample data for different insurers
+    const insurerData = {
+      'LIC': {
+        type: 'Life Insurance',
+        totalInspections: 12,
+        dataQuality: '89/100',
+        complianceScore: '92/100',
+        riskRating: 'Low',
+        riskTrend: '↓',
+        riskColor: '#10b981'
+      },
+      'ICICI Lombard': {
+        type: 'General Insurance',
+        totalInspections: 8,
+        dataQuality: '78/100',
+        complianceScore: '75/100',
+        riskRating: 'Medium',
+        riskTrend: '→',
+        riskColor: '#f59e0b'
+      },
+      'SBI Life': {
+        type: 'Life Insurance',
+        totalInspections: 9,
+        dataQuality: '85/100',
+        complianceScore: '88/100',
+        riskRating: 'Medium',
+        riskTrend: '↓',
+        riskColor: '#f59e0b'
+      },
+      'HDFC Ergo': {
+        type: 'General Insurance',
+        totalInspections: 6,
+        dataQuality: '91/100',
+        complianceScore: '94/100',
+        riskRating: 'Low',
+        riskTrend: '→',
+        riskColor: '#10b981'
+      },
+      'Wisdom General Insurance Co. Ltd.': {
+        type: 'General Insurance',
+        totalInspections: 7,
+        dataQuality: '72/100',
+        complianceScore: '68/100',
+        riskRating: 'High',
+        riskTrend: '↑',
+        riskColor: '#ef4444'
+      }
+    };
+
+    const data = insurerData[insurerName] || insurerData['Wisdom General Insurance Co. Ltd.'];
+
+    // Update company type badge
+    const typeBadge = document.querySelector('.company-type-badge');
+    if(typeBadge) typeBadge.textContent = data.type;
+
+    // Update header meta values
+    const totalInspEl = $('#meta-total-inspections');
+    const dataQualityEl = $('#meta-data-quality');
+    const complianceEl = $('#meta-compliance-score');
+    const riskRatingEl = $('#meta-risk-rating');
+
+    if(totalInspEl) totalInspEl.textContent = data.totalInspections;
+    if(dataQualityEl) dataQualityEl.textContent = data.dataQuality;
+    if(complianceEl) complianceEl.textContent = data.complianceScore;
+    if(riskRatingEl) {
+      riskRatingEl.innerHTML = `${data.riskRating} <span class="trend-arrow ${data.riskTrend === '↑' ? 'trend-up' : data.riskTrend === '↓' ? 'trend-down' : 'trend-stable'}" style="font-size:1.25rem;">${data.riskTrend}</span>`;
+      riskRatingEl.style.color = data.riskColor;
+    }
+
+    // Scroll to top of dashboard
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
 
   // Home tabs behavior: switch panels inside #home
   (function(){
@@ -4010,6 +5049,15 @@ document.addEventListener('DOMContentLoaded', function(){
   document.body.addEventListener('click', function(e){
     const t = e.target;
     if(!t) return;
+    
+    // Company dashboard link (insurer name)
+    if(t.classList && t.classList.contains('insurer-link')){
+      e.preventDefault();
+      const insurerName = t.getAttribute('data-insurer') || 'Unknown Insurer';
+      showCompanyDashboard(insurerName);
+      return;
+    }
+    
     // final report open
     if(t.classList && t.classList.contains('view-report')){
       const id = t.getAttribute('data-id') || '—';
