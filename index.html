@@ -6576,6 +6576,29 @@ document.addEventListener('DOMContentLoaded', function(){
     alert('Template created successfully!');
   };
 });
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAcANUS1p-cFZhFxFuA1WwP9l1MyKm6QM0",
+    authDomain: "supervision-demo-e3ee0.firebaseapp.com",
+    projectId: "supervision-demo-e3ee0",
+    storageBucket: "supervision-demo-e3ee0.firebasestorage.app",
+    messagingSenderId: "182618191187",
+    appId: "1:182618191187:web:e7e6dc2e095bef6198dda6",
+    measurementId: "G-EJ3351E3GF"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </script>
 </body>
 </html>
