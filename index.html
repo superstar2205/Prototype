@@ -4293,16 +4293,6 @@ document.addEventListener('DOMContentLoaded', function(){
     const email = $('#email')?.value.trim();
     const password = $('#password')?.value.trim();
     
-    // Validate credentials
-    firebaseLogin(email, password); {
-      // For demo, we accept any non-empty credentials. Replace with actual Firebase auth logic.
-      if(email && password){
-        return true; // Simulate successful login
-      } else {
-        alert('Please enter email and password to login.');
-        return false;
-      }
-    }
     
     if(login) login.style.display = 'none';
     if(appRoot){ appRoot.style.display = ''; window.scrollTo({top:0, behavior:'smooth'}); }
@@ -6587,48 +6577,46 @@ document.addEventListener('DOMContentLoaded', function(){
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyAcANUS1p-cFZhFxFuA1wwP9l1MyKm6QM0",
   authDomain: "supervision-demo-e3ee0.firebaseapp.com",
   projectId: "supervision-demo-e3ee0",
   storageBucket: "supervision-demo-e3ee0.firebasestorage.app",
   messagingSenderId: "182618191187",
-  appId: "1:182618191187:web:e7e6dc2e095bef6198dda6",
-  measurementId: "G-EJ3351E3GF"
+  appId: "1:182618191187:web:e7e6dc2e095bef6198dda6"
 };
 
+// Initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-console.log("🔥 Firebase Auth Ready");
+console.log("🔥 Firebase Connected");
 
+// Login handler
+document.getElementById("login-btn").addEventListener("click", async () => {
 
-// GLOBAL LOGIN FUNCTION
-window.firebaseLogin = async function(email, password) {
-
-  if (!email || !password) {
-    alert("Enter email and password");
-    return;
-  }
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   try {
 
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email, password);
 
-    console.log("✅ Logged in:", userCredential.user.email);
+    alert("Login successful ✅");
 
-    alert("Login Successful");
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app-root").style.display = "";
 
   } catch (error) {
 
-    console.error(error);
     alert(error.message);
 
   }
-};
+
+});
 
 </script>
-
 </script>
 </body>
 </html>
